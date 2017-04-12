@@ -11,9 +11,11 @@ import parser.GraphGenerator;
 import parser.GraphTransformator;
 import parser.MILPParser;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Verena on 28.02.2017.
@@ -22,19 +24,33 @@ public class Main {
 
     private static String INPUT_FILE = null;
     private static String OUTPUT_FILE = null;
+    private static final Stopwatch t = new Stopwatch();
 
     public static void main(String[] args) throws IOException {
 
         parseArguments(args);
 
-        // TODO : input file is a directory
-        File file = new File(INPUT_FILE);
-        boolean fileExists = file.exists();
-        boolean isDirectory = file.isDirectory();
+        boolean isTxt = INPUT_FILE.substring(INPUT_FILE.length()-3, INPUT_FILE.length()).equals("txt");
 
-        if (fileExists && isDirectory) {
+        List<String> files = new ArrayList<>();
+        if (isTxt) {
+            // read all the files that need to be processed
+            BufferedReader br = new BufferedReader(new FileReader(INPUT_FILE));
 
+            String line;
+            while ((line = br.readLine()) != null) {
+                files.add(line);
+            }
+        } else {
+            files.add(INPUT_FILE);
         }
+
+        for (String fileName : files) {
+            computeStructuralParameters(fileName);
+        }
+    }
+
+    private static void computeStructuralParameters(String fileName) throws IOException {
 
         // parse input file
         MILPParser milpParser = new MILPParser();
@@ -53,7 +69,6 @@ public class Main {
         // just gets stuck for large instances - TODO try on server
         // g.printGraph(true, true);
 
-        Stopwatch t = new Stopwatch();
         t.reset();
         t.start();
         MaximumMinimumDegreePlusLeastC<GraphInput.InputData> lbAlgo = new MaximumMinimumDegreePlusLeastC<GraphInput.InputData>();
