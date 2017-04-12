@@ -1,4 +1,6 @@
 TreeTorsoWidth/input/benchmarks
+libtw/
+libtw-master/
 
 *.class
 
