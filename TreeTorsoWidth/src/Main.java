@@ -80,7 +80,7 @@ public class Main {
         System.out.println("LB: " + lowerbound + " of " + graphSize + " nodes " + " of " + lbAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
 
-        t.reset();
+/*        t.reset();
         t.start();
         GreedyDegree<GraphInput.InputData> ubAlgo = new GreedyDegree<>();
         ubAlgo.setInput(g);
@@ -89,8 +89,7 @@ public class Main {
         t.stop();
         millisecondsPassed = t.getTime();
         System.out.println("UB: " + upperbound + " of " + graphSize + " nodes " + " of " + ubAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
-
+                + ", time: " + millisecondsPassed / 1000 + "s");*/
 
         t.reset();
         t.start();

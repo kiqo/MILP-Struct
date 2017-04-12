@@ -22,10 +22,13 @@ public class GraphGenerator {
     private Map<Node, List<Node>> neighbourNodes = new HashMap<>();
 
     // TODO improve performance!
+    /* @Input LinearProgram
+       @Output Primal graph of the linear program
+       The primal graph is constructed by taking the variables of the lp as nodes
+       and a variable is connected by an edge to another variable b iff they occur in the same constraint or
+       they occur together in the objective function
+     */
     public Graph linearProgramToPrimalGraph(LinearProgram lp) {
-        // primal graph is constructed by taking the variables of the lp as nodes
-        // a variable a is connected by an edge to variable b iff they occur in the same constraint or
-        // they occur together in the objective function
 
         // generate nodes
         for (String variableName : lp.getVariables().keySet()) {

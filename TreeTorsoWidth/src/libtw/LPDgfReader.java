@@ -160,13 +160,13 @@ public class LPDgfReader extends DgfReader {
                 } else if( command.equals("d") ) {
                     // Geometric Descriptors
                     // Form: "d DIM METRIC"
-                    // TODO - maybe do something with this
+                    // Not used here
 
                 } else if( command.equals("v") ) {
                     // Lines starting with v are a vertex embedding descriptor line
                     // Form: "v X1 X2 X3 ... XD"
                     // Note: these lines must appear after the d descriptor
-                    // TODO - maybe do something with this
+                    // Not used here
 
                 } else {
                     System.out.println( "Unknown command '" + command + "' at line " + in.getLineNumber() );

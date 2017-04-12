@@ -1,6 +1,5 @@
 package libtw;
 
-import graph.Graph;
 import nl.uu.cs.treewidth.algorithm.LowerBound;
 import nl.uu.cs.treewidth.algorithm.UpperBound;
 import nl.uu.cs.treewidth.input.GraphInput;
@@ -10,7 +9,6 @@ import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * The TorsoWidth algorithm collapses all the non-integer vertices (a ∞-torso is created)
@@ -21,24 +19,19 @@ import java.util.stream.Collectors;
  * @author Verena Dittmer
  *
  */
-public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<GraphInput.InputData>, LowerBound<GraphInput.InputData> {
+public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>, LowerBound<D> {
     private int lowerbound = Integer.MIN_VALUE;
     private int upperbound = Integer.MAX_VALUE;
-    private NGraph<GraphInput.InputData> graph;
-    private LowerBound<GraphInput.InputData> lbAlg;
-    private UpperBound<GraphInput.InputData> ubAlg;
-
-    public static void setFastAlgorithm(boolean fastAlgorithm) {
-        FAST_ALGORITHM = fastAlgorithm;
-    }
-
+    private NGraph<D> graph;
+    private LowerBound<D> lbAlg;
+    private UpperBound<D> ubAlg;
     private static boolean FAST_ALGORITHM = true;
 
-    public TorsoWidth(UpperBound<GraphInput.InputData> ubAlg){
+    public TorsoWidth(UpperBound<D> ubAlg){
         this.ubAlg = ubAlg;
     }
 
-    public TorsoWidth(UpperBound<GraphInput.InputData> ubAlg, LowerBound<GraphInput.InputData> lbAlg){
+    public TorsoWidth(UpperBound<D> ubAlg, LowerBound<D> lbAlg){
         this.ubAlg = ubAlg;
         this.lbAlg = lbAlg;
     }
@@ -49,7 +42,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
     }
 
     @Override
-    public void setInput(NGraph<GraphInput.InputData> g)  {
+    public void setInput(NGraph<D> g)  {
         this.graph = g; // TODO make a deep copy
     };
 
@@ -69,8 +62,8 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
         }
 
         // create a ∞-torso which is a graph obtained by collapsing (at least) all the non-integer vertices
-        Iterator<NVertex<GraphInput.InputData>> vertexIterator = graph.iterator();
-        NVertex<GraphInput.InputData> vertex;
+        Iterator<NVertex<D>> vertexIterator = graph.iterator();
+        NVertex<D> vertex;
 
         System.out.println("Num vertices before TorsoWidthAlg: " + graph.getNumberOfVertices());
         System.out.println("Num edges before TorsoWidthAlg: " + graph.getNumberOfEdges());
@@ -82,13 +75,13 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
 
             // vertex corresponds to a real valued variable
             if (!data.isInteger()) {
-                Iterator<NVertex<GraphInput.InputData>> iter1 = vertex.getNeighbors();
+                Iterator<NVertex<D>> iter1 = vertex.getNeighbors();
                 while (iter1.hasNext()) {
-                    NVertex<GraphInput.InputData> neighbour1 = iter1.next();
+                    NVertex<D> neighbour1 = iter1.next();
 
-                    Iterator<NVertex<GraphInput.InputData>> iter2 = vertex.getNeighbors();
+                    Iterator<NVertex<D>> iter2 = vertex.getNeighbors();
                     while (iter2.hasNext()) {
-                        NVertex<GraphInput.InputData> neighbour2 = iter2.next();
+                        NVertex<D> neighbour2 = iter2.next();
                         if (!neighbour1.equals(neighbour2)) {
                             neighbour1.ensureNeighbor(neighbour2);
                         }
@@ -100,13 +93,13 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
 
         ArrayList<NVertex<D>> vertices = ((ListGraph) graph).vertices;
 
-        Map<NVertex<GraphInput.InputData>, List<NVertex<GraphInput.InputData>>> vNeighboursToRemove = new HashMap<>();
+        Map<NVertex<D>, List<NVertex<D>>> vNeighboursToRemove = new HashMap<>();
 
         // remove now all the invalid edges, i.e. edges that contain references to nodes which were deleted
-        for (Iterator<NVertex<GraphInput.InputData>> iterator = graph.iterator(); iterator.hasNext(); ) {
-            NVertex<GraphInput.InputData> next = iterator.next();
+        for (Iterator<NVertex<D>> iterator = graph.iterator(); iterator.hasNext(); ) {
+            NVertex<D> next = iterator.next();
 
-            for (NVertex<GraphInput.InputData> vNeighbour : next) {
+            for (NVertex<D> vNeighbour : next) {
                 if (!vertices.contains(vNeighbour)) {
 
                     // vNeighbour needs to be deleted, save it to next
@@ -118,9 +111,9 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
             }
         }
 
-        Iterator<Map.Entry<NVertex<GraphInput.InputData>, List<NVertex<GraphInput.InputData>>>> iterator = vNeighboursToRemove.entrySet().iterator();
+        Iterator<Map.Entry<NVertex<D>, List<NVertex<D>>>> iterator = vNeighboursToRemove.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<NVertex<GraphInput.InputData>, List<NVertex<GraphInput.InputData>>> next = iterator.next();
+            Map.Entry<NVertex<D>, List<NVertex<D>>> next = iterator.next();
             ((ListVertex<D>) next.getKey()).neighbors.removeAll(next.getValue());
         }
 
@@ -147,24 +140,24 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
      */
     private void runAlternative() {
 
-        Set<NVertex<GraphInput.InputData>> verticesToRemove = new HashSet<>();
-        Iterator<NVertex<GraphInput.InputData>> vertexIterator = graph.iterator();
+        Set<NVertex<D>> verticesToRemove = new HashSet<>();
+        Iterator<NVertex<D>> vertexIterator = graph.iterator();
 
         while (vertexIterator.hasNext()) {
-            NVertex<GraphInput.InputData> vertex = vertexIterator.next();
+            NVertex<D> vertex = vertexIterator.next();
 
             // a non-integer node not yet handled
             if (!((LPInputData) vertex.data).isInteger() && !verticesToRemove.contains(vertex)) {
 
                 // choose this vertex as a starting vertex for the current connected component
-                Set<NVertex<GraphInput.InputData>> currentNonIntegerSet = new HashSet<>();
-                Set<NVertex<GraphInput.InputData>> currentIntegerSet = new HashSet<>();
-                List<NVertex<GraphInput.InputData>> nodesToHandle = new LinkedList<>();
+                Set<NVertex<D>> currentNonIntegerSet = new HashSet<>();
+                Set<NVertex<D>> currentIntegerSet = new HashSet<>();
+                List<NVertex<D>> nodesToHandle = new LinkedList<>();
                 nodesToHandle.add(vertex);
 
                 int maxIndex = 0;
                 while (!nodesToHandle.isEmpty()) {
-                    NVertex<GraphInput.InputData> next = nodesToHandle.get(0);
+                    NVertex<D> next = nodesToHandle.get(0);
 
                     if (((LPInputData) next.data).isInteger()) {
                         if (!currentIntegerSet.contains(next)) {
@@ -173,15 +166,20 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
                     } else {
                         if (!currentNonIntegerSet.contains(next)) {
                             currentNonIntegerSet.add(next);
-                            List<NVertex<GraphInput.InputData>> verticesNotHandled = new ArrayList<>();
-                            for (Object neighbour : ((ListVertex<GraphInput.InputData>) next).neighbors) {
-                                NVertex n = (NVertex<LPInputData>) neighbour;
-                                if (!((LPInputData) n.data).isNodeHandled()) {
-                                    verticesNotHandled.add(n);
+
+                            // old : - until now as fast as new implementation
+                            // nodesToHandle.addAll(((ListVertex) next).neighbors); //TODO just add those vertices not yet handled
+
+                            // new :
+                            List<NVertex<D>> notYetHandled = new ArrayList<>();
+                            for (NVertex<D> neighbour : ((ListVertex<D>) next).neighbors) {
+                                LPInputData data = (LPInputData) neighbour.data;
+                                if (!data.isNodeHandled()) {
+                                    notYetHandled.add(neighbour);
+                                    data.setNodeHandled(true);
                                 }
                             }
-
-                            nodesToHandle.addAll(verticesNotHandled);
+                            nodesToHandle.addAll(notYetHandled);
                         }
                     }
                     nodesToHandle.remove(0);
@@ -191,8 +189,8 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
                 verticesToRemove.addAll(currentNonIntegerSet);
 
                 // form a clique of the nodes in currentIntegerNeighbours
-                for (NVertex<GraphInput.InputData> integerNode1 : currentIntegerSet) {
-                    for (NVertex<GraphInput.InputData> integerNode2 : currentIntegerSet) {
+                for (NVertex<D> integerNode1 : currentIntegerSet) {
+                    for (NVertex<D> integerNode2 : currentIntegerSet) {
                         if (!integerNode1.equals(integerNode2)) {
                             integerNode1.ensureNeighbor(integerNode2);
                         }
@@ -205,8 +203,8 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
         ((ListGraph) graph).vertices.removeAll(verticesToRemove);
 
         // delete nodes in neighbour lists of integer nodes
-        for (NVertex<GraphInput.InputData> vertex : graph) {
-            for (NVertex<GraphInput.InputData> vertexToDel : verticesToRemove) {
+        for (NVertex<D> vertex : graph) {
+            for (NVertex<D> vertexToDel : verticesToRemove) {
                 vertex.removeNeighbor(vertexToDel);
             }
         }
@@ -227,6 +225,9 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<Gr
 
     }
 
+    public static void setFastAlgorithm(boolean fastAlgorithm) {
+        FAST_ALGORITHM = fastAlgorithm;
+    }
 
     @Override
     public int getUpperBound() {
