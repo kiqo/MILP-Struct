@@ -1,5 +1,7 @@
 TreeTorsoWidth/input/benchmarks
+
 libtw/
+!TreeTorsoWidth/src/libtw/
 libtw-master/
 TreeTorsoWidth/out/production
 
