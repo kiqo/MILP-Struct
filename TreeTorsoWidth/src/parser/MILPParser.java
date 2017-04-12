@@ -131,7 +131,7 @@ public class MILPParser {
             line = br.readLine();
 
             // parse BOUNDS (optional)
-            while (!line.startsWith("ENDATA")) {
+            while (line != null && !line.startsWith("ENDATA")) {
                 lineContents = getData(line);
 
                 String boundType = lineContents[0];
