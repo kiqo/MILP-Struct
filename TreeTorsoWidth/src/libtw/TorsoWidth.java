@@ -53,8 +53,8 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
             return;
         }
 
-        System.out.println("Num vertices before TorsoWidthAlg" + (FAST_ALGORITHM ? "(Fast implementation)" : "") + ": " + graph.getNumberOfVertices());
-        System.out.println("Num edges before TorsoWidthAlg" + (FAST_ALGORITHM ? "(Fast implementation)" : "") + ": " + graph.getNumberOfEdges());
+        System.out.println("Num vertices before " + getName() + ": " + graph.getNumberOfVertices());
+        System.out.println("Num edges before " + getName() + ": " + graph.getNumberOfEdges());
 
         if (FAST_ALGORITHM) {
             runAlternative();
@@ -65,8 +65,11 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         Iterator<NVertex<D>> vertexIterator = graph.iterator();
         NVertex<D> vertex;
 
-        System.out.println("Num vertices before TorsoWidthAlg: " + graph.getNumberOfVertices());
-        System.out.println("Num edges before TorsoWidthAlg: " + graph.getNumberOfEdges());
+        System.out.println("Num vertices before " + getName() + ": " + graph.getNumberOfVertices());
+        System.out.println("Num edges before " + getName() + ": " + graph.getNumberOfEdges());
+
+        System.out.println("Num vertices before " + getName() + ": " + graph.getNumberOfVertices());
+        System.out.println("Num edges before " + getName() + ": " + graph.getNumberOfEdges());
 
 
         while (vertexIterator.hasNext()) {
@@ -117,8 +120,8 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
             ((ListVertex<D>) next.getKey()).neighbors.removeAll(next.getValue());
         }
 
-        System.out.println("Num vertices after TorsoWidthAlg: " + graph.getNumberOfVertices());
-        System.out.println("Num edges after TorsoWidthAlg: " + graph.getNumberOfEdges());
+        System.out.println("Num vertices " + getName() + ": " + graph.getNumberOfVertices());
+        System.out.println("Num edges after " + getName() + ": " + graph.getNumberOfEdges());
 
 
         // compute lowerbound of treewidth of collapsed graph
@@ -167,8 +170,8 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
                         if (!currentNonIntegerSet.contains(next)) {
                             currentNonIntegerSet.add(next);
 
-                            // old : - until now as fast as new implementation
-                            // nodesToHandle.addAll(((ListVertex) next).neighbors); //TODO just add those vertices not yet handled
+                            // old : until now as fast as new implementation ?
+                            // nodesToHandle.addAll(((ListVertex) next).neighbors);
 
                             // new :
                             List<NVertex<D>> notYetHandled = new ArrayList<>();
@@ -209,8 +212,8 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
             }
         }
 
-        System.out.println("Num vertices after TorsoWidthAlgAlt: " + graph.getNumberOfVertices());
-        System.out.println("Num edges after TorsoWidthAlgAlt: " + graph.getNumberOfEdges());
+        System.out.println("Num vertices after " + getName() + ": " + graph.getNumberOfVertices());
+        System.out.println("Num edges after " + getName() + ": " + graph.getNumberOfEdges());
 
         // compute lowerbound of treewidth of collapsed graph
         if (lbAlg != null) {

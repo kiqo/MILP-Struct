@@ -22,8 +22,13 @@ import java.util.List;
  */
 public class Main {
 
+    private static final UpperBound DEFAULT_UPPER_BOUND_ALG = new GreedyDegree();
+    private static final LowerBound DEFAULT_LOWER_BOUND_ALG = new MaximumMinimumDegreePlusLeastC();
     private static String INPUT_FILE = null;
     private static String OUTPUT_FILE = null;
+    private static UpperBound UPPER_BOUND_ALG = null;
+    private static LowerBound LOWER_BOUND_ALG = null;
+    private static boolean TORSO_WIDTH = false;
     private static final Stopwatch t = new Stopwatch();
 
     public static void main(String[] args) throws IOException {
@@ -46,7 +51,9 @@ public class Main {
         }
 
         for (String fileName : files) {
+            System.out.println("Structural Parameters: " + fileName);
             computeStructuralParameters(fileName);
+            System.out.println("-------------------");
         }
     }
 
@@ -54,7 +61,7 @@ public class Main {
 
         // parse input file
         MILPParser milpParser = new MILPParser();
-        LinearProgram lp = milpParser.parseMPS(INPUT_FILE, false);
+        LinearProgram lp = milpParser.parseMPS(fileName, false);
 
         // generate primal graph
         GraphGenerator graphGenerator = new GraphGenerator();
@@ -69,45 +76,70 @@ public class Main {
         // just gets stuck for large instances - TODO try on server
         // g.printGraph(true, true);
 
+        if (LOWER_BOUND_ALG != null) {
+            computeTWLowerBound(g);
+        }
+
+        if (UPPER_BOUND_ALG != null) {
+            computeTWUpperBound(g);
+        }
+
+        if (TORSO_WIDTH) {
+            computeTorsoWidth(g);
+        }
+
+    }
+
+    private static void computeTorsoWidth(NGraph<GraphInput.InputData> g) {
         t.reset();
         t.start();
-        MaximumMinimumDegreePlusLeastC<GraphInput.InputData> lbAlgo = new MaximumMinimumDegreePlusLeastC<GraphInput.InputData>();
+
+        // set default upperbound algorithm
+        if (UPPER_BOUND_ALG == null) {
+            UPPER_BOUND_ALG = DEFAULT_UPPER_BOUND_ALG;
+        }
+
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(UPPER_BOUND_ALG);
+        torsoWidthAlgo.setInput(g);
+        torsoWidthAlgo.run();
+        int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
+        t.stop();
+        long millisecondsPassed = t.getTime();
+        System.out.println("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
+                + ", time: " + millisecondsPassed / 1000 + "s");
+    }
+
+    private static void computeTWUpperBound(NGraph<GraphInput.InputData> g) {
+        t.reset();
+        t.start();
+        UpperBound<GraphInput.InputData> ubAlgo = UPPER_BOUND_ALG;
+        ubAlgo.setInput(g);
+        ubAlgo.run();
+        int upperbound = ubAlgo.getUpperBound();
+        t.stop();
+        long millisecondsPassed = t.getTime();
+        System.out.println("UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + ubAlgo.getName()
+                + ", time: " + millisecondsPassed / 1000 + "s");
+    }
+
+    private static int computeTWLowerBound(NGraph<GraphInput.InputData> g) {
+        t.reset();
+        t.start();
+        LowerBound<GraphInput.InputData> lbAlgo = LOWER_BOUND_ALG;
         lbAlgo.setInput(g);
         lbAlgo.run();
         int lowerbound = lbAlgo.getLowerBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        System.out.println("LB: " + lowerbound + " of " + graphSize + " nodes " + " of " + lbAlgo.getName()
+        System.out.println("LB: " + lowerbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + lbAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
-
-/*        t.reset();
-        t.start();
-        GreedyDegree<GraphInput.InputData> ubAlgo = new GreedyDegree<>();
-        ubAlgo.setInput(g);
-        ubAlgo.run();
-        int upperbound = ubAlgo.getUpperBound();
-        t.stop();
-        millisecondsPassed = t.getTime();
-        System.out.println("UB: " + upperbound + " of " + graphSize + " nodes " + " of " + ubAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");*/
-
-        t.reset();
-        t.start();
-        GreedyDegree<GraphInput.InputData> ubAlgo2 = new GreedyDegree<>();
-        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(ubAlgo2);
-        torsoWidthAlgo.setInput(g);
-        torsoWidthAlgo.run();
-        int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
-        t.stop();
-        millisecondsPassed = t.getTime();
-        System.out.println("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
+        return lowerbound;
     }
 
     private static void parseArguments(String[] args) {
         int argc = args.length;
         boolean error = false;
-        String errorMessage = "Usage: TreeTorsoWidth -i inputFile|inputDirectory [-o outputFile] [-g primal|incidence|dual]";
+        String helpMessage = "Usage: TreeTorsoWidth -i inputFile.mps|inputFile.txt (-u|-l|-t) [-o outputFile] [-g primal|incidence|dual]";
 
         if (argc <= 1) {
             error = true;
@@ -128,6 +160,18 @@ public class Main {
                 case "-G":
                 case "--graph": expectGraphType = true; break;
 
+                case "-u":
+                case "-U":
+                case "--upperbound": UPPER_BOUND_ALG = DEFAULT_UPPER_BOUND_ALG; break;
+
+                case "-l":
+                case "-L":
+                case "--lowerbound": LOWER_BOUND_ALG = DEFAULT_LOWER_BOUND_ALG; break;
+
+                case "-t":
+                case "-T":
+                case "--torsowidth": TORSO_WIDTH = true; break;
+
                 default:
                     if (expectInputFile) {
                         expectInputFile = false;
@@ -144,12 +188,21 @@ public class Main {
                         expectGraphType = false;
                         throw new NotImplementedException();
                     }
+
                     error = true;
             }
         }
 
+        // check that either treewidth upper- or lowerbound or torsowidth are computed
+        if (LOWER_BOUND_ALG == null && UPPER_BOUND_ALG == null & !TORSO_WIDTH) {
+            System.out.println("Either -u -l -t must be set!");
+            System.out.println(helpMessage);
+            System.exit(1);
+            return;
+        }
+
         if (error) {
-            System.out.println(errorMessage);
+            System.out.println(helpMessage);
             System.exit(1);
             return;
         }

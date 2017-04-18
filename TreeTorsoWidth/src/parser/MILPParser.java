@@ -29,7 +29,7 @@ public class MILPParser {
     public LinearProgram parseMPS(String filename, boolean printLP) throws IOException {
 
         String[] splits = filename.split("\\.");
-        if (!splits[splits.length-1].equals("mps") && !splits[splits.length-1].equals("MPS")) {
+        if (!splits[splits.length-1].equals("mps") && !splits[splits.length-1].equals("mps\"") && !splits[splits.length-1].equals("MPS")) {
             System.out.print("parseMPS may only handle files with .mps as ending!");
             return null;
         }
