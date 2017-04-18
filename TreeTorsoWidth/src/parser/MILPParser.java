@@ -1,8 +1,6 @@
 package parser;
 
-import com.sun.deploy.util.StringUtils;
 import lp.*;
-import sun.swing.StringUIClientPropertyKey;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -34,13 +32,12 @@ public class MILPParser {
             return null;
         }
 
-        BufferedReader br = new BufferedReader(new FileReader(filename));
         LinearProgram lp = new LinearProgram();
         boolean containsDoubleVariable = false;
         boolean containsIntegerVariable = false;
         String[] lineContents;
 
-        try {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             List<MatrixRow> constraints = new ArrayList<>();
             lp.setConstraints(constraints);
             String line = br.readLine();
@@ -51,10 +48,10 @@ public class MILPParser {
             Map<String, Variable> variables = lp.getVariables();
             line = br.readLine();
 
-            assert(line.startsWith("ROWS"));
+            assert (line.startsWith("ROWS"));
             line = br.readLine();
 
-            while(!line.startsWith("COLUMNS")) {
+            while (!line.startsWith("COLUMNS")) {
 
                 // parse Rows
                 if (line.substring(COL_0_START).startsWith("N")) {
@@ -65,7 +62,7 @@ public class MILPParser {
                 } else {
                     // matrix row
                     MatrixRow row = new MatrixRow();
-                    row.setEquality(parseEquality(line.substring(COL_0_START, COL_0_START+1)));
+                    row.setEquality(parseEquality(line.substring(COL_0_START, COL_0_START + 1)));
                     row.setName(line.substring(COL_1_START).trim());
                     constraints.add(row);
                 }
@@ -80,7 +77,7 @@ public class MILPParser {
             while (!line.startsWith("RHS")) {
 
                 // checks if the following are integer variables
-                if (line.substring(COL_2_START, COL_2_START+8).equals("'MARKER'")) {
+                if (line.substring(COL_2_START, COL_2_START + 8).equals("'MARKER'")) {
                     if (line.substring(39, 47).equals("'INTORG'")) {
                         integerVariable = true;
                     }
@@ -140,7 +137,9 @@ public class MILPParser {
                 Number boundValue = null;
                 if (lineContents.length >= 4) {
                     if (variable.isInteger()) {
-                        boundValue = Integer.valueOf(lineContents[3]);
+                        // needed such that 1.0000 does not throw a NumberFormatException
+                        double value = Double.valueOf(lineContents[3]);
+                        boundValue = (int) value;
                     } else {
                         boundValue = Double.valueOf(lineContents[3]);
                     }
@@ -150,19 +149,25 @@ public class MILPParser {
 
                 switch (boundType) {
                     // a fixed variable has the boundvalue as upper and lower bound
-                    case "FX": variable.setUpperBound(boundValue);
-                               variable.setLowerBound(boundValue);break;
-                    case "UP": variable.setUpperBound(boundValue); break;
-                    case "LO": variable.setLowerBound(boundValue); break;
-                    case "FR": break; // free variable
-                    default: System.out.println("Unknown boundType " + boundType + "!");
+                    case "FX":
+                        variable.setUpperBound(boundValue);
+                        variable.setLowerBound(boundValue);
+                        break;
+                    case "UP":
+                        variable.setUpperBound(boundValue);
+                        break;
+                    case "LO":
+                        variable.setLowerBound(boundValue);
+                        break;
+                    case "FR":
+                        break; // free variable
+                    default:
+                        System.out.println("Unknown boundType " + boundType + "!");
                 }
                 line = br.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            br.close();
         }
 
         if (containsIntegerVariable && !containsDoubleVariable) {
@@ -175,7 +180,7 @@ public class MILPParser {
         return lp;
     }
 
-    private void addRowEntry(Row row, Variable<Number> variable, double coefficient) {
+    private void addRowEntry(Row row, Variable variable, double coefficient) {
 
         if (row.getEntries() == null || row.getEntries().isEmpty()) {
             List<MatrixEntry> entries = new ArrayList<>();
