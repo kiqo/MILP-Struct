@@ -1,4 +1,5 @@
-TreeTorsoWidth/input/benchmarks
+TreeTorsoWidth/input/benchmarks/
+!TreeTorsoWidth/input/benchmarks/input_files/
 !TreeTorsoWidth/input/
 !TreeTorsoWidth/
 
