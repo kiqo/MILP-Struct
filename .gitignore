@@ -1,5 +1,6 @@
 TreeTorsoWidth/input/benchmarks
-!TreeTorsoWidth/input
+!TreeTorsoWidth/input/
+!TreeTorsoWidth/
 
 libtw/
 !TreeTorsoWidth/src/libtw/
