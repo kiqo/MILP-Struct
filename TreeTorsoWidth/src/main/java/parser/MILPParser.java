@@ -178,6 +178,11 @@ public class MILPParser {
         if (printLP) {
             lp.printLP();
         }
+
+        // compute statistical data of lp
+        LPStatistics statistics = new LPStatistics(lp);
+        lp.setStatistics(statistics);
+
         return lp;
     }
 

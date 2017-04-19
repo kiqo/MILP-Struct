@@ -92,16 +92,16 @@ public class MILPParserTest {
         // test coefficients
         for (MatrixEntry entry : lp.getRows().get("r_0").getEntries()) {
             if (entry.getVariable().getName().equals("z")) {
-                Assert.assertEquals(1, entry.getValue(), 0.0);
+                Assert.assertEquals(1, entry.getCoefficient(), 0.0);
             }
         }
 
         for (MatrixEntry entry : lp.getRows().get("VUBbha").getEntries()) {
             if (entry.getVariable().getName().equals("xha")) {
-                Assert.assertEquals(-72, entry.getValue(), 0.0);
+                Assert.assertEquals(-72, entry.getCoefficient(), 0.0);
             }
             if (entry.getVariable().getName().equals("fbha")) {
-                Assert.assertEquals(1, entry.getValue(), 0.0);
+                Assert.assertEquals(1, entry.getCoefficient(), 0.0);
             }
         }
 
@@ -131,18 +131,18 @@ public class MILPParserTest {
         for (MatrixEntry entry : lp.getRows().get("obj").getEntries()) {
             // only one entry
             Assert.assertEquals(entry.getVariable().getName(), "x1");
-            assertEquals(1, entry.getValue());
+            assertEquals(1, entry.getCoefficient());
         }
 
         // test coefficients
         assertEquals(17, lp.getRows().get("c617").getEntries().size());
         List<MatrixEntry> entries = lp.getRows().get("c617").getEntries();
 
-        assertEquals(1, entries.get(0).getValue());
+        assertEquals(1, entries.get(0).getCoefficient());
         Assert.assertEquals("x6", entries.get(0).getVariable().getName());
-        assertEquals(47, entries.get(1).getValue());
+        assertEquals(47, entries.get(1).getCoefficient());
         Assert.assertEquals("x244", entries.get(1).getVariable().getName());
-        assertEquals(47, entries.get(3).getValue());
+        assertEquals(47, entries.get(3).getCoefficient());
         Assert.assertEquals("x246", entries.get(3).getVariable().getName());
 
         // test integer variables

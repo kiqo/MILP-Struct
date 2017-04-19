@@ -6,11 +6,11 @@ package main.java.lp;
 public class MatrixEntry {
 
     private Variable variable;
-    private double value;
+    private double coefficient;
 
     public MatrixEntry (Variable variable, double value) {
         this.variable = variable;
-        this.value = value;
+        this.coefficient = value;
     }
 
     public Variable getVariable() {
@@ -21,11 +21,11 @@ public class MatrixEntry {
         this.variable = variable;
     }
 
-    public double getValue() {
-        return value;
+    public double getCoefficient() {
+        return coefficient;
     }
 
-    public void setValue(double value) {
-        this.value = value;
+    public void setCoefficient(double coefficient) {
+        this.coefficient = coefficient;
     }
 }

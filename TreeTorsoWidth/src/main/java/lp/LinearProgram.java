@@ -14,14 +14,6 @@ public class LinearProgram {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(LinearProgram.class);
 
-    public boolean isIntegerLP() {
-        return integerLP;
-    }
-
-    public void setIntegerLP(boolean integerLP) {
-        this.integerLP = integerLP;
-    }
-
     public enum Equality {
         LESS_THAN(-1),
         GREATER_THAN(1),
@@ -53,8 +45,24 @@ public class LinearProgram {
     private List<MatrixRow> constraints;
     private Map<String, Variable> variables = new HashMap<>();
     private boolean integerLP = false;
-
+    private LPStatistics statistics;
     private static final String NL = System.getProperty("line.separator");
+
+    public LPStatistics getStatistics() {
+        return statistics;
+    }
+
+    public void setStatistics(LPStatistics statistics) {
+        this.statistics = statistics;
+    }
+
+    public boolean isIntegerLP() {
+        return integerLP;
+    }
+
+    public void setIntegerLP(boolean integerLP) {
+        this.integerLP = integerLP;
+    }
 
     public String getName() {
         return name;
@@ -100,14 +108,14 @@ public class LinearProgram {
          sb.append("LinearProgram " + this.name + " (" + (integerLP ? "ILP" : "MILP") + ")" + NL);
          sb.append("Objective function " + this.getObjectiveFunction().getName() + " : ");
          for (MatrixEntry matrixEntry : this.getObjectiveFunction().getEntries()) {
-             sb.append(matrixEntry.getValue() + " " + matrixEntry.getVariable().getName() + " + ");
+             sb.append(matrixEntry.getCoefficient() + " " + matrixEntry.getVariable().getName() + " + ");
          }
 
          sb.append(NL + "s.t." + NL);
          for (MatrixRow row : this.getConstraints()) {
              sb.append(row.getName() + " : ");
              for (MatrixEntry matrixEntry : row.getEntries()) {
-                 sb.append(matrixEntry.getValue() + " " + matrixEntry.getVariable().getName() + " + ");
+                 sb.append(matrixEntry.getCoefficient() + " " + matrixEntry.getVariable().getName() + " + ");
              }
              sb.append(" " + row.getEquality().toString() + " ");
              sb.append(row.getRightHandSide());
