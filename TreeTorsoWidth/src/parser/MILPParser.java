@@ -1,6 +1,8 @@
 package parser;
 
 import lp.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -8,14 +10,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by Verena on 07.03.2017.
  */
 public class MILPParser {
 
-    private final static Logger LOGGER = Logger.getLogger(MILPParser.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(MILPParser.class);
 
     private static final int COL_0_START = 1; // usually 2, 5, 15, 25, 40 and 50
     private static final int COL_1_START = 4; //
@@ -28,7 +29,7 @@ public class MILPParser {
 
         String[] splits = filename.split("\\.");
         if (!splits[splits.length-1].equals("mps") && !splits[splits.length-1].equals("mps\"") && !splits[splits.length-1].equals("MPS")) {
-            System.out.print("parseMPS may only handle files with .mps as ending!");
+            LOGGER.error("parseMPS may only handle files with .mps as ending!");
             return null;
         }
 
@@ -144,7 +145,7 @@ public class MILPParser {
                         boundValue = Double.valueOf(lineContents[3]);
                     }
                 } else {
-                    LOGGER.warning("No upper or lower bound value for variable " + variableName);
+                    LOGGER.warn("No upper or lower bound value for variable " + variableName);
                 }
 
                 switch (boundType) {
@@ -162,7 +163,7 @@ public class MILPParser {
                     case "FR":
                         break; // free variable
                     default:
-                        System.out.println("Unknown boundType " + boundType + "!");
+                        LOGGER.warn("Unknown boundType " + boundType + "!");
                 }
                 line = br.readLine();
             }

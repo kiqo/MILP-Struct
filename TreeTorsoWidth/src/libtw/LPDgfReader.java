@@ -7,6 +7,8 @@ import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
 import nl.uu.cs.treewidth.output.Output;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +20,9 @@ import java.util.Hashtable;
  * Created by Verena on 09.04.2017.
  */
 public class LPDgfReader extends DgfReader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LPDgfReader.class);
+
     public LPDgfReader(String filename) {
         super(filename);
     }
@@ -78,7 +83,7 @@ public class LPDgfReader extends DgfReader {
                     if( tokens.length>=2 ) {
                         numVertices = Integer.parseInt( tokens[2] ); //-> number of vertices specified in the file
                     } else {
-                        System.out.println( "Faulty problem specification at line " + in.getLineNumber() + ": " + line );
+                        LOGGER.warn( "Faulty problem specification at line " + in.getLineNumber() + ": " + line );
                     }
 
                 } else if( command.equals("n") ) {
@@ -136,7 +141,7 @@ public class LPDgfReader extends DgfReader {
                         else
                             directGraph = true;
                     } else {
-                        System.out.println( "Faulty edge command at line " + in.getLineNumber() + ": " + line );
+                        LOGGER.warn("Faulty edge command at line " + in.getLineNumber() + ": " + line);
                     }
 
                 } else if( command.equals("x") ) {
@@ -169,7 +174,7 @@ public class LPDgfReader extends DgfReader {
                     // Not used here
 
                 } else {
-                    System.out.println( "Unknown command '" + command + "' at line " + in.getLineNumber() );
+                    LOGGER.warn( "Unknown command '" + command + "' at line " + in.getLineNumber() );
 
                 }
             }

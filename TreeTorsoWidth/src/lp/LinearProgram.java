@@ -1,20 +1,18 @@
 package lp;
 
-import com.sun.deploy.trace.LoggerTraceListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by Verena on 07.03.2017.
  */
 public class LinearProgram {
 
-    private final static Logger LOGGER = Logger.getLogger(LinearProgram.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(LinearProgram.class);
 
     public boolean isIntegerLP() {
         return integerLP;
@@ -116,7 +114,7 @@ public class LinearProgram {
              sb.append(NL);
          }
 
-         System.out.println(sb.toString());
+         LOGGER.trace(sb.toString());
      }
 
 }

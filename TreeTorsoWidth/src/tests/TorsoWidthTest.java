@@ -14,6 +14,8 @@ import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import parser.GraphTransformator;
 
 import java.util.*;
@@ -23,7 +25,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by Verena on 08.04.2017.
  */
 public class TorsoWidthTest {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(TorsoWidthTest.class);
+    
     private static final int MIN_NODES = 5;
     private static final int MAX_NODES = 20;
 
@@ -57,7 +60,7 @@ public class TorsoWidthTest {
         ubAlgo.setInput(g);
         ubAlgo.run();
         int upperbound = ubAlgo.getUpperBound();
-        System.out.println("UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes with " + ubAlgo.getName());
+        LOGGER.debug("UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes with " + ubAlgo.getName());
 
         ubAlgo = new GreedyDegree<>();
 
@@ -65,7 +68,7 @@ public class TorsoWidthTest {
         torsoWidthAlgo.setInput(g);
         torsoWidthAlgo.run();
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
-        System.out.println("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes with " + torsoWidthAlgo.getName());
+        LOGGER.debug("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes with " + torsoWidthAlgo.getName());
 
         for (NVertex<GraphInput.InputData> node : g) {
             Assert.assertTrue(((LPInputData) node.data).isInteger());
@@ -81,7 +84,7 @@ public class TorsoWidthTest {
     @Test
     public void testNodeBlockerGraph() {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
-        System.out.println("--Node Blocker Graph--");
+        LOGGER.debug("--Node Blocker Graph--");
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(nodeBlockerGraph);
         resultGraph.printGraph(true, true);
 
@@ -142,7 +145,7 @@ public class TorsoWidthTest {
     @Test
     public void testGraphFromInputFile() {
         String inputFile = "./input/tests/torsowidth_test.dgf";
-        System.out.println("--"+ inputFile +" Graph--");
+        LOGGER.debug("--"+ inputFile +" Graph--");
         NGraph<GraphInput.InputData> g = null;
 
         GraphInput input = new LPDgfReader(inputFile);
@@ -160,7 +163,7 @@ public class TorsoWidthTest {
 
     @Test
     public void testStarShapedGraph() {
-        System.out.println("--Star Shaped Graph--");
+        LOGGER.debug("--Star Shaped Graph--");
         Graph starShapedGraph = createStarShapedGraph();
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(starShapedGraph);
         resultGraph.printGraph(true, true);
@@ -251,7 +254,7 @@ public class TorsoWidthTest {
         NGraph before = transformator.graphToNGraph(g);
         before.printGraph(true, true);
 
-        System.out.println("--Random Graph--");
+        LOGGER.debug("--Random Graph--");
         NGraph<GraphInput.InputData> after = torsoWidth(before);
         after.printGraph(true, true);
     }

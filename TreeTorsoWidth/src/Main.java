@@ -40,7 +40,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         init();
-        LOGGER.info("Hi, {}", "test");
 
         parseArguments(args);
 
@@ -60,9 +59,9 @@ public class Main {
         }
 
         for (String fileName : files) {
-            System.out.println("Structural Parameters: " + fileName);
+            LOGGER.debug("Structural Parameters: " + fileName);
             computeStructuralParameters(fileName);
-            System.out.println("-------------------");
+            LOGGER.debug("-------------------");
         }
     }
 
@@ -138,7 +137,7 @@ public class Main {
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        System.out.println("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
+        LOGGER.debug("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
     }
 
@@ -151,7 +150,7 @@ public class Main {
         int upperbound = ubAlgo.getUpperBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        System.out.println("UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + ubAlgo.getName()
+        LOGGER.debug("UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + ubAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
     }
 
@@ -164,7 +163,7 @@ public class Main {
         int lowerbound = lbAlgo.getLowerBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        System.out.println("LB: " + lowerbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + lbAlgo.getName()
+        LOGGER.debug("LB: " + lowerbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + lbAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
         return lowerbound;
     }
@@ -229,19 +228,19 @@ public class Main {
 
         // check that either treewidth upper- or lowerbound or torsowidth are computed
         if (!LOWER_BOUND & !UPPER_BOUND & !TORSO_WIDTH) {
-            System.out.println("Either -u -l -t must be set!");
-            System.out.println(helpMessage);
+            LOGGER.error("Either -u -l -t must be set!");
+            LOGGER.error(helpMessage);
             System.exit(1);
             return;
         }
 
         if (error) {
-            System.out.println(helpMessage);
+            LOGGER.error(helpMessage);
             System.exit(1);
             return;
         }
 
-        System.out.println("Input: " + INPUT_FILE);
+        LOGGER.debug("Input: " + INPUT_FILE);
     }
 
     private static void computeTreeWidth(NGraph<GraphInput.InputData> g) {

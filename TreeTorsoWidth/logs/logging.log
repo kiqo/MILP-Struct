@@ -1,2 +1,207 @@
 2017-04-19 10:49:38 INFO  Main:43 - Hi, test
 2017-04-19 10:50:20 INFO  Main:43 - Hi, test
+2017-04-19 10:56:28 DEBUG Main:243 - Input: ./input/benchmarks/mcsched.mps
+2017-04-19 10:56:28 DEBUG Main:62 - Structural Parameters: ./input/benchmarks/mcsched.mps
+2017-04-19 10:57:21 DEBUG Main:166 - LB: 1576 of 1747 nodes  of MMD+Least-c: Maximum Minimum Degree Plus least-c, time: 19s
+2017-04-19 11:06:38 DEBUG Main:243 - Input: ./input/benchmarks/mcsched.mps
+2017-04-19 11:06:38 DEBUG Main:62 - Structural Parameters: ./input/benchmarks/mcsched.mps
+2017-04-19 11:06:38 WARN  MILPParser:148 - No upper or lower bound value for variable C0001746
+2017-04-19 11:06:38 WARN  MILPParser:148 - No upper or lower bound value for variable C0001747
+2017-04-19 11:06:53 WARN  MILPParser:148 - No upper or lower bound value for variable x1
+2017-04-19 11:06:53 WARN  MILPParser:148 - No upper or lower bound value for variable fload
+2017-04-19 11:06:54 DEBUG TorsoWidthTest:257 - --Random Graph--
+2017-04-19 11:06:54 DEBUG TorsoWidthTest:63 - UB: 4 of 18 nodes with GreedyDegree
+2017-04-19 11:06:54 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 18
+2017-04-19 11:06:54 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 32
+2017-04-19 11:06:54 DEBUG TorsoWidth:212 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:06:54 DEBUG TorsoWidth:213 - Num edges after TorsoWidth(Fast implementation): 3
+2017-04-19 11:06:54 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 2 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:06:54 DEBUG TorsoWidthTest:87 - --Node Blocker Graph--
+2017-04-19 11:06:54 DEBUG TorsoWidthTest:63 - UB: 1 of 9 nodes with GreedyDegree
+2017-04-19 11:06:54 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 9
+2017-04-19 11:06:54 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 8
+2017-04-19 11:06:54 DEBUG TorsoWidth:212 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:06:54 DEBUG TorsoWidth:213 - Num edges after TorsoWidth(Fast implementation): 1
+2017-04-19 11:06:54 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:06:55 DEBUG TorsoWidthTest:166 - --Star Shaped Graph--
+2017-04-19 11:06:55 DEBUG TorsoWidthTest:63 - UB: 1 of 4 nodes with GreedyDegree
+2017-04-19 11:06:55 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 4
+2017-04-19 11:06:55 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 3
+2017-04-19 11:06:55 DEBUG TorsoWidth:212 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:06:55 DEBUG TorsoWidth:213 - Num edges after TorsoWidth(Fast implementation): 3
+2017-04-19 11:06:55 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 2 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:06:55 DEBUG TorsoWidthTest:148 - --./input/tests/torsowidth_test.dgf Graph--
+2017-04-19 11:06:55 DEBUG TorsoWidthTest:63 - UB: 3 of 7 nodes with GreedyDegree
+2017-04-19 11:06:55 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 7
+2017-04-19 11:06:55 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 10
+2017-04-19 11:06:55 DEBUG TorsoWidth:212 - Num vertices after TorsoWidth(Fast implementation): 6
+2017-04-19 11:06:55 DEBUG TorsoWidth:213 - Num edges after TorsoWidth(Fast implementation): 10
+2017-04-19 11:06:55 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 3 of 6 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:07:42 DEBUG Main:166 - LB: 1576 of 1747 nodes  of MMD+Least-c: Maximum Minimum Degree Plus least-c, time: 18s
+2017-04-19 11:07:42 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 1747
+2017-04-19 11:07:42 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 1243386
+2017-04-19 11:07:43 DEBUG TorsoWidth:212 - Num vertices after TorsoWidth(Fast implementation): 1745
+2017-04-19 11:07:43 DEBUG TorsoWidth:213 - Num edges after TorsoWidth(Fast implementation): 1240235
+2017-04-19 11:07:58 DEBUG Main:140 - UB TorsoWidth: 1574 of 1745 nodes of TorsoWidth(Fast implementation), time: 637s
+2017-04-19 11:07:58 DEBUG Main:64 - -------------------
+2017-04-19 11:11:35 WARN  MILPParser:148 - No upper or lower bound value for variable x1
+2017-04-19 11:11:35 WARN  MILPParser:148 - No upper or lower bound value for variable fload
+2017-04-19 11:11:35 DEBUG TorsoWidthTest:257 - --Random Graph--
+2017-04-19 11:11:35 DEBUG TorsoWidthTest:63 - UB: 4 of 14 nodes with GreedyDegree
+2017-04-19 11:11:35 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 14
+2017-04-19 11:11:35 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 22
+2017-04-19 11:11:35 DEBUG TorsoWidth:211 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:11:35 DEBUG TorsoWidth:212 - Num edges after TorsoWidth(Fast implementation): 3
+2017-04-19 11:11:35 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 2 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:11:35 DEBUG TorsoWidthTest:87 - --Node Blocker Graph--
+2017-04-19 11:11:46 DEBUG Main:140 - UB TorsoWidth: 1574 of 1745 nodes of TorsoWidth(Fast implementation), time: 243s
+2017-04-19 11:11:46 DEBUG Main:64 - -------------------
+2017-04-19 11:11:51 DEBUG TorsoWidthTest:63 - UB: 1 of 9 nodes with GreedyDegree
+2017-04-19 11:11:51 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 9
+2017-04-19 11:11:51 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 8
+2017-04-19 11:11:51 DEBUG TorsoWidth:211 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:11:51 DEBUG TorsoWidth:212 - Num edges after TorsoWidth(Fast implementation): 1
+2017-04-19 11:11:51 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:12:31 DEBUG TorsoWidthTest:166 - --Star Shaped Graph--
+2017-04-19 11:12:31 DEBUG TorsoWidthTest:63 - UB: 1 of 4 nodes with GreedyDegree
+2017-04-19 11:12:32 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 4
+2017-04-19 11:12:32 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 3
+2017-04-19 11:12:32 DEBUG TorsoWidth:211 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:12:32 DEBUG TorsoWidth:212 - Num edges after TorsoWidth(Fast implementation): 3
+2017-04-19 11:12:32 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 2 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:12:32 DEBUG TorsoWidthTest:148 - --./input/tests/torsowidth_test.dgf Graph--
+2017-04-19 11:12:32 DEBUG TorsoWidthTest:63 - UB: 3 of 7 nodes with GreedyDegree
+2017-04-19 11:12:34 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 7
+2017-04-19 11:12:34 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 10
+2017-04-19 11:12:34 DEBUG TorsoWidth:211 - Num vertices after TorsoWidth(Fast implementation): 6
+2017-04-19 11:12:34 DEBUG TorsoWidth:212 - Num edges after TorsoWidth(Fast implementation): 10
+2017-04-19 11:12:34 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 3 of 6 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:12:41 WARN  MILPParser:148 - No upper or lower bound value for variable x1
+2017-04-19 11:12:41 WARN  MILPParser:148 - No upper or lower bound value for variable fload
+2017-04-19 11:12:41 DEBUG TorsoWidthTest:257 - --Random Graph--
+2017-04-19 11:12:41 DEBUG TorsoWidthTest:63 - UB: 5 of 17 nodes with GreedyDegree
+2017-04-19 11:13:00 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 17
+2017-04-19 11:13:00 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 29
+2017-04-19 11:13:00 DEBUG TorsoWidth:211 - Num vertices after TorsoWidth(Fast implementation): 2
+2017-04-19 11:13:00 DEBUG TorsoWidth:212 - Num edges after TorsoWidth(Fast implementation): 1
+2017-04-19 11:13:02 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 2 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:13:02 DEBUG TorsoWidthTest:87 - --Node Blocker Graph--
+2017-04-19 11:13:06 DEBUG TorsoWidthTest:63 - UB: 1 of 9 nodes with GreedyDegree
+2017-04-19 11:13:09 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 9
+2017-04-19 11:13:09 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 8
+2017-04-19 11:13:09 DEBUG TorsoWidth:211 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:13:09 DEBUG TorsoWidth:212 - Num edges after TorsoWidth(Fast implementation): 1
+2017-04-19 11:13:16 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:13:17 DEBUG TorsoWidthTest:166 - --Star Shaped Graph--
+2017-04-19 11:13:17 DEBUG TorsoWidthTest:63 - UB: 1 of 4 nodes with GreedyDegree
+2017-04-19 11:13:23 WARN  MILPParser:148 - No upper or lower bound value for variable x1
+2017-04-19 11:13:23 WARN  MILPParser:148 - No upper or lower bound value for variable fload
+2017-04-19 11:13:23 DEBUG TorsoWidthTest:257 - --Random Graph--
+2017-04-19 11:13:23 DEBUG TorsoWidthTest:63 - UB: 2 of 14 nodes with GreedyDegree
+2017-04-19 11:13:29 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 14
+2017-04-19 11:13:31 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 14
+2017-04-19 11:13:33 DEBUG TorsoWidth:211 - Num vertices after TorsoWidth(Fast implementation): 1
+2017-04-19 11:13:33 DEBUG TorsoWidth:212 - Num edges after TorsoWidth(Fast implementation): 0
+2017-04-19 11:13:44 WARN  MILPParser:148 - No upper or lower bound value for variable x1
+2017-04-19 11:13:44 WARN  MILPParser:148 - No upper or lower bound value for variable fload
+2017-04-19 11:13:44 DEBUG TorsoWidthTest:257 - --Random Graph--
+2017-04-19 11:13:44 DEBUG TorsoWidthTest:63 - UB: 2 of 10 nodes with GreedyDegree
+2017-04-19 11:13:48 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 10
+2017-04-19 11:13:48 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 6
+2017-04-19 11:13:50 DEBUG TorsoWidth:211 - Num vertices after TorsoWidth(Fast implementation): 2
+2017-04-19 11:13:50 DEBUG TorsoWidth:212 - Num edges after TorsoWidth(Fast implementation): 1
+2017-04-19 11:13:50 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 2 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:13:50 DEBUG TorsoWidthTest:87 - --Node Blocker Graph--
+2017-04-19 11:13:56 DEBUG TorsoWidthTest:63 - UB: 1 of 9 nodes with GreedyDegree
+2017-04-19 11:13:58 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 9
+2017-04-19 11:13:58 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 8
+2017-04-19 11:35:18 WARN  MILPParser:148 - No upper or lower bound value for variable x1
+2017-04-19 11:35:18 WARN  MILPParser:148 - No upper or lower bound value for variable fload
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:257 - --Random Graph--
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:63 - UB: 4 of 17 nodes with GreedyDegree
+2017-04-19 11:35:19 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 17
+2017-04-19 11:35:19 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 25
+2017-04-19 11:35:19 DEBUG TorsoWidth:215 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:19 DEBUG TorsoWidth:216 - Num edges after TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 2 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:87 - --Node Blocker Graph--
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:63 - UB: 1 of 9 nodes with GreedyDegree
+2017-04-19 11:35:19 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 9
+2017-04-19 11:35:19 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 8
+2017-04-19 11:35:19 DEBUG TorsoWidth:215 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:19 DEBUG TorsoWidth:216 - Num edges after TorsoWidth(Fast implementation): 2
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:166 - --Star Shaped Graph--
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:63 - UB: 1 of 4 nodes with GreedyDegree
+2017-04-19 11:35:19 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 4
+2017-04-19 11:35:19 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:19 DEBUG TorsoWidth:215 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:19 DEBUG TorsoWidth:216 - Num edges after TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 2 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:148 - --./input/tests/torsowidth_test.dgf Graph--
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:63 - UB: 3 of 7 nodes with GreedyDegree
+2017-04-19 11:35:19 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 7
+2017-04-19 11:35:19 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 10
+2017-04-19 11:35:19 DEBUG TorsoWidth:215 - Num vertices after TorsoWidth(Fast implementation): 6
+2017-04-19 11:35:19 DEBUG TorsoWidth:216 - Num edges after TorsoWidth(Fast implementation): 10
+2017-04-19 11:35:19 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 3 of 6 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:35:37 WARN  MILPParser:148 - No upper or lower bound value for variable x1
+2017-04-19 11:35:37 WARN  MILPParser:148 - No upper or lower bound value for variable fload
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:257 - --Random Graph--
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:63 - UB: 6 of 20 nodes with GreedyDegree
+2017-04-19 11:35:38 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 20
+2017-04-19 11:35:38 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 40
+2017-04-19 11:35:38 DEBUG TorsoWidth:215 - Num vertices after TorsoWidth(Fast implementation): 0
+2017-04-19 11:35:38 DEBUG TorsoWidth:216 - Num edges after TorsoWidth(Fast implementation): 0
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:71 - UB TorsoWidth: -2147483648 of 0 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:87 - --Node Blocker Graph--
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:63 - UB: 1 of 9 nodes with GreedyDegree
+2017-04-19 11:35:38 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 9
+2017-04-19 11:35:38 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 8
+2017-04-19 11:35:38 DEBUG TorsoWidth:215 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:38 DEBUG TorsoWidth:216 - Num edges after TorsoWidth(Fast implementation): 2
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:166 - --Star Shaped Graph--
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:63 - UB: 1 of 4 nodes with GreedyDegree
+2017-04-19 11:35:38 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 4
+2017-04-19 11:35:38 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:38 DEBUG TorsoWidth:215 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:38 DEBUG TorsoWidth:216 - Num edges after TorsoWidth(Fast implementation): 3
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 2 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:148 - --./input/tests/torsowidth_test.dgf Graph--
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:63 - UB: 3 of 7 nodes with GreedyDegree
+2017-04-19 11:35:38 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 7
+2017-04-19 11:35:38 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 10
+2017-04-19 11:35:38 DEBUG TorsoWidth:215 - Num vertices after TorsoWidth(Fast implementation): 6
+2017-04-19 11:35:38 DEBUG TorsoWidth:216 - Num edges after TorsoWidth(Fast implementation): 10
+2017-04-19 11:35:38 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 3 of 6 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:37:23 WARN  MILPParser:148 - No upper or lower bound value for variable x1
+2017-04-19 11:37:23 WARN  MILPParser:148 - No upper or lower bound value for variable fload
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:257 - --Random Graph--
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:63 - UB: 2 of 18 nodes with GreedyDegree
+2017-04-19 11:37:23 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 18
+2017-04-19 11:37:23 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 20
+2017-04-19 11:37:23 DEBUG TorsoWidth:214 - Num vertices after TorsoWidth(Fast implementation): 2
+2017-04-19 11:37:23 DEBUG TorsoWidth:215 - Num edges after TorsoWidth(Fast implementation): 1
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 2 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:87 - --Node Blocker Graph--
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:63 - UB: 1 of 9 nodes with GreedyDegree
+2017-04-19 11:37:23 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 9
+2017-04-19 11:37:23 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 8
+2017-04-19 11:37:23 DEBUG TorsoWidth:214 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:37:23 DEBUG TorsoWidth:215 - Num edges after TorsoWidth(Fast implementation): 2
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 1 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:166 - --Star Shaped Graph--
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:63 - UB: 1 of 4 nodes with GreedyDegree
+2017-04-19 11:37:23 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 4
+2017-04-19 11:37:23 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 3
+2017-04-19 11:37:23 DEBUG TorsoWidth:214 - Num vertices after TorsoWidth(Fast implementation): 3
+2017-04-19 11:37:23 DEBUG TorsoWidth:215 - Num edges after TorsoWidth(Fast implementation): 3
+2017-04-19 11:37:23 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 2 of 3 nodes with TorsoWidth(Fast implementation)
+2017-04-19 11:37:24 DEBUG TorsoWidthTest:148 - --./input/tests/torsowidth_test.dgf Graph--
+2017-04-19 11:37:24 DEBUG TorsoWidthTest:63 - UB: 3 of 7 nodes with GreedyDegree
+2017-04-19 11:37:24 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 7
+2017-04-19 11:37:24 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 10
+2017-04-19 11:37:24 DEBUG TorsoWidth:214 - Num vertices after TorsoWidth(Fast implementation): 6
+2017-04-19 11:37:24 DEBUG TorsoWidth:215 - Num edges after TorsoWidth(Fast implementation): 10
+2017-04-19 11:37:24 DEBUG TorsoWidthTest:71 - UB TorsoWidth: 3 of 6 nodes with TorsoWidth(Fast implementation)

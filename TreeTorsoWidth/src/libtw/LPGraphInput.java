@@ -8,6 +8,8 @@ import nl.uu.cs.treewidth.ngraph.ListGraph;
 import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -17,6 +19,9 @@ import java.util.Map;
  * Created by Verena on 09.03.2017.
  */
 public class LPGraphInput implements GraphInput {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LPGraphInput.class);
+
     private Graph graph;
 
     public LPGraphInput(Graph graph) {
@@ -53,7 +58,7 @@ public class LPGraphInput implements GraphInput {
 
                 boolean edgeExists = v1.isNeighbor(v2);
                 if (edgeExists && !v2.isNeighbor(v1)) {
-                    System.out.println("Error: directed edge found for node " + v1.data.name);
+                    LOGGER.error("Directed edge found for node " + v1.data.name);
                 }
 
                 if (!edgeExists) {
