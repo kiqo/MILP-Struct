@@ -7,6 +7,9 @@ import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NTDBag;
 import nl.uu.cs.treewidth.ngraph.NVertexOrder;
 import nl.uu.cs.treewidth.timing.Stopwatch;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import parser.GraphGenerator;
 import parser.GraphTransformator;
 import parser.MILPParser;
@@ -23,6 +26,8 @@ import java.util.List;
  */
 public class Main {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
     private static Class<?> UPPER_BOUND_ALG = null;
     private static Class<?> LOWER_BOUND_ALG = null;
     private static String INPUT_FILE = null;
@@ -35,6 +40,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         init();
+        LOGGER.info("Hi, {}", "test");
 
         parseArguments(args);
 
