@@ -1,7 +1,7 @@
-package parser;
+package main.java.parser;
 
-import graph.Edge;
-import graph.Graph;
+import main.java.graph.Edge;
+import main.java.graph.Graph;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -17,7 +17,7 @@ public class GraphFileGenerator {
 
     public static final String CL_TERM = "0";
 
-    // creates a graph file in DIMACS format that can be used for QuickBB - see http://www.hlt.utdallas.edu/~vgogate/quickbb.html
+    // creates a main.java.graph file in DIMACS format that can be used for QuickBB - see http://www.hlt.utdallas.edu/~vgogate/quickbb.html
     public static void createDIMACSFile(String filename, Graph graph) {
         try{
             PrintWriter writer = new PrintWriter(filename + ".txt", "UTF-8");

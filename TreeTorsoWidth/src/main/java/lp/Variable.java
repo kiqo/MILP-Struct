@@ -1,4 +1,4 @@
-package lp;
+package main.java.lp;
 
 
 /**

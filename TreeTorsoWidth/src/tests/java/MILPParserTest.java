@@ -1,14 +1,14 @@
-package tests;
+package tests.java;
 
-import lp.LinearProgram;
-import lp.MatrixEntry;
-import lp.MatrixRow;
-import lp.Variable;
+import main.java.lp.LinearProgram;
+import main.java.lp.MatrixEntry;
+import main.java.lp.MatrixRow;
+import main.java.lp.Variable;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import parser.MILPParser;
+import main.java.parser.MILPParser;
 
 import java.io.IOException;
 import java.util.List;

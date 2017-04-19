@@ -1,11 +1,11 @@
-package tests;
+package tests.java;
 
-import graph.Edge;
-import graph.Graph;
-import graph.Node;
-import libtw.LPDgfReader;
-import libtw.LPInputData;
-import libtw.TorsoWidth;
+import main.java.graph.Edge;
+import main.java.graph.Graph;
+import main.java.graph.Node;
+import main.java.libtw.LPDgfReader;
+import main.java.libtw.LPInputData;
+import main.java.libtw.TorsoWidth;
 import nl.uu.cs.treewidth.algorithm.GreedyDegree;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.input.InputException;
@@ -16,7 +16,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import parser.GraphTransformator;
+import main.java.parser.GraphTransformator;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -39,11 +39,11 @@ public class TorsoWidthTest {
 
 
     /*
-    Transforms a graph to a NGraph and then runs the torso width algorithm
+    Transforms a main.java.graph to a NGraph and then runs the torso width algorithm
      */
     public NGraph<GraphInput.InputData> torsoWidth(Graph graph) {
 
-        // generate NGraph for using libtw
+        // generate NGraph for using main.java.libtw
         NGraph<GraphInput.InputData> g;
         GraphTransformator graphTransformator = new GraphTransformator();
         g = graphTransformator.graphToNGraph(graph);
@@ -99,7 +99,7 @@ public class TorsoWidthTest {
     }
 
     /*
-    Creates a graph that has an integer node that separates two components, which each also contain 2 integer nodes
+    Creates a main.java.graph that has an integer node that separates two components, which each also contain 2 integer nodes
      */
     private Graph createNodeBlockerGraph() {
         List<Node> nodes = new ArrayList<>();

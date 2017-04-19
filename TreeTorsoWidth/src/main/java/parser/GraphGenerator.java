@@ -1,12 +1,12 @@
-package parser;
+package main.java.parser;
 
-import graph.Edge;
-import graph.Graph;
-import graph.Node;
-import lp.LinearProgram;
-import lp.MatrixEntry;
-import lp.MatrixRow;
-import lp.Row;
+import main.java.graph.Edge;
+import main.java.graph.Graph;
+import main.java.graph.Node;
+import main.java.lp.LinearProgram;
+import main.java.lp.MatrixEntry;
+import main.java.lp.MatrixRow;
+import main.java.lp.Row;
 
 import java.util.*;
 
@@ -23,8 +23,8 @@ public class GraphGenerator {
 
     // TODO improve performance!
     /* @Input LinearProgram
-       @Output Primal graph of the linear program
-       The primal graph is constructed by taking the variables of the lp as nodes
+       @Output Primal main.java.graph of the linear program
+       The primal main.java.graph is constructed by taking the variables of the main.java.lp as nodes
        and a variable is connected by an edge to another variable b iff they occur in the same constraint or
        they occur together in the objective function
      */

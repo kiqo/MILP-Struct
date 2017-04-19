@@ -1,8 +1,6 @@
-package graph;
+package main.java.graph;
 
-import lp.MatrixEntry;
-
-import java.util.Objects;
+import main.java.lp.MatrixEntry;
 
 /**
  * Created by Verena on 09.03.2017.

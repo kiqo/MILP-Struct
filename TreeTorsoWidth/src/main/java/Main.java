@@ -1,6 +1,8 @@
-import graph.Graph;
-import libtw.TorsoWidth;
-import lp.LinearProgram;
+package main.java;
+
+import main.java.graph.Graph;
+import main.java.libtw.TorsoWidth;
+import main.java.lp.LinearProgram;
 import nl.uu.cs.treewidth.algorithm.*;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.NGraph;
@@ -10,9 +12,9 @@ import nl.uu.cs.treewidth.timing.Stopwatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import parser.GraphGenerator;
-import parser.GraphTransformator;
-import parser.MILPParser;
+import main.java.parser.GraphGenerator;
+import main.java.parser.GraphTransformator;
+import main.java.parser.MILPParser;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -80,12 +82,12 @@ public class Main {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = milpParser.parseMPS(fileName, false);
 
-        // generate primal graph
+        // generate primal main.java.graph
         GraphGenerator graphGenerator = new GraphGenerator();
         Graph primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
         int graphSize = primalGraph.getNodes().size();
 
-        // generate NGraph for using libtw
+        // generate NGraph for using main.java.libtw
         NGraph<GraphInput.InputData> g;
         GraphTransformator graphTransformator = new GraphTransformator();
         g = graphTransformator.graphToNGraph(primalGraph);
@@ -191,7 +193,7 @@ public class Main {
 
                 case "-g":
                 case "-G":
-                case "--graph": expectGraphType = true; break;
+                case "--main.java.graph": expectGraphType = true; break;
 
                 case "-u":
                 case "-U":
@@ -203,7 +205,7 @@ public class Main {
 
                 case "-t":
                 case "-T":
-                case "--torsowidth": TORSO_WIDTH = true; break;
+                case "--main.java.torsowidth": TORSO_WIDTH = true; break;
 
                 default:
                     if (expectInputFile) {
@@ -226,7 +228,7 @@ public class Main {
             }
         }
 
-        // check that either treewidth upper- or lowerbound or torsowidth are computed
+        // check that either treewidth upper- or lowerbound or main.java.torsowidth are computed
         if (!LOWER_BOUND & !UPPER_BOUND & !TORSO_WIDTH) {
             LOGGER.error("Either -u -l -t must be set!");
             LOGGER.error(helpMessage);

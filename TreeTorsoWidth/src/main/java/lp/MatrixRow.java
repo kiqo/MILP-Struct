@@ -1,4 +1,4 @@
-package lp;
+package main.java.lp;
 
 /**
  * Created by Verena on 07.03.2017.

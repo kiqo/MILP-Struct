@@ -1,16 +1,16 @@
-package tests;
+package tests.java;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import graph.Graph;
-import graph.Node;
-import lp.LinearProgram;
+import main.java.graph.Graph;
+import main.java.graph.Node;
+import main.java.lp.LinearProgram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.junit.Test;
-import parser.GraphGenerator;
-import parser.MILPParser;
+import main.java.parser.GraphGenerator;
+import main.java.parser.MILPParser;
 
 import java.io.IOException;
 

@@ -1,7 +1,7 @@
-package parser;
+package main.java.parser;
 
-import graph.Graph;
-import libtw.LPGraphInput;
+import main.java.graph.Graph;
+import main.java.libtw.LPGraphInput;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.input.InputException;
 import nl.uu.cs.treewidth.ngraph.NGraph;

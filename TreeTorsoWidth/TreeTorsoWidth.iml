@@ -46,7 +46,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/resources" />
+          <root url="file://$MODULE_DIR$/src/main/resources" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

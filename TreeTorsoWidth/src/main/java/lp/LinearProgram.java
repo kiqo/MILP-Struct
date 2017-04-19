@@ -1,4 +1,4 @@
-package lp;
+package main.java.lp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
