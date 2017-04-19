@@ -1,8 +1,12 @@
 package main.java.lp;
 
 import main.java.graph.Graph;
+import main.java.graph.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Verena on 19.04.2017.
@@ -19,6 +23,50 @@ public class LPStatistics {
     public LPStatistics(LinearProgram linearProgram) {
         this.linearProgram = linearProgram;
         computeLinearProgramData();
+    }
+
+    public void computePrimalGraphData(Graph primalGraph) {
+        this.primalGraph = primalGraph;
+        this.primalGraphData = computeGraphData(primalGraph);
+    }
+
+    /*
+    Sets general statistics about a graph (not tree- or torsowidth)
+     */
+    private GraphData computeGraphData(Graph graph) {
+        GraphData graphData = new GraphData();
+
+        graphData.numNodes = graph.getNodes().size();
+
+        int numIntegerNodes = 0;
+        for (Node node : graph.getNodes()) {
+            if (node.isInteger()) {
+                numIntegerNodes++;
+            }
+        }
+        graphData.numIntegerNodes = numIntegerNodes;
+        graphData.proportionIntegerNodes = (double) numIntegerNodes / (double) graphData.numNodes;
+        graphData.numEdges = graph.getEdges().size();
+        graphData.density = (double) (2 * graphData.numEdges) / (double) (graphData.numNodes * (graphData.numNodes - 1));
+
+        int sumDegree = 0;
+        int minDegree = Integer.MAX_VALUE;
+        int maxDegree = Integer.MIN_VALUE;
+        for (Map.Entry<Node, List<Node>> entry : graph.getNeighbourNodes().entrySet()) {
+            int degree = entry.getValue().size();
+            sumDegree += degree;
+            if (degree < minDegree) {
+                minDegree = degree;
+            }
+            if (degree > maxDegree) {
+                maxDegree = degree;
+            }
+        }
+        graphData.minDegree = minDegree;
+        graphData.maxDegree = maxDegree;
+        graphData.avgDegree = (double) sumDegree / (double) graphData.numNodes;
+
+        return graphData;
     }
 
     private void computeLinearProgramData() {
