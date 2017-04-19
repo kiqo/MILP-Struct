@@ -168,7 +168,7 @@ public class MILPParser {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
         }
 
         if (containsIntegerVariable && !containsDoubleVariable) {

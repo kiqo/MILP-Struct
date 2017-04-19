@@ -6,12 +6,13 @@ import lp.MatrixRow;
 import lp.Variable;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import parser.MILPParser;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
@@ -20,6 +21,8 @@ import static org.junit.Assert.assertNotNull;
  */
 public class MILPParserTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MILPParserTest.class);
+
     @Test
     public void testMILPParser() {
         MILPParser milpParser = new MILPParser();
@@ -27,7 +30,7 @@ public class MILPParserTest {
         try {
             lp = milpParser.parseMPS("input/tests/bienst2_test.mps", false);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
         }
 
         assertNotNull(lp);
@@ -117,7 +120,7 @@ public class MILPParserTest {
         try {
             lp = milpParser.parseMPS("input/benchmarks/roll3000.mps", false);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
         }
 
         // test objective function

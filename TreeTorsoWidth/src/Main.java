@@ -70,7 +70,7 @@ public class Main {
             UPPER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.GreedyDegree");
             LOWER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
         }
     }
 
@@ -111,7 +111,7 @@ public class Main {
         try {
             upperBoundAlg = (UpperBound) UPPER_BOUND_ALG.getConstructor().newInstance();
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
         }
         return upperBoundAlg;
     }
@@ -122,7 +122,7 @@ public class Main {
         try {
             lowerBoundAlg = (LowerBound<GraphInput.InputData>) LOWER_BOUND_ALG.getConstructor().newInstance();
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         return lowerBoundAlg;
     }

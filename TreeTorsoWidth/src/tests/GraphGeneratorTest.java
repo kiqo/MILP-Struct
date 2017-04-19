@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import graph.Graph;
 import graph.Node;
 import lp.LinearProgram;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
 import parser.GraphGenerator;
 import parser.MILPParser;
@@ -17,6 +19,8 @@ import java.io.IOException;
  */
 public class GraphGeneratorTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphGeneratorTest.class);
+
     @Test
     public void testLinearProgramToPrimalGraph() {
         MILPParser milpParser = new MILPParser();
@@ -24,7 +28,7 @@ public class GraphGeneratorTest {
         try {
             lp = milpParser.parseMPS("./input/benchmarks/bienst2.mps", false);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
         }
 
         GraphGenerator graphGenerator = new GraphGenerator();

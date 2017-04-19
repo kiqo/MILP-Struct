@@ -2,6 +2,8 @@ package parser;
 
 import graph.Edge;
 import graph.Graph;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +12,8 @@ import java.io.PrintWriter;
  * Created by Verena on 16.03.2017.
  */
 public class GraphFileGenerator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphFileGenerator.class);
 
     public static final String CL_TERM = "0";
 
@@ -26,7 +30,7 @@ public class GraphFileGenerator {
             writer.println(sb.toString());
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
         }
     }
 
