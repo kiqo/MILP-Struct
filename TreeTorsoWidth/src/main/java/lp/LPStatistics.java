@@ -220,6 +220,7 @@ public class LPStatistics {
         } else {
             sb.append("\t\t\t");
         }
+        sb.append(LINE_SEPARATOR);
 
         return sb.toString();
     }

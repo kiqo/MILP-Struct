@@ -23,7 +23,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +44,12 @@ public class Main {
     private static boolean UPPER_BOUND = false;
     private static final Stopwatch t = new Stopwatch();
     private static final String LINE_SEPARATOR = System.lineSeparator();
+
+    static{
+        // system property current.date used for the name of the log file
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
+        System.setProperty("current.date", dateFormat.format(new Date()));
+    }
 
     public static void main(String[] args) throws IOException {
 
@@ -88,7 +96,7 @@ public class Main {
     }
 
     private static void appendHeaders(StringBuilder sb) {
-        sb.append("name\t\tnumVars\t\tnumIntVars\tintegerLP\tnumConstr\tsizeObjFun\tnumNodes\tnumIntNodes\tnumEdges\tdensity\t\ttw_ub\ttw_lb\ttorso_ub\ttorso_lb\t");
+        sb.append("name\t\tnumVars\t\tnumIntVars\tintegerLP\tnumConstr\tsizeObjFun\tnumNodes\tnumIntNodes\tnumEdges\tdensity\t\ttw_lb\ttw_ub\ttorso_lb\ttorso_ub\t");
         sb.append(LINE_SEPARATOR);
     }
 
