@@ -5,6 +5,7 @@ import main.java.graph.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +16,15 @@ public class LPStatistics {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LPStatistics.class);
 
+    private static final String LINE_SEPARATOR = System.lineSeparator();
     private LinearProgram linearProgram;
     private LPData linearProgramData;
     private Graph primalGraph;
+
+    public GraphData getPrimalGraphData() {
+        return primalGraphData;
+    }
+
     private GraphData primalGraphData;
 
     public LPStatistics(LinearProgram linearProgram) {
@@ -149,5 +156,81 @@ public class LPStatistics {
         linearProgramData.minCoefficient = minCoefficient;
         linearProgramData.maxCoefficient = maxCoefficient;
         linearProgramData.sizeObjectiveFunction = linearProgram.getObjectiveFunction().getEntries().size();
+    }
+
+    @Override
+    public String toString() { //TODO
+        StringBuilder sb = new StringBuilder();
+        sb.append(linearProgram.getName()).append(":" + LINE_SEPARATOR);
+        sb.append("\tnumVariables = " + linearProgramData.numVariables +
+                "\tnumIntegerVariables =" + linearProgramData.numIntegerVariables +
+                "\tisIntegerLP =" + linearProgramData.isIntegerLP +
+                "\tproportionIntegerVariables =" + linearProgramData.proportionIntegerVariables +
+                "\tminIntegerVariables = " + linearProgramData.minIntegerVariables +
+                "\tmaxIntegerVariables =" + linearProgramData.maxIntegerVariables +
+                "\tavgIntegerVariables =" + linearProgramData.avgIntegerVariables +
+                "\tnumConstraints =" + linearProgramData.numConstraints +
+                "\tsizeObjectiveFunction =" + linearProgramData.sizeObjectiveFunction +
+                "\tavgVariablesConstraint =" + linearProgramData.avgVariablesConstraint +
+                "\tminCoefficient =" + linearProgramData.minCoefficient +
+                "\tmaxCoefficient =" + linearProgramData.maxCoefficient +
+                "\tnumBoundVariables =" + linearProgramData.numBoundVariables +
+                "\tminBoundValue =" + linearProgramData.minBoundValue +
+                "\tmaxBoundValue =" + linearProgramData.maxBoundValue + LINE_SEPARATOR);
+        sb.append("numNodes = " +primalGraphData.numNodes +
+                "\tnumIntegerNodes= " + primalGraphData.numIntegerNodes +
+                "\tproportionIntegerNodes= " + primalGraphData.proportionIntegerNodes +
+                "\tnumEdges= " + primalGraphData.numEdges +
+                "\tdensity= " + primalGraphData.density +
+                "\tminDegree= " + primalGraphData.minDegree +
+                "\tmaxDegree= " + primalGraphData.maxDegree +
+                "\tavgDegree= " +  primalGraphData.avgDegree);
+        return sb.toString();
+    }
+
+    public String shortDescription() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(linearProgram.getName()).append(getNumTabs(linearProgram.getName(), 3));
+        sb.append(linearProgramData.numVariables).append(getNumTabs(String.valueOf(linearProgramData.numVariables), 3));
+        sb.append(linearProgramData.numIntegerVariables).append(getNumTabs(String.valueOf(linearProgramData.numIntegerVariables), 3));
+        sb.append(linearProgramData.isIntegerLP).append(getNumTabs(String.valueOf(linearProgramData.isIntegerLP), 3));
+        sb.append(linearProgramData.numConstraints).append(getNumTabs(String.valueOf(linearProgramData.numConstraints), 3));
+        sb.append(linearProgramData.sizeObjectiveFunction).append(getNumTabs(String.valueOf(linearProgramData.sizeObjectiveFunction), 3));
+        sb.append(primalGraphData.numNodes).append(getNumTabs(String.valueOf(primalGraphData.numNodes), 3));
+        sb.append(primalGraphData.numIntegerNodes).append(getNumTabs(String.valueOf(primalGraphData.numIntegerNodes), 3));
+        sb.append(primalGraphData.numEdges).append(getNumTabs(String.valueOf(primalGraphData.numEdges), 3));
+        sb.append(new DecimalFormat("0.00").format(primalGraphData.density)).append(getNumTabs(String.valueOf(new DecimalFormat("0.00").format(primalGraphData.density)), 3));
+        if (primalGraphData.getTreewidthLB() != Integer.MIN_VALUE) {
+            sb.append(primalGraphData.getTreewidthLB()).append(getNumTabs(String.valueOf(primalGraphData.getTreewidthLB()), 2));
+        } else {
+            sb.append("\t\t\t");
+        }
+        if (primalGraphData.getTreewidthUB() != Integer.MAX_VALUE) {
+            sb.append(primalGraphData.getTreewidthUB()).append(getNumTabs(String.valueOf(primalGraphData.getTreewidthUB()), 2));
+        } else {
+            sb.append("\t\t\t");
+        }
+        if (primalGraphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
+            sb.append(primalGraphData.getTorsoWidthLB()).append(getNumTabs(String.valueOf(primalGraphData.getTorsoWidthLB()), 3));
+        } else {
+            sb.append("\t\t\t");
+        }
+        if (primalGraphData.getTorsoWidthUB() != Integer.MAX_VALUE) {
+            sb.append(primalGraphData.getTorsoWidthUB()).append(getNumTabs(String.valueOf(primalGraphData.getTorsoWidthUB()), 3));
+        } else {
+            sb.append("\t\t\t");
+        }
+
+        return sb.toString();
+    }
+
+    private String getNumTabs(String stringToFill, int tabsNeeded) {
+        int numVisualTabs = (int) Math.floor((double)stringToFill.length()/4.0);
+        String tabs = "";
+        while (numVisualTabs < tabsNeeded) {
+            tabs += "\t";
+            numVisualTabs++;
+        }
+        return tabs;
     }
 }
