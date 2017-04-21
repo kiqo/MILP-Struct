@@ -66,5 +66,4 @@
 .\input\benchmarks\sp98ir.mps
 .\input\benchmarks\tanglegram2.mps
 .\input\benchmarks\timtab1.mps
-.\input\benchmarks\triptim1.mps
 .\input\benchmarks\unitcal_7.mps

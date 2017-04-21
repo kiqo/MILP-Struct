@@ -31,4 +31,3 @@
 ./input/benchmarks/reblock67.mps
 ./input/benchmarks/rococoC10-001000.mps
 ./input/benchmarks/timtab1.mps
-./input/benchmarks/triptim1.mps
