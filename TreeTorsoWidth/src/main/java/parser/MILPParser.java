@@ -65,6 +65,7 @@ public class MILPParser {
                     MatrixRow row = new MatrixRow();
                     row.setEquality(parseEquality(line.substring(COL_0_START, COL_0_START + 1)));
                     row.setName(line.substring(COL_1_START).trim());
+                    row.setEntries(new ArrayList<>());
                     constraints.add(row);
                 }
 

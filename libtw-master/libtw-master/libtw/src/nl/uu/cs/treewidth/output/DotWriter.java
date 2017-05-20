@@ -41,7 +41,7 @@ public class DotWriter {
 	
 	public static <T> String format( Graph<T> g ) {
 		StringWriter out = new StringWriter();
-		out.write( "main.java.graph G {\n\n" );
+		out.write( "graph G {\n\n" );
 		
 		HashMap<Vertex<T>,String> vertexToName = new HashMap<Vertex<T>,String>();
 		int vertexNum = 1;
@@ -66,7 +66,7 @@ public class DotWriter {
 	
 	public static <T> String format( NeighborHashSetGraph<T> g ) {
 		StringWriter out = new StringWriter();
-		out.write( "main.java.graph G {\n\n" );
+		out.write( "graph G {\n\n" );
 		
 		HashMap<NeighborHashSetVertex<T>,String> vertexToName = new HashMap<NeighborHashSetVertex<T>,String>();
 		int vertexNum = 1;
@@ -128,7 +128,7 @@ public class DotWriter {
 		
 		StringWriter out = new StringWriter();
 		
-		out.write( "main.java.graph G {\n\n" );
+		out.write( "graph G {\n\n" );
 		HashMap<NVertex<NTDBag<D>>,String> bagToName = new HashMap<NVertex<NTDBag<D>>,String>();
 		int bagNum = 1;
 		for( NVertex<NTDBag<D>> v : g ) {
@@ -156,7 +156,7 @@ public class DotWriter {
 		
 		StringWriter out = new StringWriter();
 		
-		out.write( "main.java.graph G {\n\n" );
+		out.write( "graph G {\n\n" );
 		HashMap<Vertex<TDBag<InputData>>,String> bagToName = new HashMap<Vertex<TDBag<InputData>>,String>();
 		int bagNum = 1;
 		for( Vertex<TDBag<InputData>> v : g.vertices ) {

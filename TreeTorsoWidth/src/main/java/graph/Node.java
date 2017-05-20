@@ -1,6 +1,7 @@
 package main.java.graph;
 
 import main.java.lp.MatrixEntry;
+import main.java.lp.MatrixRow;
 
 /**
  * Created by Verena on 09.03.2017.
@@ -13,8 +14,13 @@ public class Node {
     public Node() {
     }
 
-    public Node(MatrixEntry variable) {
-        this.name = variable.getVariable().getName();
+    public Node(String name) {
+        this.name = name;
+    }
+
+    public Node(String name, int id) {
+        this.name = name;
+        this.id = id;
     }
 
     public String getName() {

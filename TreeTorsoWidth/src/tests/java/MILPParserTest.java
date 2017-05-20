@@ -28,7 +28,7 @@ public class MILPParserTest {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = null;
         try {
-            lp = milpParser.parseMPS("input/tests/bienst2_test.mps", false);
+            lp = milpParser.parseMPS("../input/tests/bienst2_test.mps", false);
         } catch (IOException e) {
             LOGGER.error("", e);
         }

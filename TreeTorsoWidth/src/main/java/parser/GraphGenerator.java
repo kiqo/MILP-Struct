@@ -15,20 +15,72 @@ import java.util.*;
  */
 public class GraphGenerator {
 
-    private static int numVariable = 0;
-    private Graph primalGraph = new Graph();
-    private List<Node> nodes = new ArrayList<>();
-    private List<Edge> edges = new ArrayList<>();
-    private Map<Node, List<Node>> neighbourNodes = new HashMap<>();
+    /* @Input LinearProgram
+       @Output Incidence graph of the linear program
+       The incidence graph is constructed by taking the variables of the lp and the constraints as nodes
+       and a variable is connected by an edge to a constraint iff the variable occurs in the constraint
+    */
+    public Graph linearProgramToIncidenceGraph(LinearProgram lp) {
+        Graph incidenceGraph = new Graph();
+        List<Node> nodes = new ArrayList<>();
+        List<Edge> edges = new ArrayList<>();
+        Map<Node, List<Node>> neighbourNodes = new HashMap<>();
+
+        int numVariable = 0;
+
+        // generate nodes
+        for (MatrixRow matrixRow : lp.getConstraints()) {
+            Node constraintNode = new Node(matrixRow.getName(), numVariable++);
+            nodes.add(constraintNode);
+            List<Node> neighboursConstraintNode = new ArrayList<>();
+
+            for (MatrixEntry matrixEntry : matrixRow.getEntries()) {
+                Node variableNode = new Node(matrixEntry.getVariable().getName(), numVariable++);
+
+                if (!nodes.contains(variableNode)) {
+                    variableNode.setInteger(lp.getVariables().get(variableNode.getName()).isInteger());
+                    nodes.add(variableNode);
+                }
+
+                // generate edges and neighbours relations
+                Edge edge = new Edge(constraintNode, variableNode);
+                edges.add(edge);
+
+                neighboursConstraintNode.add(variableNode);
+
+                // add constraintNode as neighbour to variable node
+                if (!neighbourNodes.containsKey(variableNode)) {
+                    List<Node> neighboursVariableNode = new ArrayList<>();
+                    neighboursVariableNode.add(constraintNode);
+                    neighbourNodes.put(variableNode, neighboursVariableNode);
+                } else {
+                    neighbourNodes.get(variableNode).add(constraintNode);
+                }
+            }
+
+            neighbourNodes.put(constraintNode, neighboursConstraintNode);
+        }
+
+        incidenceGraph.setEdges(edges);
+        incidenceGraph.setNeighbourNodes(neighbourNodes);
+        incidenceGraph.setNodes(nodes);
+        return incidenceGraph;
+    }
 
     // TODO improve performance!
     /* @Input LinearProgram
-       @Output Primal main.java.graph of the linear program
-       The primal main.java.graph is constructed by taking the variables of the main.java.lp as nodes
+       @Output Primal graph of the linear program
+       The primal graph is constructed by taking the variables of the lp as nodes
        and a variable is connected by an edge to another variable b iff they occur in the same constraint or
        they occur together in the objective function
      */
     public Graph linearProgramToPrimalGraph(LinearProgram lp) {
+        Graph primalGraph = new Graph();
+        List<Node> nodes = new ArrayList<>();
+        List<Edge> edges = new ArrayList<>();
+        Map<Node, List<Node>> neighbourNodes = new HashMap<>();
+
+        int numVariable = 0;
 
         // generate nodes
         for (String variableName : lp.getVariables().keySet()) {
@@ -42,10 +94,12 @@ public class GraphGenerator {
 
         // generate edges for constraints
         for (MatrixRow row : lp.getConstraints()) {
-            convertRowToEdge(row);
+            convertRowToEdge(row, neighbourNodes, edges);
         }
+
+        // definition for primal graph varies here: sometimes the objective function is considered and sometimes not
         // generate edges for objective function
-        convertRowToEdge(lp.getObjectiveFunction());
+        // convertRowToEdge(lp.getObjectiveFunction(), neighbourNodes, edges);
 
         primalGraph.setEdges(edges);
         primalGraph.setNeighbourNodes(neighbourNodes);
@@ -53,14 +107,14 @@ public class GraphGenerator {
         return primalGraph;
     }
 
-    private void convertRowToEdge(Row row) {
+    private void convertRowToEdge(Row row, Map<Node, List<Node>> neighbourNodes, List<Edge> edges) {
         List<MatrixEntry> variablesInRow = row.getEntries();
 
         MatrixEntry curVariable = null;
         for (int i = 0; i < variablesInRow.size(); i++) {
 
             curVariable = variablesInRow.get(i);
-            Node curNode = variableToNode(curVariable);
+            Node curNode = new Node(curVariable.getVariable().getName());
 
             if (!neighbourNodes.containsKey(curNode)) {
                 // create new entry in neighbourNodes
@@ -68,7 +122,7 @@ public class GraphGenerator {
             }
 
             for (int j = i+1; j < variablesInRow.size(); j++) {
-                Node neighbourNode = variableToNode(variablesInRow.get(j));
+                Node neighbourNode = new Node(variablesInRow.get(j).getVariable().getName());
 
                 // skip node if already known that they are connected
                 if (neighbourNodes.get(curNode).contains(neighbourNode)) {
@@ -86,9 +140,5 @@ public class GraphGenerator {
                 edges.add(edge);
             }
         }
-    }
-
-    private Node variableToNode(MatrixEntry entry) {
-        return nodes.stream().filter((p) -> p.getName().equals(entry.getVariable().getName())).findFirst().get();
     }
 }
