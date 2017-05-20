@@ -26,7 +26,7 @@ public class GraphGeneratorTest {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = null;
         try {
-            lp = milpParser.parseMPS("./input/benchmarks/bienst2.mps", false);
+            lp = milpParser.parseMPS("./../input/benchmarks/bienst2.mps", false);
         } catch (IOException e) {
             LOGGER.error("", e);
         }

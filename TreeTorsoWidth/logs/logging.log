@@ -2626,3 +2626,36 @@ java.lang.NullPointerException
 2017-04-20 16:12:28 DEBUG Main:175 - LB TorsoWidth: 34 of 35 nodes of TorsoWidth(Fast implementation), time: 0s
 2017-04-20 16:12:28 DEBUG Main:177 - UB TorsoWidth: 34 of 35 nodes of TorsoWidth(Fast implementation), time: 0s
 2017-04-20 16:12:28 DEBUG Main:73 - -------------------
+2017-05-02 09:02:49 DEBUG Main:308 - Input: ./../input/benchmarks/bienst2.mps
+2017-05-02 09:02:49 DEBUG Main:79 - Structural Parameters: ./../input/benchmarks/bienst2.mps
+2017-05-02 09:02:49 DEBUG Main:231 - LB: 52 of 505 nodes  of MMD+Least-c: Maximum Minimum Degree Plus least-c, time: 0s
+2017-05-02 09:02:50 DEBUG Main:217 - UB: 292 of 505 nodes  of GreedyDegree, time: 0s
+2017-05-02 09:02:50 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 505
+2017-05-02 09:02:50 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 6552
+2017-05-02 09:02:50 DEBUG TorsoWidth:214 - Num vertices after TorsoWidth(Fast implementation): 35
+2017-05-02 09:02:50 DEBUG TorsoWidth:215 - Num edges after TorsoWidth(Fast implementation): 595
+2017-05-02 09:02:50 DEBUG Main:183 - LB TorsoWidth: 34 of 35 nodes of TorsoWidth(Fast implementation), time: 0s
+2017-05-02 09:02:50 DEBUG Main:185 - UB TorsoWidth: 34 of 35 nodes of TorsoWidth(Fast implementation), time: 0s
+2017-05-02 09:02:50 DEBUG Main:81 - -------------------
+2017-05-02 09:07:14 DEBUG Main:308 - Input: ./../input/benchmarks/bienst2.mps
+2017-05-02 09:07:14 DEBUG Main:79 - Structural Parameters: ./../input/benchmarks/bienst2.mps
+2017-05-02 09:07:14 DEBUG Main:231 - LB: 52 of 505 nodes  of MMD+Least-c: Maximum Minimum Degree Plus least-c, time: 0s
+2017-05-02 09:07:15 DEBUG Main:217 - UB: 292 of 505 nodes  of GreedyDegree, time: 0s
+2017-05-02 09:07:15 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 505
+2017-05-02 09:07:15 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 6552
+2017-05-02 09:07:15 DEBUG TorsoWidth:214 - Num vertices after TorsoWidth(Fast implementation): 35
+2017-05-02 09:07:15 DEBUG TorsoWidth:215 - Num edges after TorsoWidth(Fast implementation): 595
+2017-05-02 09:07:15 DEBUG Main:183 - LB TorsoWidth: 34 of 35 nodes of TorsoWidth(Fast implementation), time: 0s
+2017-05-02 09:07:15 DEBUG Main:185 - UB TorsoWidth: 34 of 35 nodes of TorsoWidth(Fast implementation), time: 0s
+2017-05-02 09:07:15 DEBUG Main:81 - -------------------
+2017-05-14 14:12:15 DEBUG Main:308 - Input: ./../input/benchmarks/bienst2.mps
+2017-05-14 14:12:15 DEBUG Main:79 - Structural Parameters: ./../input/benchmarks/bienst2.mps
+2017-05-14 14:12:15 DEBUG Main:231 - LB: 52 of 505 nodes  of MMD+Least-c: Maximum Minimum Degree Plus least-c, time: 0s
+2017-05-14 14:12:16 DEBUG Main:217 - UB: 292 of 505 nodes  of GreedyDegree, time: 0s
+2017-05-14 14:12:16 DEBUG TorsoWidth:60 - Num vertices before TorsoWidth(Fast implementation): 505
+2017-05-14 14:12:16 DEBUG TorsoWidth:61 - Num edges before TorsoWidth(Fast implementation): 6552
+2017-05-14 14:12:16 DEBUG TorsoWidth:214 - Num vertices after TorsoWidth(Fast implementation): 35
+2017-05-14 14:12:16 DEBUG TorsoWidth:215 - Num edges after TorsoWidth(Fast implementation): 595
+2017-05-14 14:12:16 DEBUG Main:183 - LB TorsoWidth: 34 of 35 nodes of TorsoWidth(Fast implementation), time: 0s
+2017-05-14 14:12:16 DEBUG Main:185 - UB TorsoWidth: 34 of 35 nodes of TorsoWidth(Fast implementation), time: 0s
+2017-05-14 14:12:16 DEBUG Main:81 - -------------------

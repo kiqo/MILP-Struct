@@ -144,7 +144,7 @@ public class TorsoWidthTest {
 
     @Test
     public void testGraphFromInputFile() {
-        String inputFile = "./input/tests/torsowidth_test.dgf";
+        String inputFile = "./../input/tests/torsowidth_test.dgf";
         LOGGER.debug("--"+ inputFile +" Graph--");
         NGraph<GraphInput.InputData> g = null;
 

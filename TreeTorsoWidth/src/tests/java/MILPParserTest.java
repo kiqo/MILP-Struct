@@ -118,7 +118,7 @@ public class MILPParserTest {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = null;
         try {
-            lp = milpParser.parseMPS("input/benchmarks/roll3000.mps", false);
+            lp = milpParser.parseMPS("./../input/benchmarks/roll3000.mps", false);
         } catch (IOException e) {
             LOGGER.error("", e);
         }

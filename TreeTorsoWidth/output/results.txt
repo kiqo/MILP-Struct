@@ -1,2 +1,2 @@
-name		numVars		numIntVars	integerLP	numConstr	sizeObjFun	numNodes	numIntNodes	numEdges	density		tw_ub	tw_lb	torso_ub	torso_lb	
+name		numVars		numIntVars	integerLP	numConstr	sizeObjFun	numNodes	numIntNodes	numEdges	density		tw_lb	tw_ub	torso_lb	torso_ub	
 bienst2		505			35			false		576			1			505			35			6552		0,05		52		292		34			34			
