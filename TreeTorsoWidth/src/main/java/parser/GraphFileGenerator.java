@@ -17,7 +17,7 @@ public class GraphFileGenerator {
 
     public static final String CL_TERM = "0";
 
-    // creates a main.java.graph file in DIMACS format that can be used for QuickBB - see http://www.hlt.utdallas.edu/~vgogate/quickbb.html
+    // creates a graph file in DIMACS format that can be used for QuickBB - see http://www.hlt.utdallas.edu/~vgogate/quickbb.html
     public static void createDIMACSFile(String filename, Graph graph) {
         try{
             PrintWriter writer = new PrintWriter(filename + ".txt", "UTF-8");

@@ -14,7 +14,7 @@ import java.util.*;
 
 /**
  * The TorsoWidth algorithm collapses all the non-integer vertices (a ∞-torso is created)
- * and then takes the tree width of the resulting main.java.graph to be the torso width<br/>
+ * and then takes the tree width of the resulting graph to be the torso width<br/>
  *
  * Reference paper: Going Beyond Primal Treewidth for (M)ILP, Robert Ganian, Sebastian Ordyniak, M. S. Ramanujan.
  *
@@ -65,7 +65,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
             return;
         }
 
-        // create a ∞-torso which is a main.java.graph obtained by collapsing (at least) all the non-integer vertices
+        // create a ∞-torso which is a graph obtained by collapsing (at least) all the non-integer vertices
         Iterator<NVertex<D>> vertexIterator = graph.iterator();
         NVertex<D> vertex;
 
@@ -120,13 +120,13 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         LOGGER.debug("Num vertices after " + getName() + ": " + graph.getNumberOfVertices());
         LOGGER.debug("Num edges after " + getName() + ": " + graph.getNumberOfEdges());
 
-        // compute lowerbound of treewidth of collapsed main.java.graph
+        // compute lowerbound of treewidth of collapsed graph
         if (lbAlg != null) {
             lbAlg.setInput(graph);
             lbAlg.run();
             this.lowerbound = lbAlg.getLowerBound();
         }
-        // compute upperbound of treewidth of collapsed main.java.graph
+        // compute upperbound of treewidth of collapsed graph
         ubAlg.setInput(graph);
         ubAlg.run();
         this.upperbound = ubAlg.getUpperBound();
@@ -135,7 +135,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
     /*
     Instead of eliminating each non-integer vertex, find a vertex set of non-integer nodes of a connected component in
-    the main.java.graph and collapse this set in the main.java.graph by connecting the neighbours of such a set
+    the graph and collapse this set in the graph by connecting the neighbours of such a set
      */
     private void runAlternative() {
 
@@ -214,13 +214,13 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         LOGGER.debug("Num vertices after " + getName() + ": " + graph.getNumberOfVertices());
         LOGGER.debug("Num edges after " + getName() + ": " + graph.getNumberOfEdges());
 
-        // compute lowerbound of treewidth of collapsed main.java.graph
+        // compute lowerbound of treewidth of collapsed graph
         if (lbAlg != null) {
             lbAlg.setInput(graph);
             lbAlg.run();
             this.lowerbound = lbAlg.getLowerBound();
         }
-        // compute upperbound of treewidth of collapsed main.java.graph
+        // compute upperbound of treewidth of collapsed graph
         ubAlg.setInput(graph);
         ubAlg.run();
         this.upperbound = ubAlg.getUpperBound();

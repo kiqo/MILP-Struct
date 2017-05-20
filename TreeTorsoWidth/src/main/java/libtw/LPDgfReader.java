@@ -224,7 +224,7 @@ public class LPDgfReader extends DgfReader {
 
         if( bugged ) {
             String source = filename==null? "[a stream]" : filename;
-            Output.bugreport( "The IDs that DgfReader generates for a main.java.graph should be 0..size-1, but they were not when loading '"+source+"'" );
+            Output.bugreport( "The IDs that DgfReader generates for a graph should be 0..size-1, but they were not when loading '"+source+"'" );
         }
     }
 

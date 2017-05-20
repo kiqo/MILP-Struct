@@ -67,7 +67,6 @@ public class GraphGenerator {
         return incidenceGraph;
     }
 
-    // TODO improve performance!
     /* @Input LinearProgram
        @Output Primal graph of the linear program
        The primal graph is constructed by taking the variables of the lp as nodes
@@ -84,9 +83,7 @@ public class GraphGenerator {
 
         // generate nodes
         for (String variableName : lp.getVariables().keySet()) {
-            Node node = new Node();
-            node.setId(numVariable++);
-            node.setName(variableName);
+            Node node = new Node(variableName, numVariable++);
             node.setInteger(lp.getVariables().get(variableName).isInteger());
             nodes.add(node);
         }

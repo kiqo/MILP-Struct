@@ -115,14 +115,16 @@ public class Main {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = milpParser.parseMPS(fileName, false);
 
-        // generate primal main.java.graph
+        // generate primal graph
         GraphGenerator graphGenerator = new GraphGenerator();
         Graph primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
+        Graph incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
 
         // compute statistics about the primal graph
         lp.getStatistics().computePrimalGraphData(primalGraph);
+        // lp.getStatistics().computeIncidenceGraphData(incidenceGraph); // TODO
 
-        // generate NGraph for using main.java.libtw
+        // generate NGraph for using libtw
         NGraph<GraphInput.InputData> g;
         GraphTransformator graphTransformator = new GraphTransformator();
         g = graphTransformator.graphToNGraph(primalGraph);
@@ -256,7 +258,7 @@ public class Main {
 
                 case "-g":
                 case "-G":
-                case "--main.java.graph": expectGraphType = true; break;
+                case "--graph": expectGraphType = true; break;
 
                 case "-u":
                 case "-U":
@@ -268,7 +270,7 @@ public class Main {
 
                 case "-t":
                 case "-T":
-                case "--main.java.torsowidth": TORSO_WIDTH = true; break;
+                case "--torsowidth": TORSO_WIDTH = true; break;
 
                 default:
                     if (expectInputFile) {

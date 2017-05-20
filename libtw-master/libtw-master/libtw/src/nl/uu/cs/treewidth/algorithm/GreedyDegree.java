@@ -28,7 +28,7 @@ import nl.uu.cs.treewidth.ngraph.NVertexOrder;
 
 /**
  * The GreedyDegree algorithm computes a permutation and at the same time derives an upperbound.<br/>
- * It does this by eliminating the vertex with the smallest degree until the main.java.graph is empty.<br/>
+ * It does this by eliminating the vertex with the smallest degree until the graph is empty.<br/>
  * 
  * Reference paper: Treewidth Computations I. Upper Bounds, Hans L. Bodlaender and Arie M.C.A. Koster (to appear).
  * 
@@ -91,7 +91,7 @@ public class GreedyDegree< D extends InputData > implements Permutation<D>, Uppe
 			// add to permutation
 			permutation.order.add( smallestVertex.data.original );
 			upperBound = Math.max( upperBound, smallestVertex.getNumberOfNeighbors() );		
-			// remove from main.java.graph
+			// remove from graph
 			graph.eliminate( smallestVertex );
 
 			// early termination, helpful if graph is a clique

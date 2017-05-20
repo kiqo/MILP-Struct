@@ -39,7 +39,7 @@ public class TorsoWidthTest {
 
 
     /*
-    Transforms a main.java.graph to a NGraph and then runs the torso width algorithm
+    Transforms a graph to a NGraph and then runs the torso width algorithm
      */
     public NGraph<GraphInput.InputData> torsoWidth(Graph graph) {
 
@@ -99,7 +99,7 @@ public class TorsoWidthTest {
     }
 
     /*
-    Creates a main.java.graph that has an integer node that separates two components, which each also contain 2 integer nodes
+    Creates a graph that has an integer node that separates two components, which each also contain 2 integer nodes
      */
     private Graph createNodeBlockerGraph() {
         List<Node> nodes = new ArrayList<>();
