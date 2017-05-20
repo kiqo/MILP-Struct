@@ -8,7 +8,6 @@
     </content>
     <content url="file://$MODULE_DIR$/../libtw-master">
       <sourceFolder url="file://$MODULE_DIR$/../libtw-master/libtw-master/libtw/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../libtw-master" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
