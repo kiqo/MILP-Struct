@@ -5,6 +5,7 @@ libtw/
 !TreeTorsoWidth/src/libtw/
 libtw-master/*
 !libtw-master/libtw/src/nl/uu/cs/treewidth/algorithm/GreedyDegree.java
+!libtw-master/libtw/src/nl/uu/cs/treewidth/output/DotWriter.java
 TreeTorsoWidth/out/production
 
 *.class
