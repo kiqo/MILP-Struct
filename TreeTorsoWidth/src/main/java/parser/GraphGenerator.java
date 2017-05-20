@@ -110,32 +110,35 @@ public class GraphGenerator {
     private void convertRowToEdge(Row row, Map<Node, List<Node>> neighbourNodes, List<Edge> edges) {
         List<MatrixEntry> variablesInRow = row.getEntries();
 
-        MatrixEntry curVariable = null;
+        MatrixEntry curVariable;
         for (int i = 0; i < variablesInRow.size(); i++) {
 
             curVariable = variablesInRow.get(i);
             Node curNode = new Node(curVariable.getVariable().getName());
 
-            if (!neighbourNodes.containsKey(curNode)) {
-                // create new entry in neighbourNodes
-                neighbourNodes.put(curNode, new ArrayList<>());
-            }
-
             for (int j = i+1; j < variablesInRow.size(); j++) {
+
                 Node neighbourNode = new Node(variablesInRow.get(j).getVariable().getName());
 
-                // skip node if already known that they are connected
-                if (neighbourNodes.get(curNode).contains(neighbourNode)) {
+                List<Node> neighbours = neighbourNodes.get(curNode);
+                if (neighbours == null) {
+                    neighbours = new ArrayList<>();
+                    neighbourNodes.put(curNode, neighbours);
+                } else if (neighbours.contains(neighbourNode)){
+                    // skip node if already known that they are connected
                     continue;
                 }
-
                 // add neighbourNode to curNode and curNode to neighbourNode and generate edge for them
-                neighbourNodes.get(curNode).add(neighbourNode);
-                if (!neighbourNodes.containsKey(neighbourNode)) {
-                    // create new entry in neighbourNodes
-                    neighbourNodes.put(neighbourNode, new ArrayList<>());
+                // create new entry in neighbourNodes
+                neighbours.add(neighbourNode);
+
+                neighbours = neighbourNodes.get(neighbourNode);
+                if (neighbours == null) {
+                    neighbours = new ArrayList<>();
+                    neighbourNodes.put(neighbourNode, neighbours);
                 }
-                neighbourNodes.get(neighbourNode).add(curNode);
+                neighbours.add(curNode);
+
                 Edge edge = new Edge(curNode, neighbourNode);
                 edges.add(edge);
             }
