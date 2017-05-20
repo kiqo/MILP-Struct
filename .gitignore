@@ -1,11 +1,9 @@
 input/benchmarks/
 !input/
 
-libtw/
-!TreeTorsoWidth/src/libtw/
-libtw-master/*
-!libtw-master/libtw/src/nl/uu/cs/treewidth/algorithm/GreedyDegree.java
-!libtw-master/libtw/src/nl/uu/cs/treewidth/output/DotWriter.java
+libtw-master/
+!libtw-master/libtw-master/libtw/src/nl/uu/cs/treewidth/algorithm/GreedyDegree.java
+!libtw-master/libtw-master/libtw/src/nl/uu/cs/treewidth/output/DotWriter.java
 TreeTorsoWidth/out/production
 
 *.class
@@ -20,4 +18,5 @@ TreeTorsoWidth/out/production
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+.idea/workspace.xml
 TreeTorsoWidth/.idea/workspace.xml
