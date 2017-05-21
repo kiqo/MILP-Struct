@@ -59,6 +59,7 @@ public class MILPParser {
                     // objective function
                     Row row = new Row();
                     row.setName(line.substring(COL_1_START).trim());
+                    row.setEntries(new ArrayList<>());
                     lp.setObjectiveFunction(row);
                 } else {
                     // matrix row
