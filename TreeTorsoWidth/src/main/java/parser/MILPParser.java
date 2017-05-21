@@ -125,6 +125,15 @@ public class MILPParser {
                 double rightHandSideValue = Double.valueOf(lineContents[2]);
                 Row currentRow = rows.get(rowName);
                 ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
+
+                if (lineContents.length >= 5) {
+                    // parse for another constraint the rhs
+                    rowName = lineContents[3];
+                    rightHandSideValue = Double.valueOf(lineContents[2]);
+                    currentRow = rows.get(rowName);
+                    ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
+                }
+
                 line = br.readLine();
             }
             line = br.readLine();

@@ -13,10 +13,8 @@ public class LPData {
     public double avgIntegerVariables;
     public int numConstraints;
     public int sizeObjectiveFunction;
-    public double avgVariablesConstraint;
+    public double avgVariables;
     public double minCoefficient;
     public double maxCoefficient;
     public int numBoundVariables;
-    public double minBoundValue;
-    public double maxBoundValue;
 }

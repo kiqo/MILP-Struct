@@ -41,7 +41,7 @@ public class TorsoWidthTest {
     /*
     Transforms a graph to a NGraph and then runs the torso width algorithm
      */
-    public NGraph<GraphInput.InputData> torsoWidth(Graph graph) {
+    public static NGraph<GraphInput.InputData> torsoWidth(Graph graph) {
 
         // generate NGraph for using main.java.libtw
         NGraph<GraphInput.InputData> g;
@@ -54,7 +54,7 @@ public class TorsoWidthTest {
     /*
     Runs the torso width algorithm
     */
-    public NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> g) {
+    public static NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> g) {
 
         GreedyDegree<GraphInput.InputData> ubAlgo = new GreedyDegree<>();
         ubAlgo.setInput(g);

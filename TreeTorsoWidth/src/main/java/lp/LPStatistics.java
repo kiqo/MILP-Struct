@@ -20,12 +20,13 @@ public class LPStatistics {
     private LinearProgram linearProgram;
     private LPData linearProgramData;
     private Graph primalGraph;
+    private Graph incidenceGraph;
+    private GraphData primalGraphData;
+    private GraphData incidenceGraphData;
 
     public GraphData getPrimalGraphData() {
         return primalGraphData;
     }
-
-    private GraphData primalGraphData;
 
     public LPStatistics(LinearProgram linearProgram) {
         this.linearProgram = linearProgram;
@@ -35,6 +36,11 @@ public class LPStatistics {
     public void computePrimalGraphData(Graph primalGraph) {
         this.primalGraph = primalGraph;
         this.primalGraphData = computeGraphData(primalGraph);
+    }
+
+    public void computeIncidenceGraphData(Graph incidenceGraph) {
+        this.incidenceGraph = incidenceGraph;
+        this.incidenceGraphData = computeGraphData(incidenceGraph);
     }
 
     /*
@@ -54,7 +60,11 @@ public class LPStatistics {
         graphData.numIntegerNodes = numIntegerNodes;
         graphData.proportionIntegerNodes = (double) numIntegerNodes / (double) graphData.numNodes;
         graphData.numEdges = graph.getEdges().size();
-        graphData.density = (double) (2 * graphData.numEdges) / (double) (graphData.numNodes * (graphData.numNodes - 1));
+        if (graphData.numNodes <= 1) {
+            graphData.density = 0;
+        } else {
+            graphData.density = (double) (2 * graphData.numEdges) / (double) (graphData.numNodes * (graphData.numNodes - 1));
+        }
 
         int sumDegree = 0;
         int minDegree = Integer.MAX_VALUE;
@@ -90,7 +100,7 @@ public class LPStatistics {
             if (var.isInteger()) {
                 numInteger++;
             }
-            if (var.getLowerBound() != null && var.getUpperBound() != null) {
+            if (var.getLowerBound() != null || var.getUpperBound() != null) {
                 numBoundVariables++;
             }
             if (var.getLowerBound() != null) {
@@ -112,8 +122,6 @@ public class LPStatistics {
         linearProgramData.isIntegerLP = (numInteger == linearProgramData.numVariables);
         linearProgramData.proportionIntegerVariables = (double) numInteger / (double) linearProgramData.numVariables;
         linearProgramData.numBoundVariables = numBoundVariables;
-        linearProgramData.minBoundValue = minBoundValue;
-        linearProgramData.maxBoundValue = maxBoundValue;
 
         // matrix information
         linearProgramData.numConstraints = linearProgram.getConstraints().size();
@@ -152,7 +160,7 @@ public class LPStatistics {
         linearProgramData.minIntegerVariables = minNumInteger; // per row
         linearProgramData.maxIntegerVariables = maxNumInteger;
         linearProgramData.avgIntegerVariables = numIntegerVariablesTotal / linearProgramData.numConstraints;
-        linearProgramData.avgVariablesConstraint = numVariablesTotal / linearProgramData.numConstraints;
+        linearProgramData.avgVariables = numVariablesTotal / linearProgramData.numConstraints;
         linearProgramData.minCoefficient = minCoefficient;
         linearProgramData.maxCoefficient = maxCoefficient;
         linearProgramData.sizeObjectiveFunction = linearProgram.getObjectiveFunction().getEntries().size();
@@ -171,13 +179,11 @@ public class LPStatistics {
                 "\tavgIntegerVariables =" + linearProgramData.avgIntegerVariables +
                 "\tnumConstraints =" + linearProgramData.numConstraints +
                 "\tsizeObjectiveFunction =" + linearProgramData.sizeObjectiveFunction +
-                "\tavgVariablesConstraint =" + linearProgramData.avgVariablesConstraint +
+                "\tavgVariables =" + linearProgramData.avgVariables +
                 "\tminCoefficient =" + linearProgramData.minCoefficient +
                 "\tmaxCoefficient =" + linearProgramData.maxCoefficient +
                 "\tnumBoundVariables =" + linearProgramData.numBoundVariables +
-                "\tminBoundValue =" + linearProgramData.minBoundValue +
-                "\tmaxBoundValue =" + linearProgramData.maxBoundValue + LINE_SEPARATOR);
-        sb.append("numNodes = " +primalGraphData.numNodes +
+                "numNodes = " +primalGraphData.numNodes +
                 "\tnumIntegerNodes= " + primalGraphData.numIntegerNodes +
                 "\tproportionIntegerNodes= " + primalGraphData.proportionIntegerNodes +
                 "\tnumEdges= " + primalGraphData.numEdges +
@@ -188,9 +194,16 @@ public class LPStatistics {
         return sb.toString();
     }
 
+    public static String shortDescriptionHeader() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("name\t\tnumVars\t\tnumIntVars\tintegerLP\tnumConstr\tsizeObjFun\tnumNodes\tnumIntNodes\tnumEdges\tdensity\t\ttw_lb\ttw_ub\ttorso_lb\ttorso_ub\t");
+        sb.append(LINE_SEPARATOR);
+        return sb.toString();
+    }
+
     public String shortDescription() {
         StringBuilder sb = new StringBuilder();
-        sb.append(linearProgram.getName()).append(getNumTabs(linearProgram.getName(), 3));
+        sb.append(linearProgram.getName()).append(getNumTabs(String.valueOf(linearProgram.getName()), 3));
         sb.append(linearProgramData.numVariables).append(getNumTabs(String.valueOf(linearProgramData.numVariables), 3));
         sb.append(linearProgramData.numIntegerVariables).append(getNumTabs(String.valueOf(linearProgramData.numIntegerVariables), 3));
         sb.append(linearProgramData.isIntegerLP).append(getNumTabs(String.valueOf(linearProgramData.isIntegerLP), 3));
@@ -233,5 +246,65 @@ public class LPStatistics {
             numVisualTabs++;
         }
         return tabs;
+    }
+
+    public static String csvFormatHeader() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
+                "numBoundVars;minCoeff;maxCoeff;sizeObjFun;" +
+                "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;torso_lb;torso_ub;");
+        sb.append(LINE_SEPARATOR);
+        return sb.toString();
+    }
+
+    public String csvFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(linearProgram.getName()).append(";");
+        sb.append(linearProgramData.numVariables).append(";");
+        sb.append(linearProgramData.numConstraints).append(";");
+        sb.append(linearProgramData.numIntegerVariables).append(";");
+        sb.append(new DecimalFormat("0.00").format(linearProgramData.proportionIntegerVariables)).append(";");
+        sb.append(linearProgramData.isIntegerLP).append(";");
+        sb.append(linearProgramData.minIntegerVariables).append(";");
+        sb.append(linearProgramData.maxIntegerVariables).append(";");
+        sb.append(linearProgramData.avgIntegerVariables).append(";");
+        sb.append(linearProgramData.avgVariables).append(";");
+        sb.append(linearProgramData.numBoundVariables).append(";");
+        sb.append(linearProgramData.minCoefficient).append(";");
+        sb.append(linearProgramData.maxCoefficient).append(";");
+        sb.append(linearProgramData.sizeObjectiveFunction).append(";");
+
+        // primal graph data
+        sb.append(primalGraphData.numNodes).append(";");
+        sb.append(primalGraphData.numIntegerNodes).append(";");
+        sb.append(new DecimalFormat("0.00").format(primalGraphData.proportionIntegerNodes)).append(";");
+        sb.append(primalGraphData.numEdges).append(";");
+        sb.append(new DecimalFormat("0.00").format(primalGraphData.density)).append(";");
+        sb.append(primalGraphData.minDegree).append(";");
+        sb.append(primalGraphData.maxDegree).append(";");
+        sb.append(new DecimalFormat("0.00").format(primalGraphData.avgDegree)).append(";");
+        if (primalGraphData.getTreewidthLB() != Integer.MIN_VALUE) {
+            sb.append(primalGraphData.getTreewidthLB()).append(";");
+        } else {
+            sb.append(";");
+        }
+        if (primalGraphData.getTreewidthUB() != Integer.MAX_VALUE) {
+            sb.append(primalGraphData.getTreewidthUB()).append(";");
+        } else {
+            sb.append(";");
+        }
+        if (primalGraphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
+            sb.append(primalGraphData.getTorsoWidthLB()).append(";");
+        } else {
+            sb.append(";");
+        }
+        if (primalGraphData.getTorsoWidthUB() != Integer.MAX_VALUE) {
+            sb.append(primalGraphData.getTorsoWidthUB()).append(";");
+        } else {
+            sb.append(";");
+        }
+        sb.append(LINE_SEPARATOR);
+
+        return sb.toString();
     }
 }

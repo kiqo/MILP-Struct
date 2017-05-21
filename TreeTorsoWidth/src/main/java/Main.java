@@ -3,6 +3,7 @@ package main.java;
 import main.java.graph.Graph;
 import main.java.libtw.TorsoWidth;
 import main.java.lp.GraphData;
+import main.java.lp.LPStatistics;
 import main.java.lp.LinearProgram;
 import nl.uu.cs.treewidth.algorithm.*;
 import nl.uu.cs.treewidth.input.GraphInput;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import main.java.parser.GraphGenerator;
 import main.java.parser.GraphTransformator;
 import main.java.parser.MILPParser;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -39,6 +39,7 @@ public class Main {
     private static Class<?> LOWER_BOUND_ALG = null;
     private static String INPUT_FILE = null;
     private static String OUTPUT_FILE = "./output/results.txt";
+    private static String GRAPH_TYPE = "primal";
     private static boolean TORSO_WIDTH = false;
     private static boolean LOWER_BOUND = false;
     private static boolean UPPER_BOUND = false;
@@ -73,7 +74,14 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder();
-        appendHeaders(sb);
+
+        // append header
+        if (OUTPUT_FILE.endsWith(".csv")) {
+            sb.append(LPStatistics.csvFormatHeader());
+        } else {
+            sb.append(LPStatistics.shortDescriptionHeader());
+        }
+
         for (String fileName : files) {
             try {
                 LOGGER.debug("Structural Parameters: " + fileName);
@@ -95,11 +103,6 @@ public class Main {
         }
     }
 
-    private static void appendHeaders(StringBuilder sb) {
-        sb.append("name\t\tnumVars\t\tnumIntVars\tintegerLP\tnumConstr\tsizeObjFun\tnumNodes\tnumIntNodes\tnumEdges\tdensity\t\ttw_lb\ttw_ub\ttorso_lb\ttorso_ub\t");
-        sb.append(LINE_SEPARATOR);
-    }
-
     private static void init() {
         try {
             UPPER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.GreedyDegree");
@@ -117,17 +120,20 @@ public class Main {
 
         // generate primal graph
         GraphGenerator graphGenerator = new GraphGenerator();
-        Graph primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
-        Graph incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
+        Graph graph = null;
+        if (GRAPH_TYPE.equals("primal")) {
+            graph = graphGenerator.linearProgramToPrimalGraph(lp);
+            lp.getStatistics().computePrimalGraphData(graph);
+        } else if (GRAPH_TYPE.equals("incidence")){
+            graph = graphGenerator.linearProgramToIncidenceGraph(lp);
+            lp.getStatistics().computeIncidenceGraphData(graph);
 
-        // compute statistics about the primal graph
-        lp.getStatistics().computePrimalGraphData(primalGraph);
-        // lp.getStatistics().computeIncidenceGraphData(incidenceGraph); // TODO
+        }
 
         // generate NGraph for using libtw
         NGraph<GraphInput.InputData> g;
         GraphTransformator graphTransformator = new GraphTransformator();
-        g = graphTransformator.graphToNGraph(primalGraph);
+        g = graphTransformator.graphToNGraph(graph);
 
         // just gets stuck for large instances - TODO try on server
         // g.printGraph(true, true);
@@ -142,12 +148,16 @@ public class Main {
             lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBound);
         }
 
-        if (TORSO_WIDTH) {
+        if (TORSO_WIDTH && GRAPH_TYPE.equals("primal")) {
             computeTorsoWidth(g, lp);
         }
 
         // append statistics of current lp
-        sb.append(lp.getStatistics().shortDescription());
+        if (OUTPUT_FILE.endsWith(".csv")) {
+            sb.append(lp.getStatistics().csvFormat());
+        } else {
+            sb.append(lp.getStatistics().shortDescription());
+        }
     }
 
     private static UpperBound<GraphInput.InputData> createUpperBound() {
@@ -262,11 +272,11 @@ public class Main {
 
                 case "-u":
                 case "-U":
-                case "--upperbound": UPPER_BOUND = true; break; // TODO set UPPER_BOUND_ALG
+                case "--upperbound": UPPER_BOUND = true; break;
 
                 case "-l":
                 case "-L":
-                case "--lowerbound": LOWER_BOUND = true; break; // TODO set LOWER_BOUND_ALG
+                case "--lowerbound": LOWER_BOUND = true; break;
 
                 case "-t":
                 case "-T":
@@ -285,20 +295,35 @@ public class Main {
 
                     }
                     if (expectGraphType) {
-                        expectGraphType = false;
-                        throw new NotImplementedException();
+                        GRAPH_TYPE = args[i];
+                        break;
                     }
 
                     error = true;
             }
         }
 
-        // check that either treewidth upper- or lowerbound or main.java.torsowidth are computed
+        // check that either treewidth upper- or lowerbound or torsowidth are computed
         if (!LOWER_BOUND & !UPPER_BOUND & !TORSO_WIDTH) {
             LOGGER.error("Either -u -l -t must be set!");
             LOGGER.error(helpMessage);
             System.exit(1);
             return;
+        }
+
+        if (GRAPH_TYPE.equals("p") || GRAPH_TYPE.equals("primal")) {
+            GRAPH_TYPE = "primal";
+        } else if (GRAPH_TYPE.equals("i") || GRAPH_TYPE.equals("incidence")){
+            GRAPH_TYPE = "incidence";
+        } else {
+            LOGGER.error("Error: Graph type that should be computed is not recognized!");
+            error = true;
+        }
+
+        if (TORSO_WIDTH && GRAPH_TYPE.equals("incidence")) {
+            LOGGER.warn("Warning: Ignoring option to compute incidence graph and compute primal " +
+                    "graph instead (torso width can only be computed for primal graphs");
+            GRAPH_TYPE = "primal";
         }
 
         if (error) {
