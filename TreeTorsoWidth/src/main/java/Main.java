@@ -40,6 +40,8 @@ public class Main {
     private static String INPUT_FILE = null;
     private static String OUTPUT_FILE = "./output/results.txt";
     private static String GRAPH_TYPE = "primal";
+    private static boolean PRIMAL = false;
+    private static boolean INCIDENCE = false;
     private static boolean TORSO_WIDTH = false;
     private static boolean LOWER_BOUND = false;
     private static boolean UPPER_BOUND = false;
@@ -77,7 +79,7 @@ public class Main {
 
         // append header
         if (OUTPUT_FILE.endsWith(".csv")) {
-            sb.append(LPStatistics.csvFormatHeader());
+            sb.append(LPStatistics.csvFormatHeader(PRIMAL, INCIDENCE));
         } else {
             sb.append(LPStatistics.shortDescriptionHeader());
         }
@@ -120,41 +122,47 @@ public class Main {
 
         // generate primal graph
         GraphGenerator graphGenerator = new GraphGenerator();
-        Graph graph = null;
-        if (GRAPH_TYPE.equals("primal")) {
-            graph = graphGenerator.linearProgramToPrimalGraph(lp);
-            lp.getStatistics().computePrimalGraphData(graph);
-        } else if (GRAPH_TYPE.equals("incidence")){
-            graph = graphGenerator.linearProgramToIncidenceGraph(lp);
-            lp.getStatistics().computeIncidenceGraphData(graph);
-
+        Graph primalGraph = null;
+        Graph incidenceGraph = null;
+        if (PRIMAL) {
+            primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
+            lp.getStatistics().computePrimalGraphData(primalGraph);
+        }
+        if (INCIDENCE){
+            incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
+            lp.getStatistics().computeIncidenceGraphData(incidenceGraph);
         }
 
         // generate NGraph for using libtw
-        NGraph<GraphInput.InputData> g;
+        NGraph<GraphInput.InputData> gPrimal, gIncidence;
         GraphTransformator graphTransformator = new GraphTransformator();
-        g = graphTransformator.graphToNGraph(graph);
+        gPrimal = graphTransformator.graphToNGraph(primalGraph);
+        gIncidence = graphTransformator.graphToNGraph(incidenceGraph);
 
         // just gets stuck for large instances - TODO try on server
         // g.printGraph(true, true);
 
         if (LOWER_BOUND) {
-            int treewidthLowerBound = computeTWLowerBound(g);
-            lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBound);
+            int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
+            int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
+            lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
+            lp.getStatistics().getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
         }
 
         if (UPPER_BOUND) {
-            int treewidthUpperBound = computeTWUpperBound(g);
-            lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBound);
+            int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
+            int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
+            lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
+            lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
         }
 
-        if (TORSO_WIDTH && GRAPH_TYPE.equals("primal")) {
-            computeTorsoWidth(g, lp);
+        if (TORSO_WIDTH && PRIMAL) {
+            computeTorsoWidth(gPrimal, lp);
         }
 
         // append statistics of current lp
         if (OUTPUT_FILE.endsWith(".csv")) {
-            sb.append(lp.getStatistics().csvFormat());
+            sb.append(lp.getStatistics().csvFormat(PRIMAL, INCIDENCE));
         } else {
             sb.append(lp.getStatistics().shortDescription());
         }
@@ -181,6 +189,9 @@ public class Main {
         return lowerBoundAlg;
     }
 
+    /*
+        Computes TorsoWidth of a graph and sets the result to the lp statistics
+     */
     private static void computeTorsoWidth(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) {
         t.reset();
         t.start();
@@ -249,7 +260,7 @@ public class Main {
     private static void parseArguments(String[] args) {
         int argc = args.length;
         boolean error = false;
-        String helpMessage = "Usage: TreeTorsoWidth -i inputFile.mps|inputFile.txt (-u|-l|-t) [-o outputFile] [-g primal|incidence|dual]";
+        String helpMessage = "Usage: TreeTorsoWidth -i (inputFile.mps|inputFile.txt) (-u|-l|-t) [-o outputFile] [-g (p[rimal]|i[ncidence]|pi)]";
 
         if (argc <= 1) {
             error = true;
@@ -312,18 +323,20 @@ public class Main {
         }
 
         if (GRAPH_TYPE.equals("p") || GRAPH_TYPE.equals("primal")) {
-            GRAPH_TYPE = "primal";
+            PRIMAL = true;
         } else if (GRAPH_TYPE.equals("i") || GRAPH_TYPE.equals("incidence")){
-            GRAPH_TYPE = "incidence";
+            INCIDENCE = true;
+        } else if (GRAPH_TYPE.equals("pi") || GRAPH_TYPE.equals("ip")) {
+            PRIMAL = true;
+            INCIDENCE = true;
         } else {
             LOGGER.error("Error: Graph type that should be computed is not recognized!");
             error = true;
         }
 
-        if (TORSO_WIDTH && GRAPH_TYPE.equals("incidence")) {
-            LOGGER.warn("Warning: Ignoring option to compute incidence graph and compute primal " +
-                    "graph instead (torso width can only be computed for primal graphs");
-            GRAPH_TYPE = "primal";
+        if (TORSO_WIDTH && !PRIMAL) {
+            LOGGER.error("Error: Option to compute torso width is only possible if graph type primal is specified!");
+            error = true;
         }
 
         if (error) {

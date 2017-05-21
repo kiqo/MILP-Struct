@@ -34,12 +34,12 @@ public class LPStatisticsTest {
         LPStatistics statistics = new LPStatistics(lp);
         lp.setStatistics(statistics);
         statistics.computePrimalGraphData(primalGraph);
-        statistics.computeIncidenceGraphData(incidenceGraph);
+        // statistics.computeIncidenceGraphData(incidenceGraph);
 /*
         sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
                 "numBoundVars;minCoeff;maxCoeff;sizeObjFun;" +
                 "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;torso_lb;torso_ub;");*/
         Assert.assertEquals("bienst2;7;8;2;0,29;false;0.0;2.0;1.0;3.0;" +
-                "2;-74.0;1.0;1;7;2;0,29;13;0,62;1;6;3,71;0;0;0;0;" + System.lineSeparator(), statistics.csvFormat());
+                "2;-74.0;1.0;1;7;2;0,29;13;0,62;1;6;3,71;0;0;0;0;" + System.lineSeparator(), statistics.csvFormat(true, false));
     }
 }

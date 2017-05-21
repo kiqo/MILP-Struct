@@ -22,6 +22,15 @@ public class LPStatistics {
     private Graph primalGraph;
     private Graph incidenceGraph;
     private GraphData primalGraphData;
+
+    public GraphData getIncidenceGraphData() {
+        return incidenceGraphData;
+    }
+
+    public void setIncidenceGraphData(GraphData incidenceGraphData) {
+        this.incidenceGraphData = incidenceGraphData;
+    }
+
     private GraphData incidenceGraphData;
 
     public GraphData getPrimalGraphData() {
@@ -167,7 +176,7 @@ public class LPStatistics {
     }
 
     @Override
-    public String toString() { //TODO
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(linearProgram.getName()).append(":" + LINE_SEPARATOR);
         sb.append("\tnumVariables = " + linearProgramData.numVariables +
@@ -248,16 +257,24 @@ public class LPStatistics {
         return tabs;
     }
 
-    public static String csvFormatHeader() {
+    public static String csvFormatHeader(boolean formatPrimalGraph, boolean formatIncidenceGraph) {
         StringBuilder sb = new StringBuilder();
         sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
-                "numBoundVars;minCoeff;maxCoeff;sizeObjFun;" +
-                "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;torso_lb;torso_ub;");
+                "numBoundVars;minCoeff;maxCoeff;sizeObjFun;");
+
+        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;";
+        if (formatPrimalGraph) {
+            sb.append(graphDataHeader);
+        }
+        if (formatIncidenceGraph) {
+            sb.append(graphDataHeader);
+        }
+        sb.append("torso_lb;torso_ub;");
         sb.append(LINE_SEPARATOR);
         return sb.toString();
     }
 
-    public String csvFormat() {
+    public String csvFormat(boolean formatPrimalGraph, boolean formatIncidenceGraph) {
         StringBuilder sb = new StringBuilder();
         sb.append(linearProgram.getName()).append(";");
         sb.append(linearProgramData.numVariables).append(";");
@@ -274,37 +291,47 @@ public class LPStatistics {
         sb.append(linearProgramData.maxCoefficient).append(";");
         sb.append(linearProgramData.sizeObjectiveFunction).append(";");
 
-        // primal graph data
-        sb.append(primalGraphData.numNodes).append(";");
-        sb.append(primalGraphData.numIntegerNodes).append(";");
-        sb.append(new DecimalFormat("0.00").format(primalGraphData.proportionIntegerNodes)).append(";");
-        sb.append(primalGraphData.numEdges).append(";");
-        sb.append(new DecimalFormat("0.00").format(primalGraphData.density)).append(";");
-        sb.append(primalGraphData.minDegree).append(";");
-        sb.append(primalGraphData.maxDegree).append(";");
-        sb.append(new DecimalFormat("0.00").format(primalGraphData.avgDegree)).append(";");
-        if (primalGraphData.getTreewidthLB() != Integer.MIN_VALUE) {
-            sb.append(primalGraphData.getTreewidthLB()).append(";");
-        } else {
-            sb.append(";");
+        if (formatPrimalGraph) {
+            formatGraphData(sb, primalGraphData);
         }
-        if (primalGraphData.getTreewidthUB() != Integer.MAX_VALUE) {
-            sb.append(primalGraphData.getTreewidthUB()).append(";");
-        } else {
-            sb.append(";");
+
+        if (formatIncidenceGraph) {
+            formatGraphData(sb, incidenceGraphData);
         }
-        if (primalGraphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
-            sb.append(primalGraphData.getTorsoWidthLB()).append(";");
-        } else {
-            sb.append(";");
-        }
-        if (primalGraphData.getTorsoWidthUB() != Integer.MAX_VALUE) {
-            sb.append(primalGraphData.getTorsoWidthUB()).append(";");
-        } else {
-            sb.append(";");
-        }
+
         sb.append(LINE_SEPARATOR);
 
         return sb.toString();
+    }
+
+    private void formatGraphData(StringBuilder sb, GraphData graphData) {
+        sb.append(graphData.numNodes).append(";");
+        sb.append(graphData.numIntegerNodes).append(";");
+        sb.append(new DecimalFormat("0.00").format(graphData.proportionIntegerNodes)).append(";");
+        sb.append(graphData.numEdges).append(";");
+        sb.append(new DecimalFormat("0.00").format(graphData.density)).append(";");
+        sb.append(graphData.minDegree).append(";");
+        sb.append(graphData.maxDegree).append(";");
+        sb.append(new DecimalFormat("0.00").format(graphData.avgDegree)).append(";");
+        if (graphData.getTreewidthLB() != Integer.MIN_VALUE) {
+            sb.append(graphData.getTreewidthLB()).append(";");
+        } else {
+            sb.append(";");
+        }
+        if (graphData.getTreewidthUB() != Integer.MAX_VALUE) {
+            sb.append(graphData.getTreewidthUB()).append(";");
+        } else {
+            sb.append(";");
+        }
+        if (graphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
+            sb.append(graphData.getTorsoWidthLB()).append(";");
+        } else {
+            sb.append(";");
+        }
+        if (graphData.getTorsoWidthUB() != Integer.MAX_VALUE) {
+            sb.append(graphData.getTorsoWidthUB()).append(";");
+        } else {
+            sb.append(";");
+        }
     }
 }
