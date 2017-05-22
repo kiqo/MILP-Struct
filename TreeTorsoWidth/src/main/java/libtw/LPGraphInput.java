@@ -46,12 +46,12 @@ public class LPGraphInput implements GraphInput {
         }
 
         // create edges for NGraph
-        for (Map.Entry<Node, List<Node>> nodeNeighboursPair : graph.getNeighbourNodes().entrySet()) {
+        for (Map.Entry<String, List<Node>> nodeNeighboursPair : graph.getNeighbourNodes().entrySet()) {
 
             NVertex<InputData> v1, v2;
-            Node curNode = nodeNeighboursPair.getKey();
+            String curNodeName = nodeNeighboursPair.getKey();
 
-            v1 = vertices.get(curNode.getName());
+            v1 = vertices.get(curNodeName);
 
             for (Node neighbour : nodeNeighboursPair.getValue()) {
                 v2 = vertices.get(neighbour.getName());

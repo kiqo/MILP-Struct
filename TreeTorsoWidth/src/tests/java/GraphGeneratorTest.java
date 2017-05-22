@@ -91,8 +91,8 @@ public class GraphGeneratorTest {
             for (MatrixEntry matrixEntry : matrixRow.getEntries()) {
                 Node variableNode = new Node(matrixEntry.getVariable().getName());
                 Assert.assertTrue(incidenceGraph.getNodes().contains(variableNode));
-                Assert.assertTrue(incidenceGraph.getNeighbourNodes().get(constraintNode).contains(variableNode));
-                Assert.assertTrue(incidenceGraph.getNeighbourNodes().get(variableNode).contains(constraintNode));
+                Assert.assertTrue(incidenceGraph.getNeighbourNodes().get(constraintNode.getName()).contains(variableNode));
+                Assert.assertTrue(incidenceGraph.getNeighbourNodes().get(variableNode.getName()).contains(constraintNode));
                 Edge edge = new Edge(variableNode, constraintNode);
                 Assert.assertTrue(incidenceGraph.getEdges().contains(edge));
             }

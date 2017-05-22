@@ -24,7 +24,7 @@ public class GraphGenerator {
         Graph incidenceGraph = new Graph();
         List<Node> nodes = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
-        Map<Node, List<Node>> neighbourNodes = new HashMap<>();
+        Map<String, List<Node>> neighbourNodes = new HashMap<>();
 
         int numVariable = 0;
 
@@ -49,16 +49,16 @@ public class GraphGenerator {
                 neighboursConstraintNode.add(variableNode);
 
                 // add constraintNode as neighbour to variable node
-                if (!neighbourNodes.containsKey(variableNode)) {
+                if (!neighbourNodes.containsKey(variableNode.getName())) {
                     List<Node> neighboursVariableNode = new ArrayList<>();
                     neighboursVariableNode.add(constraintNode);
-                    neighbourNodes.put(variableNode, neighboursVariableNode);
+                    neighbourNodes.put(variableNode.getName(), neighboursVariableNode);
                 } else {
-                    neighbourNodes.get(variableNode).add(constraintNode);
+                    neighbourNodes.get(variableNode.getName()).add(constraintNode);
                 }
             }
 
-            neighbourNodes.put(constraintNode, neighboursConstraintNode);
+            neighbourNodes.put(constraintNode.getName(), neighboursConstraintNode);
         }
 
         incidenceGraph.setEdges(edges);
@@ -77,7 +77,7 @@ public class GraphGenerator {
         Graph primalGraph = new Graph();
         List<Node> nodes = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
-        Map<Node, List<Node>> neighbourNodes = new HashMap<>();
+        Map<String, List<Node>> neighbourNodes = new HashMap<>();
 
         int numVariable = 0;
 
@@ -106,7 +106,7 @@ public class GraphGenerator {
         return primalGraph;
     }
 
-    private void convertRowToEdge(Row row, Map<Node, List<Node>> neighbourNodes, List<Edge> edges) {
+    private void convertRowToEdge(Row row, Map<String, List<Node>> neighbourNodes, List<Edge> edges) {
         List<MatrixEntry> variablesInRow = row.getEntries();
 
         MatrixEntry curVariable;
@@ -121,10 +121,10 @@ public class GraphGenerator {
 
                 neighbourNode = new Node(variablesInRow.get(j).getVariable().getName());
 
-                neighbours = neighbourNodes.get(curNode);
+                neighbours = neighbourNodes.get(curNode.getName());
                 if (neighbours == null) {
                     neighbours = new ArrayList<>();
-                    neighbourNodes.put(curNode, neighbours);
+                    neighbourNodes.put(curNode.getName(), neighbours);
                 } else if (neighbours.contains(neighbourNode)){
                     // skip node if already known that they are connected
                     continue;
@@ -133,10 +133,10 @@ public class GraphGenerator {
                 // create new entry in neighbourNodes
                 neighbours.add(neighbourNode);
 
-                neighbours = neighbourNodes.get(neighbourNode);
+                neighbours = neighbourNodes.get(neighbourNode.getName());
                 if (neighbours == null) {
                     neighbours = new ArrayList<>();
-                    neighbourNodes.put(neighbourNode, neighbours);
+                    neighbourNodes.put(neighbourNode.getName(), neighbours);
                 }
                 neighbours.add(curNode);
 

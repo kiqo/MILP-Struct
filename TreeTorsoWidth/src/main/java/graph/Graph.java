@@ -8,7 +8,7 @@ import java.util.*;
 public class Graph {
     private List<Node> nodes;
     private List<Edge> edges;
-    private Map<Node, List<Node>> neighbourNodes;
+    private Map<String, List<Node>> neighbourNodes;
 
     public List<Edge> getEdges() {
         return edges;
@@ -26,11 +26,11 @@ public class Graph {
         this.nodes = nodes;
     }
 
-    public Map<Node, List<Node>> getNeighbourNodes() {
+    public Map<String, List<Node>> getNeighbourNodes() {
         return neighbourNodes;
     }
 
-    public void setNeighbourNodes(Map<Node, List<Node>> neighbourNodes) {
+    public void setNeighbourNodes(Map<String, List<Node>> neighbourNodes) {
         this.neighbourNodes = neighbourNodes;
     }
 }

@@ -217,26 +217,26 @@ public class TorsoWidthTest {
 
     public Graph createGraph(List<Node> nodes, List<Edge> edges) {
         Graph graph = new Graph();
-        Map<Node, List<Node>> neighbourNodes = new HashMap<>();
+        Map<String, List<Node>> neighbourNodes = new HashMap<>();
 
         for (Edge edge : edges) {
             List<Node> neighbours1;
-            if (neighbourNodes.get(edge.getNode1()) == null) {
+            if (neighbourNodes.get(edge.getNode1().getName()) == null) {
                 neighbours1 = new ArrayList<>();
             } else {
-                neighbours1 = neighbourNodes.get(edge.getNode1());
+                neighbours1 = neighbourNodes.get(edge.getNode1().getName());
             }
             neighbours1.add(edge.getNode2());
-            neighbourNodes.put(edge.getNode1(), neighbours1);
+            neighbourNodes.put(edge.getNode1().getName(), neighbours1);
 
             List<Node> neighbours2;
-            if (neighbourNodes.get(edge.getNode2()) == null) {
+            if (neighbourNodes.get(edge.getNode2().getName()) == null) {
                 neighbours2 = new ArrayList<>();
             } else {
-                neighbours2 = neighbourNodes.get(edge.getNode2());
+                neighbours2 = neighbourNodes.get(edge.getNode2().getName());
             }
             neighbours2.add(edge.getNode1());
-            neighbourNodes.put(edge.getNode2(), neighbours2);
+            neighbourNodes.put(edge.getNode2().getName(), neighbours2);
         }
 
         graph.setEdges(edges);
@@ -251,7 +251,7 @@ public class TorsoWidthTest {
 
         Graph g = createRandomGraph();
         GraphTransformator transformator = new GraphTransformator();
-        NGraph before = transformator.graphToNGraph(g);
+        NGraph<GraphInput.InputData> before = transformator.graphToNGraph(g);
         before.printGraph(true, true);
 
         LOGGER.debug("--Random Graph--");

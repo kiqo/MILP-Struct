@@ -78,7 +78,7 @@ public class LPStatistics {
         int sumDegree = 0;
         int minDegree = Integer.MAX_VALUE;
         int maxDegree = Integer.MIN_VALUE;
-        for (Map.Entry<Node, List<Node>> entry : graph.getNeighbourNodes().entrySet()) {
+        for (Map.Entry<String, List<Node>> entry : graph.getNeighbourNodes().entrySet()) {
             int degree = entry.getValue().size();
             sumDegree += degree;
             if (degree < minDegree) {
