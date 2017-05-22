@@ -81,9 +81,11 @@ public class GraphGenerator {
 
         int numVariable = 0;
 
+        Node node;
+
         // generate nodes
         for (String variableName : lp.getVariables().keySet()) {
-            Node node = new Node(variableName, numVariable++);
+            node = new Node(variableName, numVariable++);
             node.setInteger(lp.getVariables().get(variableName).isInteger());
             nodes.add(node);
         }
@@ -91,7 +93,7 @@ public class GraphGenerator {
 
         // generate edges for constraints
         for (MatrixRow row : lp.getConstraints()) {
-            convertRowToEdge(row, neighbourNodes, edges);
+           convertRowToEdge(row, neighbourNodes, edges);
         }
 
         // definition for primal graph varies here: sometimes the objective function is considered and sometimes not
@@ -108,16 +110,18 @@ public class GraphGenerator {
         List<MatrixEntry> variablesInRow = row.getEntries();
 
         MatrixEntry curVariable;
+        Node curNode, neighbourNode;
+        List<Node> neighbours;
         for (int i = 0; i < variablesInRow.size(); i++) {
 
             curVariable = variablesInRow.get(i);
-            Node curNode = new Node(curVariable.getVariable().getName());
+            curNode = new Node(curVariable.getVariable().getName());
 
             for (int j = i+1; j < variablesInRow.size(); j++) {
 
-                Node neighbourNode = new Node(variablesInRow.get(j).getVariable().getName());
+                neighbourNode = new Node(variablesInRow.get(j).getVariable().getName());
 
-                List<Node> neighbours = neighbourNodes.get(curNode);
+                neighbours = neighbourNodes.get(curNode);
                 if (neighbours == null) {
                     neighbours = new ArrayList<>();
                     neighbourNodes.put(curNode, neighbours);
@@ -136,8 +140,7 @@ public class GraphGenerator {
                 }
                 neighbours.add(curNode);
 
-                Edge edge = new Edge(curNode, neighbourNode);
-                edges.add(edge);
+                edges.add(new Edge(curNode, neighbourNode));
             }
         }
     }
