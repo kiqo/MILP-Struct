@@ -264,12 +264,11 @@ public class LPStatistics {
 
         String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;";
         if (formatPrimalGraph) {
-            sb.append(graphDataHeader);
+            sb.append(graphDataHeader).append("torso_lb;torso_ub;");
         }
         if (formatIncidenceGraph) {
             sb.append(graphDataHeader);
         }
-        sb.append("torso_lb;torso_ub;");
         sb.append(LINE_SEPARATOR);
         return sb.toString();
     }
@@ -293,6 +292,14 @@ public class LPStatistics {
 
         if (formatPrimalGraph) {
             formatGraphData(sb, primalGraphData);
+            if (primalGraphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
+                sb.append(primalGraphData.getTorsoWidthLB());
+            }
+            sb.append(";");
+            if (primalGraphData.getTorsoWidthUB() != Integer.MAX_VALUE) {
+                sb.append(primalGraphData.getTorsoWidthUB());
+            }
+            sb.append(";");
         }
 
         if (formatIncidenceGraph) {
@@ -307,12 +314,12 @@ public class LPStatistics {
     private void formatGraphData(StringBuilder sb, GraphData graphData) {
         sb.append(graphData.numNodes).append(";");
         sb.append(graphData.numIntegerNodes).append(";");
-        sb.append(new DecimalFormat("0.00").format(graphData.proportionIntegerNodes)).append(";");
+        sb.append(new DecimalFormat("0.0000").format(graphData.proportionIntegerNodes)).append(";");
         sb.append(graphData.numEdges).append(";");
-        sb.append(new DecimalFormat("0.00").format(graphData.density)).append(";");
+        sb.append(new DecimalFormat("0.0000").format(graphData.density)).append(";");
         sb.append(graphData.minDegree).append(";");
         sb.append(graphData.maxDegree).append(";");
-        sb.append(new DecimalFormat("0.00").format(graphData.avgDegree)).append(";");
+        sb.append(new DecimalFormat("0.0000").format(graphData.avgDegree)).append(";");
         if (graphData.getTreewidthLB() != Integer.MIN_VALUE) {
             sb.append(graphData.getTreewidthLB()).append(";");
         } else {
@@ -320,16 +327,6 @@ public class LPStatistics {
         }
         if (graphData.getTreewidthUB() != Integer.MAX_VALUE) {
             sb.append(graphData.getTreewidthUB()).append(";");
-        } else {
-            sb.append(";");
-        }
-        if (graphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
-            sb.append(graphData.getTorsoWidthLB()).append(";");
-        } else {
-            sb.append(";");
-        }
-        if (graphData.getTorsoWidthUB() != Integer.MAX_VALUE) {
-            sb.append(graphData.getTorsoWidthUB()).append(";");
         } else {
             sb.append(";");
         }

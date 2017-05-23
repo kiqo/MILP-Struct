@@ -65,14 +65,20 @@ public class Main {
             sb.append(LPStatistics.shortDescriptionHeader());
         }
 
-        ExecutorService executor = null;
+        ExecutorService executor = Executors.newFixedThreadPool(1); // -> keeps EXACTLY one thread, change to using a thread pool?
+/*        List<Callable> callables = new ArrayList<>();
+        for (String fileName : files) {
+            callables.add(new StructuralParametersComputation(fileName, ""));
+        }*/
+
         for (String fileName : files) {
             LOGGER.debug("Structural Parameters: " + fileName);
-            executor = Executors.newSingleThreadExecutor();
+//            executor = Executors.newSingleThreadExecutor(); // -> keeps EXACTLY one thread, change to using a thread pool?
             List<Future<String>> result;
             String resultString = null;
             try {
-                result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName, sb)), 10, TimeUnit.MINUTES);
+                // invoke all waits until all tasks are finished (= terminated or had an error)
+                result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName)), 3, TimeUnit.SECONDS);
 
                 if (result.get(0).isCancelled()) {
                     // task finished by cancellation (seconds exceeded)

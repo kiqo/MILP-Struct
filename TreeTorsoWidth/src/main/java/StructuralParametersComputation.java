@@ -32,11 +32,10 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private static final Stopwatch t = new Stopwatch();
     private static String fileName;
-    private static StringBuilder sb;
+    private static StringBuilder sb = new StringBuilder();
 
-    public StructuralParametersComputation (String fileName, StringBuilder sb) {
+    public StructuralParametersComputation (String fileName) {
         this.fileName = fileName;
-        this.sb = sb;
     }
 
     private static void computeTreeWidth(NGraph<GraphInput.InputData> g) {
@@ -85,7 +84,7 @@ public class StructuralParametersComputation implements Callable<String> {
         decomposition.printGraph( true, true );
     }
 
-    private static void computeStructuralParameters(String fileName, StringBuilder sb) throws IOException, InterruptedException {
+    private static void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         // parse input file
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = milpParser.parseMPS(fileName, false);
@@ -245,7 +244,7 @@ public class StructuralParametersComputation implements Callable<String> {
     @Override
     public String call() throws IOException {
         try {
-            computeStructuralParameters(fileName, sb);
+            computeStructuralParameters(fileName);
         } catch (InterruptedException e) {
             LOGGER.warn("Warning: Interrupt Exception for " + fileName);
             Thread.currentThread().interrupt(); // not needed?
