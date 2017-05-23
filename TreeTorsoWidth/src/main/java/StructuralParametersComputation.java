@@ -246,7 +246,6 @@ public class StructuralParametersComputation implements Callable<String> {
         try {
             computeStructuralParameters(fileName);
         } catch (InterruptedException e) {
-            LOGGER.warn("Warning: Interrupt Exception for " + fileName);
             Thread.currentThread().interrupt(); // not needed?
         }
         return sb.toString();

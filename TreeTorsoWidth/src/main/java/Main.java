@@ -9,10 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -65,18 +62,12 @@ public class Main {
             sb.append(LPStatistics.shortDescriptionHeader());
         }
 
-        ExecutorService executor = Executors.newSingleThreadExecutor(); // -> keeps EXACTLY one thread, change to using a thread pool?
-/*        List<Callable> callables = new ArrayList<>();
-        for (String fileName : files) {
-            callables.add(new StructuralParametersComputation(fileName));
-        }
-        result = executor.invokeAll(callables, 30, TimeUnit.SECONDS);
-        */
-
+        // single threaded
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        List<Future<String>> result = null;
         for (String fileName : files) {
             LOGGER.debug("Structural Parameters: " + fileName);
-//            executor = Executors.newSingleThreadExecutor(); // -> keeps EXACTLY one thread, change to using a thread pool?
-            List<Future<String>> result;
+            executor = Executors.newSingleThreadExecutor(); // -> keeps EXACTLY one thread, change to using a thread pool?
             String resultString = null;
             try {
                 // invoke all waits until all tasks are finished (= terminated or had an error)
@@ -93,7 +84,6 @@ public class Main {
             } catch (InterruptedException | ExecutionException e) {
                 LOGGER.error("", e);
             }
-            LOGGER.debug(resultString);
             sb.append(resultString);
             LOGGER.debug("-------------------");
         }
