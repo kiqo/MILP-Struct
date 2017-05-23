@@ -1,28 +1,13 @@
 package main.java;
 
-import main.java.graph.Graph;
-import main.java.libtw.TorsoWidth;
-import main.java.lp.GraphData;
 import main.java.lp.LPStatistics;
-import main.java.lp.LinearProgram;
-import nl.uu.cs.treewidth.algorithm.*;
-import nl.uu.cs.treewidth.input.GraphInput;
-import nl.uu.cs.treewidth.ngraph.NGraph;
-import nl.uu.cs.treewidth.ngraph.NTDBag;
-import nl.uu.cs.treewidth.ngraph.NVertex;
-import nl.uu.cs.treewidth.ngraph.NVertexOrder;
-import nl.uu.cs.treewidth.timing.Stopwatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import main.java.parser.GraphGenerator;
-import main.java.parser.GraphTransformator;
-import main.java.parser.MILPParser;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,12 +72,12 @@ public class Main {
             List<Future<String>> result;
             String resultString = null;
             try {
-                result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName, sb)), 4, TimeUnit.SECONDS);
+                result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName, sb)), 10, TimeUnit.MINUTES);
 
                 if (result.get(0).isCancelled()) {
                     // task finished by cancellation (seconds exceeded)
-                    LOGGER.debug(fileName + " was cancelled");
-                    resultString = "No result;" + System.lineSeparator();
+                    LOGGER.warn(fileName + " was cancelled");
+                    resultString = fileName + ";no result;" + System.lineSeparator();
                 } else {
                     resultString = result.get(0).get();
                 }
@@ -105,32 +90,21 @@ public class Main {
             LOGGER.debug("-------------------");
         }
 
-        // Disable new tasks from being submitted TODO not needed?
+        // Disable new tasks from being submitted
         executor.shutdown();
         try {
             // Wait a while for existing tasks to terminate
-            if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
                 // Cancel currently executing tasks
                 executor.shutdownNow();
                 // Wait a while for tasks to respond to being cancelled
-                if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
                     LOGGER.error("Error: Executor did not terminate");
                 }
             }
         } catch (InterruptedException e) {
             LOGGER.error("", e);
         }
-/*
-        if (executor != null) {
-            executor.shutdownNow();
-            try {
-                if (executor != null) {
-                    executor.awaitTermination(1, TimeUnit.SECONDS);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }*/
 
         // print to output file statistics about lp and primal graph
         try{

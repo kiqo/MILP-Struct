@@ -21,7 +21,7 @@ public class LPStatisticsTest {
 
 
     @Test
-    public void testLPFromInputFile() throws TimeoutException {
+    public void testLPFromInputFile() throws TimeoutException, InterruptedException {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = null;
         try {

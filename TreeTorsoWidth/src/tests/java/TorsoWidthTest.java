@@ -41,7 +41,7 @@ public class TorsoWidthTest {
     /*
     Transforms a graph to a NGraph and then runs the torso width algorithm
      */
-    public static NGraph<GraphInput.InputData> torsoWidth(Graph graph) {
+    public static NGraph<GraphInput.InputData> torsoWidth(Graph graph) throws InterruptedException {
 
         // generate NGraph for using main.java.libtw
         NGraph<GraphInput.InputData> g;
@@ -54,7 +54,7 @@ public class TorsoWidthTest {
     /*
     Runs the torso width algorithm
     */
-    public static NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> g) {
+    public static NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> g) throws InterruptedException {
 
         GreedyDegree<GraphInput.InputData> ubAlgo = new GreedyDegree<>();
         ubAlgo.setInput(g);
@@ -82,7 +82,7 @@ public class TorsoWidthTest {
 
 
     @Test
-    public void testNodeBlockerGraph() {
+    public void testNodeBlockerGraph() throws InterruptedException {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
         LOGGER.debug("--Node Blocker Graph--");
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(nodeBlockerGraph);
@@ -143,7 +143,7 @@ public class TorsoWidthTest {
     }
 
     @Test
-    public void testGraphFromInputFile() {
+    public void testGraphFromInputFile() throws InterruptedException {
         String inputFile = "./../input/tests/torsowidth_test.dgf";
         LOGGER.debug("--"+ inputFile +" Graph--");
         NGraph<GraphInput.InputData> g = null;
@@ -162,7 +162,7 @@ public class TorsoWidthTest {
     }
 
     @Test
-    public void testStarShapedGraph() {
+    public void testStarShapedGraph() throws InterruptedException {
         LOGGER.debug("--Star Shaped Graph--");
         Graph starShapedGraph = createStarShapedGraph();
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(starShapedGraph);
@@ -247,7 +247,7 @@ public class TorsoWidthTest {
     }
 
     @Test
-    public void testRandomGraph() {
+    public void testRandomGraph() throws InterruptedException {
 
         Graph g = createRandomGraph();
         GraphTransformator transformator = new GraphTransformator();

@@ -21,7 +21,7 @@ public class GraphGenerator {
        The incidence graph is constructed by taking the variables of the lp and the constraints as nodes
        and a variable is connected by an edge to a constraint iff the variable occurs in the constraint
     */
-    public Graph linearProgramToIncidenceGraph(LinearProgram lp) {
+    public Graph linearProgramToIncidenceGraph(LinearProgram lp) throws InterruptedException {
         Graph incidenceGraph = new Graph();
         List<Node> nodes = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
@@ -31,6 +31,11 @@ public class GraphGenerator {
 
         // generate nodes
         for (MatrixRow matrixRow : lp.getConstraints()) {
+
+            if (Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException();
+            }
+
             Node constraintNode = new Node(matrixRow.getName(), numVariable++);
             nodes.add(constraintNode);
             List<Node> neighboursConstraintNode = new ArrayList<>();
@@ -74,7 +79,7 @@ public class GraphGenerator {
        and a variable is connected by an edge to another variable b iff they occur in the same constraint or
        they occur together in the objective function
      */
-    public Graph linearProgramToPrimalGraph(LinearProgram lp) {
+    public Graph linearProgramToPrimalGraph(LinearProgram lp) throws InterruptedException {
         Graph primalGraph = new Graph();
         List<Node> nodes = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
@@ -99,6 +104,9 @@ public class GraphGenerator {
 
         // generate edges for constraints
         for (MatrixRow row : lp.getConstraints()) {
+            if (Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException();
+            }
             convertRowToEdge(row, nodesMap, neighbourNodes, edges);
         }
 
@@ -113,13 +121,17 @@ public class GraphGenerator {
         return primalGraph;
     }
 
-    private void convertRowToEdge(Row row, Map<String, Node> nodesMap, Map<String, List<Node>> neighbourNodes, List<Edge> edges) {
+    private void convertRowToEdge(Row row, Map<String, Node> nodesMap, Map<String, List<Node>> neighbourNodes, List<Edge> edges) throws InterruptedException {
         List<MatrixEntry> variablesInRow = row.getEntries();
 
         Node curNode, neighbourNode;
         String curNodeName, neighbourNodeName;
         List<Node> neighbours;
         for (int i = 0; i < variablesInRow.size(); i++) {
+
+            if ((i % 5 == 0) && Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException();
+            }
 
             curNodeName = variablesInRow.get(i).getVariable().getName();
             curNode = nodesMap.get(curNodeName);

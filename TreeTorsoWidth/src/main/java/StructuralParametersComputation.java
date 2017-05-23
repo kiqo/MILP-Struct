@@ -3,7 +3,6 @@ package main.java;
 import main.java.graph.Graph;
 import main.java.libtw.TorsoWidth;
 import main.java.lp.GraphData;
-import main.java.lp.LPStatistics;
 import main.java.lp.LinearProgram;
 import main.java.parser.GraphGenerator;
 import main.java.parser.GraphTransformator;
@@ -86,10 +85,12 @@ public class StructuralParametersComputation implements Callable<String> {
         decomposition.printGraph( true, true );
     }
 
-    private static void computeStructuralParameters(String fileName, StringBuilder sb) throws IOException {
+    private static void computeStructuralParameters(String fileName, StringBuilder sb) throws IOException, InterruptedException {
         // parse input file
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = milpParser.parseMPS(fileName, false);
+
+        checkInterrupted();
 
         // generate primal graph
         GraphGenerator graphGenerator = new GraphGenerator();
@@ -104,23 +105,30 @@ public class StructuralParametersComputation implements Callable<String> {
             lp.getStatistics().computeIncidenceGraphData(incidenceGraph);
         }
 
+        checkInterrupted();
+
         // generate NGraph for using libtw
         NGraph<GraphInput.InputData> gPrimal, gIncidence;
         GraphTransformator graphTransformator = new GraphTransformator();
         gPrimal = graphTransformator.graphToNGraph(primalGraph);
+        checkInterrupted();
         gIncidence = graphTransformator.graphToNGraph(incidenceGraph);
+        checkInterrupted();
 
         // just gets stuck for large instances - TODO try on server
         // g.printGraph(true, true);
 
         if (Configuration.LOWER_BOUND) {
             int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
+            checkInterrupted();
             int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
+
             lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
             lp.getStatistics().getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
         }
 
         if (Configuration.UPPER_BOUND) {
+            // checkInterrupted(); - checked in the upper bound algorithm
             int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
             int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
             lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
@@ -128,6 +136,7 @@ public class StructuralParametersComputation implements Callable<String> {
         }
 
         if (Configuration.TORSO_WIDTH && Configuration.PRIMAL) {
+            // checkInterrupted(); - checked in the torso width algorithm
             computeTorsoWidth(gPrimal, lp);
         }
 
@@ -136,6 +145,12 @@ public class StructuralParametersComputation implements Callable<String> {
             sb.append(lp.getStatistics().csvFormat(Configuration.PRIMAL, Configuration.INCIDENCE));
         } else {
             sb.append(lp.getStatistics().shortDescription());
+        }
+    }
+
+    private static void checkInterrupted() throws InterruptedException {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedException();
         }
     }
 
@@ -163,7 +178,7 @@ public class StructuralParametersComputation implements Callable<String> {
     /*
         Computes TorsoWidth of a graph and sets the result to the lp statistics
      */
-    private static void computeTorsoWidth(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) {
+    private static void computeTorsoWidth(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) throws InterruptedException {
         t.reset();
         t.start();
 
@@ -199,7 +214,7 @@ public class StructuralParametersComputation implements Callable<String> {
         primalGraphData.setTorsoMaxDegree(maxDegree);
     }
 
-    private static int computeTWUpperBound(NGraph<GraphInput.InputData> g) {
+    private static int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
         t.reset();
         t.start();
         UpperBound<GraphInput.InputData> ubAlgo = createUpperBound();
@@ -213,7 +228,7 @@ public class StructuralParametersComputation implements Callable<String> {
         return upperbound;
     }
 
-    private static int computeTWLowerBound(NGraph<GraphInput.InputData> g) {
+    private static int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
         t.reset();
         t.start();
         LowerBound<GraphInput.InputData> lbAlgo = createLowerBound();
@@ -229,7 +244,12 @@ public class StructuralParametersComputation implements Callable<String> {
 
     @Override
     public String call() throws IOException {
-        computeStructuralParameters(fileName, sb);
+        try {
+            computeStructuralParameters(fileName, sb);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Warning: Interrupt Exception for " + fileName);
+            Thread.currentThread().interrupt(); // not needed?
+        }
         return sb.toString();
     }
 }

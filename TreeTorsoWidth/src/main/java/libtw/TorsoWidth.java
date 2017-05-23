@@ -50,7 +50,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         this.graph = g; // TODO make a deep copy
     };
 
-    public void run() {
+    public void run() throws InterruptedException {
 
         if (this.ubAlg == null) {
             LOGGER.error("TorsoWidth algorithm needs to haven an upperbound algorithm defined!");
@@ -69,7 +69,11 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         Iterator<NVertex<D>> vertexIterator = graph.iterator();
         NVertex<D> vertex;
 
+        int i = 0;
         while (vertexIterator.hasNext()) {
+            if ((i % 10 == 0) && Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException();
+            }
             vertex = vertexIterator.next();
             LPInputData data = (LPInputData) vertex.data;
 
@@ -137,12 +141,16 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     Instead of eliminating each non-integer vertex, find a vertex set of non-integer nodes of a connected component in
     the graph and collapse this set in the graph by connecting the neighbours of such a set
      */
-    private void runAlternative() {
+    private void runAlternative() throws InterruptedException {
 
         Set<NVertex<D>> verticesToRemove = new HashSet<>();
         Iterator<NVertex<D>> vertexIterator = graph.iterator();
 
+        int i = 0;
         while (vertexIterator.hasNext()) {
+            if ((i % 10 == 0) && Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException();
+            }
             NVertex<D> vertex = vertexIterator.next();
 
             // a non-integer node not yet handled

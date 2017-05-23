@@ -72,10 +72,15 @@ public class GreedyDegree< D extends InputData > implements Permutation<D>, Uppe
 		graph = g.copy( new MyConvertor() );
 	}
 
-	public void run() {
+	public void run() throws InterruptedException {
 		
 		upperBound = Integer.MIN_VALUE;
 		while( graph.getNumberOfVertices()>0 ){
+
+			if (Thread.currentThread().isInterrupted()) {
+				throw new InterruptedException();
+			}
+
 			// get vertex with smallest degree
 			// TODO make more efficient implementation
 			// This can be done by only recomputing the degree of vertices

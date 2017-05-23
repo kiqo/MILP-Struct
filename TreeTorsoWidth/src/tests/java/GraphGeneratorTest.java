@@ -39,7 +39,7 @@ public class GraphGeneratorTest {
     }
 
     @Test
-    public void testLinearProgramToPrimalGraph() throws TimeoutException {
+    public void testLinearProgramToPrimalGraph() throws TimeoutException, InterruptedException {
         if (lp == null) {
             parseInputLP();
         }
@@ -67,7 +67,7 @@ public class GraphGeneratorTest {
     }
 
     @Test
-    public void testLinearProgramToIncidenceGraph() {
+    public void testLinearProgramToIncidenceGraph() throws InterruptedException {
         if (lp == null) {
             parseInputLP();
         }
