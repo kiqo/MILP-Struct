@@ -25,8 +25,10 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created by Verena on 28.02.2017.
@@ -35,225 +37,109 @@ public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    private static Class<?> UPPER_BOUND_ALG = null;
-    private static Class<?> LOWER_BOUND_ALG = null;
-    private static String INPUT_FILE = null;
-    private static String OUTPUT_FILE = "./output/results.txt";
-    private static String GRAPH_TYPE = "primal";
-    private static boolean PRIMAL = false;
-    private static boolean INCIDENCE = false;
-    private static boolean TORSO_WIDTH = false;
-    private static boolean LOWER_BOUND = false;
-    private static boolean UPPER_BOUND = false;
-    private static final Stopwatch t = new Stopwatch();
-    private static final String LINE_SEPARATOR = System.lineSeparator();
-
     static{
         // system property current.date used for the name of the log file
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
         System.setProperty("current.date", dateFormat.format(new Date()));
     }
 
+    private static void init() {
+        try {
+            Configuration.UPPER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.GreedyDegree");
+            Configuration.LOWER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC");
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("", e);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
 
         init();
-
         parseArguments(args);
-
-        boolean isTxt = INPUT_FILE.substring(INPUT_FILE.length()-3, INPUT_FILE.length()).equals("txt");
+        boolean isTxt = Configuration.INPUT_FILE.substring(Configuration.INPUT_FILE.length() - 3, Configuration.INPUT_FILE.length()).equals("txt");
 
         List<String> files = new ArrayList<>();
         if (isTxt) {
             // read all the files that need to be processed
-            BufferedReader br = new BufferedReader(new FileReader(INPUT_FILE));
+            BufferedReader br = new BufferedReader(new FileReader(Configuration.INPUT_FILE));
 
             String line;
             while ((line = br.readLine()) != null) {
                 files.add(line);
             }
         } else {
-            files.add(INPUT_FILE);
+            files.add(Configuration.INPUT_FILE);
         }
 
         StringBuilder sb = new StringBuilder();
 
         // append header
-        if (OUTPUT_FILE.endsWith(".csv")) {
-            sb.append(LPStatistics.csvFormatHeader(PRIMAL, INCIDENCE));
+        if (Configuration.OUTPUT_FILE.endsWith(".csv")) {
+            sb.append(LPStatistics.csvFormatHeader(Configuration.PRIMAL, Configuration.INCIDENCE));
         } else {
             sb.append(LPStatistics.shortDescriptionHeader());
         }
 
+        ExecutorService executor = null;
         for (String fileName : files) {
+            LOGGER.debug("Structural Parameters: " + fileName);
+            executor = Executors.newSingleThreadExecutor();
+            List<Future<String>> result;
+            String resultString = null;
             try {
-                LOGGER.debug("Structural Parameters: " + fileName);
-                computeStructuralParameters(fileName, sb);
-                LOGGER.debug("-------------------");
-            } catch (Exception e) {
-                // catch any exception that occurs and outprint error
-                LOGGER.error("Error for file " + fileName + ":", e);
+                result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName, sb)), 4, TimeUnit.SECONDS);
+
+                if (result.get(0).isCancelled()) {
+                    // task finished by cancellation (seconds exceeded)
+                    LOGGER.debug(fileName + " was cancelled");
+                    resultString = "No result;" + System.lineSeparator();
+                } else {
+                    resultString = result.get(0).get();
+                }
+
+            } catch (InterruptedException | ExecutionException e) {
+                LOGGER.error("", e);
             }
+
+            sb.append(resultString);
+            LOGGER.debug("-------------------");
         }
+
+        // Disable new tasks from being submitted TODO not needed?
+        executor.shutdown();
+        try {
+            // Wait a while for existing tasks to terminate
+            if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                // Cancel currently executing tasks
+                executor.shutdownNow();
+                // Wait a while for tasks to respond to being cancelled
+                if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                    LOGGER.error("Error: Executor did not terminate");
+                }
+            }
+        } catch (InterruptedException e) {
+            LOGGER.error("", e);
+        }
+/*
+        if (executor != null) {
+            executor.shutdownNow();
+            try {
+                if (executor != null) {
+                    executor.awaitTermination(1, TimeUnit.SECONDS);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }*/
 
         // print to output file statistics about lp and primal graph
         try{
-            PrintWriter writer = new PrintWriter(OUTPUT_FILE, "UTF-8");
+            PrintWriter writer = new PrintWriter(Configuration.OUTPUT_FILE, "UTF-8");
             writer.print(sb.toString());
             writer.close();
         } catch (IOException e) {
             LOGGER.error("", e);
         }
-    }
-
-    private static void init() {
-        try {
-            UPPER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.GreedyDegree");
-            LOWER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC");
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("", e);
-        }
-    }
-
-    private static void computeStructuralParameters(String fileName, StringBuilder sb) throws IOException {
-
-        // parse input file
-        MILPParser milpParser = new MILPParser();
-        LinearProgram lp = milpParser.parseMPS(fileName, false);
-
-        // generate primal graph
-        GraphGenerator graphGenerator = new GraphGenerator();
-        Graph primalGraph = null;
-        Graph incidenceGraph = null;
-        if (PRIMAL) {
-            primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
-            lp.getStatistics().computePrimalGraphData(primalGraph);
-        }
-        if (INCIDENCE){
-            incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
-            lp.getStatistics().computeIncidenceGraphData(incidenceGraph);
-        }
-
-        // generate NGraph for using libtw
-        NGraph<GraphInput.InputData> gPrimal, gIncidence;
-        GraphTransformator graphTransformator = new GraphTransformator();
-        gPrimal = graphTransformator.graphToNGraph(primalGraph);
-        gIncidence = graphTransformator.graphToNGraph(incidenceGraph);
-
-        // just gets stuck for large instances - TODO try on server
-        // g.printGraph(true, true);
-
-        if (LOWER_BOUND) {
-            int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
-            int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
-            lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
-            lp.getStatistics().getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
-        }
-
-        if (UPPER_BOUND) {
-            int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
-            int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
-            lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
-            lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
-        }
-
-        if (TORSO_WIDTH && PRIMAL) {
-            computeTorsoWidth(gPrimal, lp);
-        }
-
-        // append statistics of current lp
-        if (OUTPUT_FILE.endsWith(".csv")) {
-            sb.append(lp.getStatistics().csvFormat(PRIMAL, INCIDENCE));
-        } else {
-            sb.append(lp.getStatistics().shortDescription());
-        }
-    }
-
-    private static UpperBound<GraphInput.InputData> createUpperBound() {
-        UpperBound upperBoundAlg = null;
-        try {
-            upperBoundAlg = (UpperBound) UPPER_BOUND_ALG.getConstructor().newInstance();
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            LOGGER.error("", e);
-        }
-        return upperBoundAlg;
-    }
-
-
-    private static LowerBound<GraphInput.InputData> createLowerBound() {
-        LowerBound<GraphInput.InputData> lowerBoundAlg = null;
-        try {
-            lowerBoundAlg = (LowerBound<GraphInput.InputData>) LOWER_BOUND_ALG.getConstructor().newInstance();
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            LOGGER.error(e.getMessage());
-        }
-        return lowerBoundAlg;
-    }
-
-    /*
-        Computes TorsoWidth of a graph and sets the result to the lp statistics
-     */
-    private static void computeTorsoWidth(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) {
-        t.reset();
-        t.start();
-
-        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(createUpperBound(), createLowerBound());
-        torsoWidthAlgo.setInput(g);
-        torsoWidthAlgo.run();
-        int torsoWidthLowerBound = torsoWidthAlgo.getLowerBound();
-        int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
-        t.stop();
-        long millisecondsPassed = t.getTime();
-        LOGGER.debug("LB TorsoWidth: " + torsoWidthLowerBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
-        LOGGER.debug("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
-        GraphData primalGraphData = linearProgram.getStatistics().getPrimalGraphData();
-        primalGraphData.setTorsoWidthUB(torsoWidthUpperBound);
-        primalGraphData.setTorsoWidthLB(torsoWidthLowerBound);
-
-        // get statistics of torso graph
-        int minDegree = Integer.MAX_VALUE;
-        int maxDegree = Integer.MIN_VALUE;
-
-        for (NVertex<GraphInput.InputData> vertex : g) {
-            int degree = vertex.getNumberOfNeighbors();
-            if (degree < minDegree) {
-                minDegree = degree;
-            }
-            if (degree > maxDegree) {
-                maxDegree = degree;
-            }
-        }
-        primalGraphData.setTorsoMinDegree(minDegree);
-        primalGraphData.setTorsoMaxDegree(maxDegree);
-    }
-
-    private static int computeTWUpperBound(NGraph<GraphInput.InputData> g) {
-        t.reset();
-        t.start();
-        UpperBound<GraphInput.InputData> ubAlgo = createUpperBound();
-        ubAlgo.setInput(g);
-        ubAlgo.run();
-        int upperbound = ubAlgo.getUpperBound();
-        t.stop();
-        long millisecondsPassed = t.getTime();
-        LOGGER.debug("UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + ubAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
-        return upperbound;
-    }
-
-    private static int computeTWLowerBound(NGraph<GraphInput.InputData> g) {
-        t.reset();
-        t.start();
-        LowerBound<GraphInput.InputData> lbAlgo = createLowerBound();
-        lbAlgo.setInput(g);
-        lbAlgo.run();
-        int lowerbound = lbAlgo.getLowerBound();
-        t.stop();
-        long millisecondsPassed = t.getTime();
-        LOGGER.debug("LB: " + lowerbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + lbAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
-        return lowerbound;
     }
 
 
@@ -283,30 +169,30 @@ public class Main {
 
                 case "-u":
                 case "-U":
-                case "--upperbound": UPPER_BOUND = true; break;
+                case "--upperbound": Configuration.UPPER_BOUND = true; break;
 
                 case "-l":
                 case "-L":
-                case "--lowerbound": LOWER_BOUND = true; break;
+                case "--lowerbound": Configuration.LOWER_BOUND = true; break;
 
                 case "-t":
                 case "-T":
-                case "--torsowidth": TORSO_WIDTH = true; break;
+                case "--torsowidth": Configuration.TORSO_WIDTH = true; break;
 
                 default:
                     if (expectInputFile) {
                         expectInputFile = false;
-                        INPUT_FILE = args[i];
+                        Configuration.INPUT_FILE = args[i];
                         break;
                     }
                     if (expectOutputFile) {
                         expectOutputFile = false;
-                        OUTPUT_FILE = args[i];
+                        Configuration.OUTPUT_FILE = args[i];
                         break;
 
                     }
                     if (expectGraphType) {
-                        GRAPH_TYPE = args[i];
+                        Configuration.GRAPH_TYPE = args[i];
                         break;
                     }
 
@@ -315,27 +201,27 @@ public class Main {
         }
 
         // check that either treewidth upper- or lowerbound or torsowidth are computed
-        if (!LOWER_BOUND & !UPPER_BOUND & !TORSO_WIDTH) {
+        if (!Configuration.LOWER_BOUND & !Configuration.UPPER_BOUND & !Configuration.TORSO_WIDTH) {
             LOGGER.error("Either -u -l -t must be set!");
             LOGGER.error(helpMessage);
             System.exit(1);
             return;
         }
 
-        if (GRAPH_TYPE.equals("p") || GRAPH_TYPE.equals("primal")) {
-            PRIMAL = true;
-        } else if (GRAPH_TYPE.equals("i") || GRAPH_TYPE.equals("incidence")){
-            INCIDENCE = true;
-        } else if (GRAPH_TYPE.equals("pi") || GRAPH_TYPE.equals("ip")) {
-            PRIMAL = true;
-            INCIDENCE = true;
+        if (Configuration.GRAPH_TYPE.equals("p") || Configuration.GRAPH_TYPE.equals("Configuration.PRIMAL")) {
+            Configuration.PRIMAL = true;
+        } else if (Configuration.GRAPH_TYPE.equals("i") || Configuration.GRAPH_TYPE.equals("Configuration.INCIDENCE")){
+            Configuration.INCIDENCE = true;
+        } else if (Configuration.GRAPH_TYPE.equals("pi") || Configuration.GRAPH_TYPE.equals("ip")) {
+            Configuration.PRIMAL = true;
+            Configuration.INCIDENCE = true;
         } else {
             LOGGER.error("Error: Graph type that should be computed is not recognized!");
             error = true;
         }
 
-        if (TORSO_WIDTH && !PRIMAL) {
-            LOGGER.error("Error: Option to compute torso width is only possible if graph type primal is specified!");
+        if (Configuration.TORSO_WIDTH && !Configuration.PRIMAL) {
+            LOGGER.error("Error: Option to compute torso width is only possible if graph type Configuration.PRIMAL is specified!");
             error = true;
         }
 
@@ -345,52 +231,6 @@ public class Main {
             return;
         }
 
-        LOGGER.debug("Input: " + INPUT_FILE);
-    }
-
-    private static void computeTreeWidth(NGraph<GraphInput.InputData> g) {
-
-        // first calculate an upper bound
-        GreedyFillIn<GraphInput.InputData> ubAlgo = new GreedyFillIn<GraphInput.InputData>();
-        ubAlgo.setInput( g );
-        ubAlgo.run();
-        int upperbound = ubAlgo.getUpperBound();
-
-        // then calculate the exact treewidth
-        TreewidthDP<GraphInput.InputData> twdp = new TreewidthDP<GraphInput.InputData>( upperbound );
-        twdp.setInput( g );
-        twdp.run();
-        int treewidth = twdp.getTreewidth();
-    }
-
-    private static void computeTreeDecomposition(NGraph<GraphInput.InputData> g) {
-        MaximumMinimumDegreePlusLeastC<GraphInput.InputData> lbAlgo = new MaximumMinimumDegreePlusLeastC<GraphInput.InputData>();
-        lbAlgo.setInput( g );
-        lbAlgo.run();
-        int lowerbound = lbAlgo.getLowerBound();
-
-        GreedyFillIn<GraphInput.InputData> ubAlgo = new GreedyFillIn<GraphInput.InputData>();
-        ubAlgo.setInput( g );
-        ubAlgo.run();
-        int upperbound = ubAlgo.getUpperBound();
-
-        NVertexOrder<GraphInput.InputData> permutation = null;
-
-        if( lowerbound == upperbound ) {
-            permutation = ubAlgo.getPermutation();
-        } else {
-            QuickBB<GraphInput.InputData> qbbAlgo = new QuickBB<GraphInput.InputData>();
-            qbbAlgo.setInput( g );
-            qbbAlgo.run();
-            permutation = qbbAlgo.getPermutation();
-        }
-
-        PermutationToTreeDecomposition<GraphInput.InputData> convertor = new PermutationToTreeDecomposition<GraphInput.InputData>( permutation );
-        convertor.setInput( g );
-        convertor.run();
-        NGraph<NTDBag<GraphInput.InputData>> decomposition = convertor.getDecomposition();
-
-        // needs GraphViz installed
-        decomposition.printGraph( true, true );
+        LOGGER.debug("Input: " + Configuration.INPUT_FILE);
     }
 }

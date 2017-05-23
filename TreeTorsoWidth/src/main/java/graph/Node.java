@@ -3,6 +3,8 @@ package main.java.graph;
 import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
 
+import java.util.List;
+
 /**
  * Created by Verena on 09.03.2017.
  */
@@ -10,6 +12,7 @@ public class Node {
     private String name;
     private int id;
     private boolean isInteger;
+    private List<Node> neighbours;
 
     public Node() {
     }

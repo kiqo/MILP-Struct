@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Verena on 21.05.2017.
@@ -20,7 +21,7 @@ public class LPStatisticsTest {
 
 
     @Test
-    public void testLPFromInputFile() {
+    public void testLPFromInputFile() throws TimeoutException {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = null;
         try {

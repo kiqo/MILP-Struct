@@ -18,6 +18,7 @@ import main.java.parser.GraphGenerator;
 import main.java.parser.MILPParser;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Verena on 09.03.2017.
@@ -38,7 +39,7 @@ public class GraphGeneratorTest {
     }
 
     @Test
-    public void testLinearProgramToPrimalGraph() {
+    public void testLinearProgramToPrimalGraph() throws TimeoutException {
         if (lp == null) {
             parseInputLP();
         }
