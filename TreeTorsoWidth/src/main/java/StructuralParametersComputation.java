@@ -32,7 +32,7 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private static final Stopwatch t = new Stopwatch();
     private static String fileName;
-    private static StringBuilder sb = new StringBuilder();
+    private StringBuilder sb = new StringBuilder();
 
     public StructuralParametersComputation (String fileName) {
         this.fileName = fileName;
@@ -84,7 +84,7 @@ public class StructuralParametersComputation implements Callable<String> {
         decomposition.printGraph( true, true );
     }
 
-    private static void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
+    private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         // parse input file
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = milpParser.parseMPS(fileName, false);
@@ -188,9 +188,9 @@ public class StructuralParametersComputation implements Callable<String> {
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        LOGGER.debug("LB TorsoWidth: " + torsoWidthLowerBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
+        LOGGER.debug("File: " + fileName + " LB TorsoWidth: " + torsoWidthLowerBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
-        LOGGER.debug("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
+        LOGGER.debug("File: " + fileName + " UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
         GraphData primalGraphData = linearProgram.getStatistics().getPrimalGraphData();
         primalGraphData.setTorsoWidthUB(torsoWidthUpperBound);
@@ -222,7 +222,7 @@ public class StructuralParametersComputation implements Callable<String> {
         int upperbound = ubAlgo.getUpperBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        LOGGER.debug("UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + ubAlgo.getName()
+        LOGGER.debug("File: " + fileName + " UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + ubAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
         return upperbound;
     }
@@ -236,7 +236,7 @@ public class StructuralParametersComputation implements Callable<String> {
         int lowerbound = lbAlgo.getLowerBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        LOGGER.debug("LB: " + lowerbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + lbAlgo.getName()
+        LOGGER.debug("File: " + fileName + " LB: " + lowerbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + lbAlgo.getName()
                 + ", time: " + millisecondsPassed / 1000 + "s");
         return lowerbound;
     }

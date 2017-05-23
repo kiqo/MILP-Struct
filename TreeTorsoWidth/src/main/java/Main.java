@@ -65,11 +65,13 @@ public class Main {
             sb.append(LPStatistics.shortDescriptionHeader());
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(1); // -> keeps EXACTLY one thread, change to using a thread pool?
+        ExecutorService executor = Executors.newSingleThreadExecutor(); // -> keeps EXACTLY one thread, change to using a thread pool?
 /*        List<Callable> callables = new ArrayList<>();
         for (String fileName : files) {
-            callables.add(new StructuralParametersComputation(fileName, ""));
-        }*/
+            callables.add(new StructuralParametersComputation(fileName));
+        }
+        result = executor.invokeAll(callables, 30, TimeUnit.SECONDS);
+        */
 
         for (String fileName : files) {
             LOGGER.debug("Structural Parameters: " + fileName);
@@ -91,12 +93,12 @@ public class Main {
             } catch (InterruptedException | ExecutionException e) {
                 LOGGER.error("", e);
             }
-
+            LOGGER.debug(resultString);
             sb.append(resultString);
             LOGGER.debug("-------------------");
         }
 
-        // Disable new tasks from being submitted
+        // disable new tasks from being submitted
         executor.shutdown();
         try {
             // Wait a while for existing tasks to terminate
