@@ -71,7 +71,7 @@ public class Main {
             String resultString = null;
             try {
                 // invoke all waits until all tasks are finished (= terminated or had an error)
-                result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName)), 3, TimeUnit.SECONDS);
+                result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName)), Configuration.TIMEOUT, TimeUnit.SECONDS);
 
                 if (result.get(0).isCancelled()) {
                     // task finished by cancellation (seconds exceeded)
@@ -92,11 +92,11 @@ public class Main {
         executor.shutdown();
         try {
             // Wait a while for existing tasks to terminate
-            if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(Configuration.TERMINATION_TIMEOUT, TimeUnit.SECONDS)) {
                 // Cancel currently executing tasks
                 executor.shutdownNow();
                 // Wait a while for tasks to respond to being cancelled
-                if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+                if (!executor.awaitTermination(Configuration.TERMINATION_TIMEOUT, TimeUnit.SECONDS)) {
                     LOGGER.error("Error: Executor did not terminate");
                 }
             }
