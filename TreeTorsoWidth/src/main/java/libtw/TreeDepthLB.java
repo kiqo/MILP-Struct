@@ -24,6 +24,9 @@ public class TreeDepthLB<D extends GraphInput.InputData> implements LowerBound<D
     private static final int NUM_ITERATIONS = 1000;
     private int lowerBound = Integer.MIN_VALUE;
 
+    /*
+    returns the longest path found by a random algorithm
+     */
     public List<ListVertex<D>> getLongestPath() {
         return longestPath;
     }

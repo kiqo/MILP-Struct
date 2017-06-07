@@ -245,7 +245,7 @@ public class StructuralParametersComputation implements Callable<String> {
 
         t.reset();
         t.start();
-        TreeDepthUB<GraphInput.InputData> treeDepthUBAlgo = new TreeDepthUB<>();
+        TreeDepthUB<GraphInput.InputData> treeDepthUBAlgo = new TreeDepthUB<>(treeDepthLBAlgo.getLongestPath());
         treeDepthUBAlgo.setInput(g);
         treeDepthUBAlgo.run();
         int treeDepthUpperBound = treeDepthUBAlgo.getUpperBound();

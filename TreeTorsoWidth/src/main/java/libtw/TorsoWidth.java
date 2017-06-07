@@ -47,7 +47,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
     @Override
     public void setInput(NGraph<D> g)  {
-        this.graph = g; // TODO make a deep copy
+        this.graph = g; // TODO make a deep copy(also with LPInputData)
     };
 
     public void run() throws InterruptedException {
