@@ -159,7 +159,7 @@ public class TreeDepth<D extends GraphInput.InputData> implements LowerBound<D>,
     private int DFSTree(ListVertex<D> rootNode, Set<ListVertex<D>> handledVertices) {
 
         handledVertices.add(rootNode);
-        System.out.print(rootNode.data.name + " ");
+        // System.out.print(rootNode.data.name + " ");
 
         int height = 0;
         for (NVertex<D> neighbor : rootNode.neighbors) {

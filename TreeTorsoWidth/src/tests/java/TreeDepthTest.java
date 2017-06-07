@@ -84,7 +84,7 @@ public class TreeDepthTest extends GraphTest {
     }
 
     private void printPath(List<ListVertex<GraphInput.InputData>> path) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder("Path found: ");
         for (int i = 0; i < path.size() - 1; i++) {
             result.append(path.get(i).data.name).append(" - ");
         }

@@ -143,10 +143,15 @@ public class StructuralParametersComputation implements Callable<String> {
             }
         }
 
-        // TODO compute for primal and incidence
         if (Configuration.TREE_DEPTH) {
             checkInterrupted();
-            computeTreeDepth(gPrimal, lp);
+            if (Configuration.PRIMAL) {
+                computeTreeDepth(gPrimal, lp.getStatistics().getPrimalGraphData());
+                checkInterrupted();
+            }
+            if (Configuration.INCIDENCE) {
+                computeTreeDepth(gIncidence, lp.getStatistics().getIncidenceGraphData());
+            }
         }
 
         if (Configuration.TORSO_WIDTH && Configuration.PRIMAL) {
@@ -231,23 +236,22 @@ public class StructuralParametersComputation implements Callable<String> {
     /*
     Computes TreeDepthLB of a graph and sets the result to the lp statistics
     */
-    private static void computeTreeDepth(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) throws InterruptedException {
+    private static void computeTreeDepth(NGraph<GraphInput.InputData> g, GraphData graphData) throws InterruptedException {
         t.reset();
         t.start();
-        TreeDepth<GraphInput.InputData> treeDepthLBAlgo = new TreeDepth<>();
-        treeDepthLBAlgo.setInput(g);
-        treeDepthLBAlgo.run();
-        int treeDepthLowerBound = treeDepthLBAlgo.getLowerBound();
+        TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
+        treeDepthAlgo.setInput(g);
+        treeDepthAlgo.run();
+        int treeDepthLowerBound = treeDepthAlgo.getLowerBound();
+        int treeDepthUpperBound = treeDepthAlgo.getUpperBound();
         t.stop();
+
         // TODO use printTimingInfo everywhere
-        printTimingInfo(fileName, "LB TreeDepth", treeDepthLowerBound, g.getNumberOfVertices(), treeDepthLBAlgo.getName(), t.getTime()/1000);
+        printTimingInfo(fileName, "LB TreeDepth", treeDepthLowerBound, g.getNumberOfVertices(), treeDepthAlgo.getName(), t.getTime()/1000);
+        printTimingInfo(fileName, "UB TreeDepth", treeDepthUpperBound, g.getNumberOfVertices(), treeDepthAlgo.getName(), t.getTime()/1000);
 
-        // TODO
-        /*
-        GraphData primalGraphData = linearProgram.getStatistics().getPrimalGraphData();
-        primalGraphData.setTreeDepthUB(treeDepthUpperBound);
-        primalGraphData.setTreeDepthLB(treeDepthLowerBound);*/
-
+        graphData.setTreeDepthUB(treeDepthUpperBound);
+        graphData.setTreeDepthLB(treeDepthLowerBound);
     }
 
     private static void printTimingInfo(String fileName, String algorithm, int result, int graphSize, String algoName, long secondsPassed) {

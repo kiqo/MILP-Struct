@@ -113,16 +113,16 @@ public class LPStatistics {
                 numBoundVariables++;
             }
             if (var.getLowerBound() != null) {
-                if (var.isInteger() && (int)var.getLowerBound() < minBoundValue) {
+                if (var.isInteger() && (int) var.getLowerBound() < minBoundValue) {
                     minBoundValue = (int) var.getLowerBound();
-                } else if (!var.isInteger() && (double)var.getLowerBound() < minBoundValue) {
+                } else if (!var.isInteger() && (double) var.getLowerBound() < minBoundValue) {
                     minBoundValue = (double) var.getLowerBound();
                 }
             }
             if (var.getUpperBound() != null) {
-                if (var.isInteger() && (int)var.getUpperBound() > maxBoundValue) {
+                if (var.isInteger() && (int) var.getUpperBound() > maxBoundValue) {
                     maxBoundValue = (int) var.getUpperBound();
-                } else if (!var.isInteger() && (double)var.getUpperBound() > maxBoundValue) {
+                } else if (!var.isInteger() && (double) var.getUpperBound() > maxBoundValue) {
                     maxBoundValue = (double) var.getUpperBound();
                 }
             }
@@ -175,34 +175,6 @@ public class LPStatistics {
         linearProgramData.sizeObjectiveFunction = linearProgram.getObjectiveFunction().getEntries().size();
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(linearProgram.getName()).append(":" + LINE_SEPARATOR);
-        sb.append("\tnumVariables = " + linearProgramData.numVariables +
-                "\tnumIntegerVariables =" + linearProgramData.numIntegerVariables +
-                "\tisIntegerLP =" + linearProgramData.isIntegerLP +
-                "\tproportionIntegerVariables =" + linearProgramData.proportionIntegerVariables +
-                "\tminIntegerVariables = " + linearProgramData.minIntegerVariables +
-                "\tmaxIntegerVariables =" + linearProgramData.maxIntegerVariables +
-                "\tavgIntegerVariables =" + linearProgramData.avgIntegerVariables +
-                "\tnumConstraints =" + linearProgramData.numConstraints +
-                "\tsizeObjectiveFunction =" + linearProgramData.sizeObjectiveFunction +
-                "\tavgVariables =" + linearProgramData.avgVariables +
-                "\tminCoefficient =" + linearProgramData.minCoefficient +
-                "\tmaxCoefficient =" + linearProgramData.maxCoefficient +
-                "\tnumBoundVariables =" + linearProgramData.numBoundVariables +
-                "numNodes = " +primalGraphData.numNodes +
-                "\tnumIntegerNodes= " + primalGraphData.numIntegerNodes +
-                "\tproportionIntegerNodes= " + primalGraphData.proportionIntegerNodes +
-                "\tnumEdges= " + primalGraphData.numEdges +
-                "\tdensity= " + primalGraphData.density +
-                "\tminDegree= " + primalGraphData.minDegree +
-                "\tmaxDegree= " + primalGraphData.maxDegree +
-                "\tavgDegree= " +  primalGraphData.avgDegree);
-        return sb.toString();
-    }
-
     public static String shortDescriptionHeader() {
         StringBuilder sb = new StringBuilder();
         sb.append("name\t\tnumVars\t\tnumIntVars\tintegerLP\tnumConstr\tsizeObjFun\tnumNodes\tnumIntNodes\tnumEdges\tdensity\t\ttw_lb\ttw_ub\ttorso_lb\ttorso_ub\t");
@@ -248,7 +220,7 @@ public class LPStatistics {
     }
 
     private String getNumTabs(String stringToFill, int tabsNeeded) {
-        int numVisualTabs = (int) Math.floor((double)stringToFill.length()/4.0);
+        int numVisualTabs = (int) Math.floor((double) stringToFill.length() / 4.0);
         String tabs = "";
         while (numVisualTabs < tabsNeeded) {
             tabs += "\t";
@@ -262,7 +234,7 @@ public class LPStatistics {
         sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
                 "numBoundVars;minCoeff;maxCoeff;sizeObjFun;");
 
-        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;";
+        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_lb;td_ub;";
         if (formatPrimalGraph) {
             sb.append(graphDataHeader).append("torso_lb;torso_ub;");
         }
@@ -330,5 +302,14 @@ public class LPStatistics {
         } else {
             sb.append(";");
         }
+        if (graphData.getTreeDepthLB() != Integer.MIN_VALUE) {
+            sb.append(graphData.getTreeDepthLB());
+        }
+        sb.append(";");
+        if(graphData.getTreeDepthUB()!=Integer.MAX_VALUE) {
+            sb.append(graphData.getTreeDepthUB());
+        }
+        sb.append(";");
+
     }
 }
