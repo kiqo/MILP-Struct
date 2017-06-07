@@ -2,8 +2,7 @@ package main.java;
 
 import main.java.graph.Graph;
 import main.java.libtw.TorsoWidth;
-import main.java.libtw.TreeDepthLB;
-import main.java.libtw.TreeDepthUB;
+import main.java.libtw.TreeDepth;
 import main.java.lp.GraphData;
 import main.java.lp.LinearProgram;
 import main.java.parser.GraphGenerator;
@@ -235,23 +234,13 @@ public class StructuralParametersComputation implements Callable<String> {
     private static void computeTreeDepth(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) throws InterruptedException {
         t.reset();
         t.start();
-        TreeDepthLB<GraphInput.InputData> treeDepthLBAlgo = new TreeDepthLB<>();
+        TreeDepth<GraphInput.InputData> treeDepthLBAlgo = new TreeDepth<>();
         treeDepthLBAlgo.setInput(g);
         treeDepthLBAlgo.run();
         int treeDepthLowerBound = treeDepthLBAlgo.getLowerBound();
         t.stop();
         // TODO use printTimingInfo everywhere
         printTimingInfo(fileName, "LB TreeDepth", treeDepthLowerBound, g.getNumberOfVertices(), treeDepthLBAlgo.getName(), t.getTime()/1000);
-
-        t.reset();
-        t.start();
-        TreeDepthUB<GraphInput.InputData> treeDepthUBAlgo = new TreeDepthUB<>(treeDepthLBAlgo.getLongestPath());
-        treeDepthUBAlgo.setInput(g);
-        treeDepthUBAlgo.run();
-        int treeDepthUpperBound = treeDepthUBAlgo.getUpperBound();
-        t.stop();
-        printTimingInfo(fileName, "UB TreeDepth", treeDepthUpperBound, g.getNumberOfVertices(), treeDepthUBAlgo.getName(), t.getTime()/1000);
-
 
         // TODO
         /*

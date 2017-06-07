@@ -1,7 +1,7 @@
 package tests.java;
 
 import main.java.graph.Graph;
-import main.java.libtw.TreeDepthLB;
+import main.java.libtw.TreeDepth;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;
@@ -20,28 +20,30 @@ public class TreeDepthTest extends GraphTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepthTest.class);
 
     /*
-    Transforms a graph to a NGraph and then runs the tree depth lower bound algorithm
+    Transforms a graph to a NGraph and then runs the tree depth algorithm
      */
-    private TreeDepthLB<GraphInput.InputData> treeDepthLB(Graph graph) throws InterruptedException {
+    private TreeDepth<GraphInput.InputData> treeDepth(Graph graph) throws InterruptedException {
 
         // generate NGraph for using libtw
         NGraph<GraphInput.InputData> g;
         GraphTransformator graphTransformator = new GraphTransformator();
         g = graphTransformator.graphToNGraph(graph);
 
-        return treeDepthLB(g);
+        return treeDepth(g);
     }
 
     /*
-    Runs the tree depth lb algorithm
+    Runs the tree depth algorithm
     */
-    private TreeDepthLB<GraphInput.InputData> treeDepthLB(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    private TreeDepth<GraphInput.InputData> treeDepth(NGraph<GraphInput.InputData> g) throws InterruptedException {
 
-        TreeDepthLB<GraphInput.InputData> treeDepthAlgo = new TreeDepthLB<>();
+        TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
         treeDepthAlgo.setInput(g);
         treeDepthAlgo.run();
         int treeDepthLB = treeDepthAlgo.getLowerBound();
+        int treeDepthUB = treeDepthAlgo.getUpperBound();
         printTimingInfo("LB TreeDepth: ", treeDepthLB, g.getNumberOfVertices(), treeDepthAlgo.getName());
+        printTimingInfo("UB TreeDepth: ", treeDepthUB, g.getNumberOfVertices(), treeDepthAlgo.getName());
 
         return treeDepthAlgo;
     }
@@ -50,20 +52,22 @@ public class TreeDepthTest extends GraphTest {
     public void testNodeBlockerGraph() throws InterruptedException {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
         LOGGER.debug("--Node Blocker Graph--");
-        TreeDepthLB<GraphInput.InputData> lbAlgoResult = treeDepthLB(nodeBlockerGraph);
-        printPath(lbAlgoResult.getLongestPath());
-        Assert.assertEquals(7, lbAlgoResult.getLongestPath().size(), 0);
-        Assert.assertEquals(3, lbAlgoResult.getLowerBound(), 0);
+        TreeDepth<GraphInput.InputData> algoResult = treeDepth(nodeBlockerGraph);
+        printPath(algoResult.getLongestPath());
+        Assert.assertEquals(7, algoResult.getLongestPath().size(), 0);
+        Assert.assertEquals(3, algoResult.getLowerBound(), 0);
+        Assert.assertEquals(4, algoResult.getUpperBound(), 0);
     }
 
     @Test
     public void testStarShapedGraph() throws InterruptedException {
         LOGGER.debug("--Star Shaped Graph--");
         Graph starShapedGraph = createStarShapedGraph();
-        TreeDepthLB<GraphInput.InputData> lbAlgoResult = treeDepthLB(starShapedGraph);
+        TreeDepth<GraphInput.InputData> algoResult = treeDepth(starShapedGraph);
         // longest path is 3, lower bound is then roundUp(ld(n+1)) = 2
-        Assert.assertEquals(3, lbAlgoResult.getLongestPath().size(), 0);
-        Assert.assertEquals(2, lbAlgoResult.getLowerBound(), 0);
+        Assert.assertEquals(3, algoResult.getLongestPath().size(), 0);
+        Assert.assertEquals(2, algoResult.getLowerBound(), 0);
+        Assert.assertEquals(2, algoResult.getUpperBound(), 0);
     }
 
     @Test
@@ -75,8 +79,8 @@ public class TreeDepthTest extends GraphTest {
         before.printGraph(true, true);
 
         LOGGER.debug("--Random Graph--");
-        TreeDepthLB<GraphInput.InputData> lbAlgoResult = treeDepthLB(before);
-        printPath(lbAlgoResult.getLongestPath());
+        TreeDepth<GraphInput.InputData> algoResult = treeDepth(before);
+        printPath(algoResult.getLongestPath());
     }
 
     private void printPath(List<ListVertex<GraphInput.InputData>> path) {
