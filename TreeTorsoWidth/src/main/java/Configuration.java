@@ -16,4 +16,5 @@ public class Configuration {
     public static boolean TORSO_WIDTH = false;
     public static boolean LOWER_BOUND = false;
     public static boolean UPPER_BOUND = false;
+    public static boolean TREE_DEPTH = false;
 }

@@ -97,7 +97,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
         ArrayList<NVertex<D>> vertices = ((ListGraph) graph).vertices;
 
-        Map<NVertex<D>, List<NVertex<D>>> vNeighboursToRemove = new HashMap<>();
+        Map<NVertex<D>, List<NVertex<D>>> neighboursToRemove = new HashMap<>();
 
         // remove now all the invalid edges, i.e. edges that contain references to nodes which were deleted
         for (Iterator<NVertex<D>> iterator = graph.iterator(); iterator.hasNext(); ) {
@@ -107,15 +107,15 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
                 if (!vertices.contains(vNeighbour)) {
 
                     // vNeighbour needs to be deleted, save it to next
-                    if (!vNeighboursToRemove.containsKey(next)) {
-                        vNeighboursToRemove.put(next, new ArrayList<>());
+                    if (!neighboursToRemove.containsKey(next)) {
+                        neighboursToRemove.put(next, new ArrayList<>());
                     }
-                    vNeighboursToRemove.get(next).add(vNeighbour);
+                    neighboursToRemove.get(next).add(vNeighbour);
                 }
             }
         }
 
-        Iterator<Map.Entry<NVertex<D>, List<NVertex<D>>>> iterator = vNeighboursToRemove.entrySet().iterator();
+        Iterator<Map.Entry<NVertex<D>, List<NVertex<D>>>> iterator = neighboursToRemove.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<NVertex<D>, List<NVertex<D>>> next = iterator.next();
             ((ListVertex<D>) next.getKey()).neighbors.removeAll(next.getValue());

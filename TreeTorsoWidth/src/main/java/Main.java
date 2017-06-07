@@ -151,6 +151,10 @@ public class Main {
                 case "-T":
                 case "--torsowidth": Configuration.TORSO_WIDTH = true; break;
 
+                case "-td":
+                case "-TD":
+                case "--treedepth": Configuration.TREE_DEPTH = true; break;
+
                 default:
                     if (expectInputFile) {
                         expectInputFile = false;

@@ -2,6 +2,8 @@ package main.java;
 
 import main.java.graph.Graph;
 import main.java.libtw.TorsoWidth;
+import main.java.libtw.TreeDepthLB;
+import main.java.libtw.TreeDepthUB;
 import main.java.lp.GraphData;
 import main.java.lp.LinearProgram;
 import main.java.parser.GraphGenerator;
@@ -134,6 +136,11 @@ public class StructuralParametersComputation implements Callable<String> {
             lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
         }
 
+        if (Configuration.TREE_DEPTH) {
+            checkInterrupted();
+            computeTreeDepth(gPrimal, lp);
+        }
+
         if (Configuration.TORSO_WIDTH && Configuration.PRIMAL) {
             // checkInterrupted(); - checked in the torso width algorithm
             computeTorsoWidth(gPrimal, lp);
@@ -181,7 +188,7 @@ public class StructuralParametersComputation implements Callable<String> {
         t.reset();
         t.start();
 
-        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(createUpperBound(), createLowerBound());
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(createUpperBound(), createLowerBound()); // TODO check that graph
         torsoWidthAlgo.setInput(g);
         torsoWidthAlgo.run();
         int torsoWidthLowerBound = torsoWidthAlgo.getLowerBound();
@@ -211,6 +218,43 @@ public class StructuralParametersComputation implements Callable<String> {
         }
         primalGraphData.setTorsoMinDegree(minDegree);
         primalGraphData.setTorsoMaxDegree(maxDegree);
+    }
+
+    /*
+    Computes TreeDepthLB of a graph and sets the result to the lp statistics
+    */
+    private static void computeTreeDepth(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) throws InterruptedException {
+        t.reset();
+        t.start();
+        TreeDepthLB<GraphInput.InputData> treeDepthLBAlgo = new TreeDepthLB<>();
+        treeDepthLBAlgo.setInput(g);
+        treeDepthLBAlgo.run();
+        int treeDepthLowerBound = treeDepthLBAlgo.getLowerBound();
+        t.stop();
+        // TODO use printTimingInfo everywhere
+        printTimingInfo(fileName, "LB TreeDepth", treeDepthLowerBound, g.getNumberOfVertices(), treeDepthLBAlgo.getName(), t.getTime()/1000);
+
+        t.reset();
+        t.start();
+        TreeDepthUB<GraphInput.InputData> treeDepthUBAlgo = new TreeDepthUB<>();
+        treeDepthUBAlgo.setInput(g);
+        treeDepthUBAlgo.run();
+        int treeDepthUpperBound = treeDepthUBAlgo.getUpperBound();
+        t.stop();
+        printTimingInfo(fileName, "UB TreeDepth", treeDepthUpperBound, g.getNumberOfVertices(), treeDepthUBAlgo.getName(), t.getTime()/1000);
+
+
+        // TODO
+        /*
+        GraphData primalGraphData = linearProgram.getStatistics().getPrimalGraphData();
+        primalGraphData.setTreeDepthUB(treeDepthUpperBound);
+        primalGraphData.setTreeDepthLB(treeDepthLowerBound);*/
+
+    }
+
+    private static void printTimingInfo(String fileName, String algorithm, int result, int graphSize, String algoName, long secondsPassed) {
+        LOGGER.debug(fileName + " " + algorithm + " " + result + " of graph size: " + graphSize + " with " + algoName
+                + ", time: " + secondsPassed + "s");
     }
 
     private static int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
