@@ -3,9 +3,14 @@ package main.java.libtw;
 import nl.uu.cs.treewidth.algorithm.LowerBound;
 import nl.uu.cs.treewidth.algorithm.UpperBound;
 import nl.uu.cs.treewidth.input.GraphInput;
+import nl.uu.cs.treewidth.ngraph.ListGraph;
+import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;
+import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * The tree-depth td(G) is defined to be the minimum height of a rooted forest F
@@ -22,12 +27,15 @@ import org.slf4j.LoggerFactory;
  * @author Verena Dittmer
  * */
 public class TreeDepthUB<D extends GraphInput.InputData> implements UpperBound<D> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepthLB.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepthUB.class);
+
+    private int upperBound = Integer.MAX_VALUE;
+    private List<ListVertex<D>> longestPath = null;
     private NGraph<D> graph;
 
     @Override
     public int getUpperBound() {
-        return 0;
+        return upperBound;
     }
 
     @Override
@@ -42,6 +50,6 @@ public class TreeDepthUB<D extends GraphInput.InputData> implements UpperBound<D
 
     @Override
     public void run() throws InterruptedException {
-
+        
     }
 }

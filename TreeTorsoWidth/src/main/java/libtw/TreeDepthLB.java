@@ -9,10 +9,7 @@ import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * A lower bound for the tree-depth is the logarithm of the length of any path in the
@@ -26,6 +23,11 @@ public class TreeDepthLB<D extends GraphInput.InputData> implements LowerBound<D
 
     private static final int NUM_ITERATIONS = 1000;
     private int lowerBound = Integer.MIN_VALUE;
+
+    public List<ListVertex<D>> getLongestPath() {
+        return longestPath;
+    }
+
     private List<ListVertex<D>> longestPath = null;
     private NGraph<D> graph;
 
@@ -57,7 +59,7 @@ public class TreeDepthLB<D extends GraphInput.InputData> implements LowerBound<D
             }
         }
 
-        lowerBound = (int) Math.ceil(Math.log(maxPathLength) / Math.log(2.0));
+        lowerBound = (int) Math.ceil(Math.log(maxPathLength + 1) / Math.log(2.0));
     }
 
     private List<ListVertex<D>> findRandomPath() {
@@ -72,6 +74,7 @@ public class TreeDepthLB<D extends GraphInput.InputData> implements LowerBound<D
         pathFound.add(curVertex);
         int numIterations = 0; // debug purposes TODO
 
+        boolean startVertexHandledAgain = false;
         while (true) {
             numIterations++;
 
@@ -84,7 +87,7 @@ public class TreeDepthLB<D extends GraphInput.InputData> implements LowerBound<D
             }
 
             // first try to randomly select a neighbour to be the next vertex in the path
-            ListVertex<D> nextVertex = (ListVertex<D>) curVertex.neighbors.get(rand.nextInt(curVertex.getNumberOfNeighbors() - 1));
+            ListVertex<D> nextVertex = (ListVertex<D>) curVertex.neighbors.get(rand.nextInt(curVertex.getNumberOfNeighbors()));
             if (!pathFound.contains(nextVertex)) {
                 pathFound.add(nextVertex);
             } else {
@@ -102,7 +105,15 @@ public class TreeDepthLB<D extends GraphInput.InputData> implements LowerBound<D
                 }
 
                 if (!pathIncreased) {
-                    break;
+                    if (startVertexHandledAgain) {
+                        // path cannot be increased anymore so stop
+                        break;
+                    } else {
+                        // go back to start vertex and try to increase path from there
+                        startVertexHandledAgain = true;
+                        // reverse current path found such that start vertex is at the end
+                        Collections.reverse(pathFound);
+                    }
                 }
             }
         }
