@@ -184,9 +184,9 @@ public class Main {
             return;
         }
 
-        if (Configuration.GRAPH_TYPE.equals("p") || Configuration.GRAPH_TYPE.equals("Configuration.PRIMAL")) {
+        if (Configuration.GRAPH_TYPE.equals("p") || Configuration.GRAPH_TYPE.equals("primal")) {
             Configuration.PRIMAL = true;
-        } else if (Configuration.GRAPH_TYPE.equals("i") || Configuration.GRAPH_TYPE.equals("Configuration.INCIDENCE")){
+        } else if (Configuration.GRAPH_TYPE.equals("i") || Configuration.GRAPH_TYPE.equals("incidence")){
             Configuration.INCIDENCE = true;
         } else if (Configuration.GRAPH_TYPE.equals("pi") || Configuration.GRAPH_TYPE.equals("ip")) {
             Configuration.PRIMAL = true;

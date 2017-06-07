@@ -93,49 +93,58 @@ public class StructuralParametersComputation implements Callable<String> {
 
         checkInterrupted();
 
-        // generate primal graph
         GraphGenerator graphGenerator = new GraphGenerator();
         Graph primalGraph = null;
         Graph incidenceGraph = null;
+
+        // NGraph for using libtw
+        NGraph<GraphInput.InputData> gPrimal = null, gIncidence = null;
+        GraphTransformator graphTransformator = new GraphTransformator();
+
         if (Configuration.PRIMAL) {
             primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
+            checkInterrupted();
             lp.getStatistics().computePrimalGraphData(primalGraph);
+            gPrimal = graphTransformator.graphToNGraph(primalGraph);
         }
         if (Configuration.INCIDENCE) {
             incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
+            checkInterrupted();
             lp.getStatistics().computeIncidenceGraphData(incidenceGraph);
+            gIncidence = graphTransformator.graphToNGraph(incidenceGraph);
         }
-
         checkInterrupted();
 
-        // generate NGraph for using libtw
-        NGraph<GraphInput.InputData> gPrimal, gIncidence;
-        GraphTransformator graphTransformator = new GraphTransformator();
-        gPrimal = graphTransformator.graphToNGraph(primalGraph);
-        checkInterrupted();
-        gIncidence = graphTransformator.graphToNGraph(incidenceGraph);
-        checkInterrupted();
-
-        // just gets stuck for large instances - TODO try on server
+        // Displays and writes graph to file system using GraphViz but too slow for large graphs
         // g.printGraph(true, true);
 
+        // compute lower bound for tree width
         if (Configuration.LOWER_BOUND) {
-            int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
+            if (Configuration.PRIMAL) {
+                int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
+                lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
+            }
             checkInterrupted();
-            int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
-
-            lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
-            lp.getStatistics().getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
+            if (Configuration.INCIDENCE) {
+                int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
+                lp.getStatistics().getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
+            }
         }
 
+        // compute upper bound for tree width
         if (Configuration.UPPER_BOUND) {
             // checkInterrupted(); - checked in the upper bound algorithm
-            int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
-            int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
-            lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
-            lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
+            if (Configuration.PRIMAL) {
+                int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
+                lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
+            }
+            if (Configuration.INCIDENCE) {
+                int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
+                lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
+            }
         }
 
+        // TODO compute for primal and incidence
         if (Configuration.TREE_DEPTH) {
             checkInterrupted();
             computeTreeDepth(gPrimal, lp);
@@ -253,7 +262,7 @@ public class StructuralParametersComputation implements Callable<String> {
     }
 
     private static void printTimingInfo(String fileName, String algorithm, int result, int graphSize, String algoName, long secondsPassed) {
-        LOGGER.debug(fileName + " " + algorithm + " " + result + " of graph size: " + graphSize + " with " + algoName
+        LOGGER.debug(fileName + " " + algorithm + ": " + result + " of  " + graphSize + " nodes with " + algoName
                 + ", time: " + secondsPassed + "s");
     }
 
