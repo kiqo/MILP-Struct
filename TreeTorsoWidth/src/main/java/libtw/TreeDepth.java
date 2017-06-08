@@ -113,6 +113,7 @@ public class TreeDepth<D extends GraphInput.InputData> implements LowerBound<D>,
 
             if (curVertex.getNumberOfNeighbors() == 0) {
                 // may only happen if the graph is not connected
+                LOGGER.warn("Vertex " + curVertex.data.name + " with id " + curVertex.data.id + " has no neighbours!");
                 break;
             }
 

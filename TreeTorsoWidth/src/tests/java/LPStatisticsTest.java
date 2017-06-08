@@ -41,6 +41,6 @@ public class LPStatisticsTest {
                 "numBoundVars;minCoeff;maxCoeff;sizeObjFun;" +
                 "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;torso_lb;torso_ub;");*/
         Assert.assertEquals("bienst2;7;8;2;0,29;false;0.0;2.0;1.0;3.0;" +
-                "2;-74.0;1.0;1;7;2;0,2857;13;0,6190;1;6;3,7143;0;0;0;0;" + System.lineSeparator(), statistics.csvFormat(true, false));
+                "2;-74.0;1.0;1;7;2;0,2857;13;0,6190;1;6;3,7143;0;0;0;0;0;0;" + System.lineSeparator(), statistics.csvFormat(true, false));
     }
 }

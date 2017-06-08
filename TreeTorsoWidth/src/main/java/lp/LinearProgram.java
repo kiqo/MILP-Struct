@@ -3,9 +3,7 @@ package main.java.lp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Verena on 07.03.2017.
@@ -83,6 +81,7 @@ public class LinearProgram {
     public List<MatrixRow> getConstraints() {
         return constraints;
     }
+
 
     public void setConstraints(List<MatrixRow> constraints) {
         this.constraints = constraints;
