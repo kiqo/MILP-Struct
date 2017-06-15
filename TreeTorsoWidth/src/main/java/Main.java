@@ -118,7 +118,7 @@ public class Main {
     private static void parseArguments(String[] args) {
         int argc = args.length;
         boolean error = false;
-        String helpMessage = "Usage: TreeTorsoWidth -i (inputFile.mps|inputFile.txt) (-u|-l|-t) [-o outputFile] [-g (p[rimal]|i[ncidence]|pi)]";
+        String helpMessage = "Usage: TreeTorsoWidth -i (inputFile.mps|inputFile.txt) (-u|-l|-t|-td) [-o outputFile] [-g (p[rimal]|i[ncidence]|pi)]";
 
         if (argc <= 1) {
             error = true;
@@ -138,6 +138,8 @@ public class Main {
                 case "-g":
                 case "-G":
                 case "--graph": expectGraphType = true; break;
+
+                case "-obj": Configuration.OBJ_FUNCTION = true; break;
 
                 case "-u":
                 case "-U":
@@ -176,9 +178,9 @@ public class Main {
             }
         }
 
-        // check that either treewidth upper- or lowerbound or torsowidth are computed
-        if (!Configuration.LOWER_BOUND & !Configuration.UPPER_BOUND & !Configuration.TORSO_WIDTH) {
-            LOGGER.error("Either -u -l -t must be set!");
+        // check that either treewidth upper- or lowerbound, torsowidth or treedepth is computed
+        if (!Configuration.LOWER_BOUND & !Configuration.UPPER_BOUND & !Configuration.TORSO_WIDTH && !Configuration.TREE_DEPTH) {
+            LOGGER.error("Either -u -l -t -td must be set!");
             LOGGER.error(helpMessage);
             System.exit(1);
             return;
@@ -198,6 +200,11 @@ public class Main {
 
         if (Configuration.TORSO_WIDTH && !Configuration.PRIMAL) {
             LOGGER.error("Error: Option to compute torso width is only possible if graph type Configuration.PRIMAL is specified!");
+            error = true;
+        }
+
+        if (Configuration.TREE_DEPTH && !Configuration.PRIMAL) {
+            LOGGER.error("Error: Option to compute treedepth is only possible if graph type Configuration.PRIMAL is specified!");
             error = true;
         }
 

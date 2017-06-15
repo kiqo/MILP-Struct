@@ -17,4 +17,5 @@ public class Configuration {
     public static boolean LOWER_BOUND = false;
     public static boolean UPPER_BOUND = false;
     public static boolean TREE_DEPTH = false;
+    public static boolean OBJ_FUNCTION = false;
 }

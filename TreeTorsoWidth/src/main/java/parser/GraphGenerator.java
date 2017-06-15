@@ -8,6 +8,7 @@ import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
 import main.java.lp.Row;
 
+import javax.security.auth.login.Configuration;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
@@ -28,9 +29,15 @@ public class GraphGenerator {
         Map<String, List<Node>> neighbourNodes = new HashMap<>();
 
         int numVariable = 0;
-
-        // generate nodes
-        for (MatrixRow matrixRow : lp.getConstraints()) {
+        Collection<Row> rows;
+        if (main.java.Configuration.OBJ_FUNCTION) {
+            // objective function is considered like a row in the matrix
+            rows = lp.getRows().values();
+        } else {
+            // objective function just ignored
+            rows = new ArrayList<>(lp.getConstraints());
+        }
+        for (Row matrixRow : rows) {
 
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
@@ -110,10 +117,11 @@ public class GraphGenerator {
             convertRowToEdge(row, nodesMap, neighbourNodes, edges);
         }
 
-
         // definition for primal graph varies here: sometimes the objective function is considered and sometimes not
         // generate edges for objective function
-        // convertRowToEdge(lp.getObjectiveFunction(), neighbourNodes, edges);
+        if (main.java.Configuration.OBJ_FUNCTION) {
+            convertRowToEdge(lp.getObjectiveFunction(), nodesMap, neighbourNodes, edges);
+        }
 
         primalGraph.setEdges(edges);
         primalGraph.setNeighbourNodes(neighbourNodes);

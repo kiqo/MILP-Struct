@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import main.java.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
@@ -75,12 +76,18 @@ public class GraphGeneratorTest {
         Graph incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
 
         // number of nodes
-        Assert.assertEquals(lp.getConstraints().size() + lp.getVariables().size(), incidenceGraph.getNodes().size(), 0);
+        int numNodesExpected = lp.getConstraints().size() + lp.getVariables().size();
+        if (Configuration.OBJ_FUNCTION) {
+            numNodesExpected++;
+        }
+        Assert.assertEquals(numNodesExpected, incidenceGraph.getNodes().size(), 0);
 
-        // objective function not in the nodes
+        // objective function also in the nodes
         Node objFuncNode = new Node();
         objFuncNode.setName(lp.getObjectiveFunction().getName());
-        Assert.assertTrue(!incidenceGraph.getNodes().contains(objFuncNode));
+        if (Configuration.OBJ_FUNCTION) {
+            Assert.assertTrue(incidenceGraph.getNodes().contains(objFuncNode));
+        }
         Assert.assertNotNull(incidenceGraph.getNodes().get(0).getName());
 
         // check all edges
