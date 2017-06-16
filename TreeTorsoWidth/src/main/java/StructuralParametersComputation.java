@@ -149,9 +149,6 @@ public class StructuralParametersComputation implements Callable<String> {
                 computeTreeDepth(gPrimal, lp.getStatistics().getPrimalGraphData());
                 checkInterrupted();
             }
-            if (Configuration.INCIDENCE) {
-                computeTreeDepth(gIncidence, lp.getStatistics().getIncidenceGraphData());
-            }
         }
 
         if (Configuration.TORSO_WIDTH && Configuration.PRIMAL) {

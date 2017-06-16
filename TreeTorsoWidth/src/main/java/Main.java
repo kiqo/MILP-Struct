@@ -118,19 +118,23 @@ public class Main {
     private static void parseArguments(String[] args) {
         int argc = args.length;
         boolean error = false;
-        String helpMessage = "Usage: TreeTorsoWidth -i (inputFile.mps|inputFile.txt) (-u|-l|-t|-td) [-o outputFile] [-g (p[rimal]|i[ncidence]|pi)]";
+        String usageMessage = "Usage: TreeTorsoWidth [--help] <inputFile(.mps|.txt)> [-o <outputFile(.txt|.csv)>] " +
+                                "(--lb|--ub|--to|--td) -g (<primal>|<incidence>|<dual>) [--obj]" + System.getProperty("line.separator" +
+                                "See TreeTorsoWidth --help for more information");
 
         if (argc <= 1) {
             error = true;
+        } else {
+            if (args[0].equals("--help")) {
+                printHelpMessage(usageMessage);
+            }
+
+            Configuration.INPUT_FILE = args[0];
         }
 
-        boolean expectInputFile = false, expectOutputFile = false , expectGraphType = false;
-        for (int i = 0; i < argc; i++) {
+        boolean expectOutputFile = false , expectGraphType = false;
+        for (int i = 1; i < argc; i++) {
             switch (args[i]) {
-                case "-i":
-                case "-I":
-                case "--input": expectInputFile = true; break;
-
                 case "-o":
                 case "-O":
                 case "--output": expectOutputFile = true; break;
@@ -139,30 +143,25 @@ public class Main {
                 case "-G":
                 case "--graph": expectGraphType = true; break;
 
-                case "-obj": Configuration.OBJ_FUNCTION = true; break;
+                case "--obj": Configuration.OBJ_FUNCTION = true; break;
 
-                case "-u":
-                case "-U":
+                case "--ub":
+                case "--UB":
                 case "--upperbound": Configuration.UPPER_BOUND = true; break;
 
-                case "-l":
-                case "-L":
+                case "--lb":
+                case "--LB":
                 case "--lowerbound": Configuration.LOWER_BOUND = true; break;
 
-                case "-t":
-                case "-T":
+                case "--to":
+                case "--TO":
                 case "--torsowidth": Configuration.TORSO_WIDTH = true; break;
 
-                case "-td":
-                case "-TD":
+                case "--td":
+                case "--TD":
                 case "--treedepth": Configuration.TREE_DEPTH = true; break;
 
                 default:
-                    if (expectInputFile) {
-                        expectInputFile = false;
-                        Configuration.INPUT_FILE = args[i];
-                        break;
-                    }
                     if (expectOutputFile) {
                         expectOutputFile = false;
                         Configuration.OUTPUT_FILE = args[i];
@@ -170,7 +169,17 @@ public class Main {
 
                     }
                     if (expectGraphType) {
-                        Configuration.GRAPH_TYPE = args[i];
+                        String graphType = args[i];
+                        if (graphType.equalsIgnoreCase("p") || graphType.equalsIgnoreCase("primal")) {
+                            Configuration.PRIMAL = true;
+                        } else if (graphType.equalsIgnoreCase("i") || graphType.equalsIgnoreCase("incidence")){
+                            Configuration.INCIDENCE = true;
+                        } else if (graphType.equalsIgnoreCase("d") || graphType.equalsIgnoreCase("dual")) {
+                            Configuration.DUAL = true;
+                        } else {
+                            LOGGER.error("Error: Graph type that should be computed is not recognized!");
+                            error = true;
+                        }
                         break;
                     }
 
@@ -181,21 +190,9 @@ public class Main {
         // check that either treewidth upper- or lowerbound, torsowidth or treedepth is computed
         if (!Configuration.LOWER_BOUND & !Configuration.UPPER_BOUND & !Configuration.TORSO_WIDTH && !Configuration.TREE_DEPTH) {
             LOGGER.error("Either -u -l -t -td must be set!");
-            LOGGER.error(helpMessage);
+            LOGGER.error(usageMessage);
             System.exit(1);
             return;
-        }
-
-        if (Configuration.GRAPH_TYPE.equals("p") || Configuration.GRAPH_TYPE.equals("primal")) {
-            Configuration.PRIMAL = true;
-        } else if (Configuration.GRAPH_TYPE.equals("i") || Configuration.GRAPH_TYPE.equals("incidence")){
-            Configuration.INCIDENCE = true;
-        } else if (Configuration.GRAPH_TYPE.equals("pi") || Configuration.GRAPH_TYPE.equals("ip")) {
-            Configuration.PRIMAL = true;
-            Configuration.INCIDENCE = true;
-        } else {
-            LOGGER.error("Error: Graph type that should be computed is not recognized!");
-            error = true;
         }
 
         if (Configuration.TORSO_WIDTH && !Configuration.PRIMAL) {
@@ -209,11 +206,19 @@ public class Main {
         }
 
         if (error) {
-            LOGGER.error(helpMessage);
+            LOGGER.error(usageMessage);
             System.exit(1);
             return;
         }
 
+        Configuration.printOut();
         LOGGER.debug("Input: " + Configuration.INPUT_FILE);
+    }
+
+    private static void printHelpMessage(String usageMessage) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(usageMessage);
+        LOGGER.error(usageMessage);
+        System.exit(1);
     }
 }
