@@ -16,6 +16,7 @@ import java.util.concurrent.TimeoutException;
  * Created by Verena on 09.03.2017.
  */
 public class GraphGenerator {
+    private Map<String, List<Node>> neighbourNodes;
 
     /* @Input LinearProgram
        @Output Incidence graph of the linear program
@@ -125,8 +126,40 @@ public class GraphGenerator {
 
         primalGraph.setEdges(edges);
         primalGraph.setNeighbourNodes(neighbourNodes);
+        this.neighbourNodes = neighbourNodes;
+        primalGraph.setComponents(findComponents(primalGraph));
 
         return primalGraph;
+    }
+
+    /*
+    Finds connected components in the graph and returns a list containing one vertex for each component
+     */
+    private List<Node> findComponents(Graph graph) {
+        List<Node> components = new ArrayList<>();
+
+        List<Node> handledNodes = new ArrayList<>();
+        for (Node node : graph.getNodes()) {
+            if (!handledNodes.contains(node)) {
+                DFSSearch(node, handledNodes);
+
+                // add this node as representative to result set
+                components.add(node);
+            }
+        }
+        return components;
+    }
+
+    // TODO remove duplicate code in TreeDepth
+    private void DFSSearch(Node rootNode, List<Node> handledNodes) {
+
+        handledNodes.add(rootNode);
+
+        for (Node neighbor : neighbourNodes.get(rootNode.getName())) {
+            if (!handledNodes.contains(neighbor)) {
+                DFSSearch(neighbor, handledNodes);
+            }
+        }
     }
 
     private void convertRowToEdge(Row row, Map<String, Node> nodesMap, Map<String, List<Node>> neighbourNodes, List<Edge> edges) throws InterruptedException {
