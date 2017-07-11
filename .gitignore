@@ -1,10 +1,6 @@
 input/benchmarks/
 !input/
 
-libtw-master/
-!libtw-master/libtw-master/
-!libtw-master/libtw-master/libtw/src/nl/uu/cs/treewidth/algorithm/GreedyDegree.java
-!libtw-master/libtw-master/libtw/src/nl/uu/cs/treewidth/output/DotWriter.java
 TreeTorsoWidth/out/production
 
 *.class
