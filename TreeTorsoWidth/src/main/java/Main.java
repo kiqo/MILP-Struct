@@ -189,7 +189,7 @@ public class Main {
 
         // check that either treewidth upper- or lowerbound, torsowidth or treedepth is computed
         if (!Configuration.LOWER_BOUND & !Configuration.UPPER_BOUND & !Configuration.TORSO_WIDTH && !Configuration.TREE_DEPTH) {
-            LOGGER.error("Either -u -l -t -td must be set!");
+            LOGGER.error("Either --ub --lb --to or --td must be set!");
             LOGGER.error(usageMessage);
             System.exit(1);
             return;

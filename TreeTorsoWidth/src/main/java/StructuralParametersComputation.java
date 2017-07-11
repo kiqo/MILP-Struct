@@ -198,7 +198,7 @@ public class StructuralParametersComputation implements Callable<String> {
         t.reset();
         t.start();
 
-        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(createUpperBound(), createLowerBound()); // TODO check that graph
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(createUpperBound(), createLowerBound());
         torsoWidthAlgo.setInput(g);
         torsoWidthAlgo.run();
         int torsoWidthLowerBound = torsoWidthAlgo.getLowerBound();

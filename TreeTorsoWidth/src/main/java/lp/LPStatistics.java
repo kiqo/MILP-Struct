@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -141,7 +143,15 @@ public class LPStatistics {
         int maxNumInteger = Integer.MIN_VALUE;
         double minCoefficient = Double.MAX_VALUE;
         double maxCoefficient = Double.MIN_VALUE;
-        for (MatrixRow matrixRow : linearProgram.getConstraints()) {
+        Collection<Row> rows;
+        if (main.java.Configuration.OBJ_FUNCTION) {
+            // objective function is considered like a row in the matrix
+            rows = linearProgram.getRows().values();
+        } else {
+            // objective function just ignored
+            rows = new ArrayList<>(linearProgram.getConstraints());
+        }
+        for (Row matrixRow : rows) {
 
             int numIntegerInRow = 0;
             for (MatrixEntry matrixEntry : matrixRow.getEntries()) {
@@ -251,7 +261,7 @@ public class LPStatistics {
         sb.append(linearProgramData.numVariables).append(";");
         sb.append(linearProgramData.numConstraints).append(";");
         sb.append(linearProgramData.numIntegerVariables).append(";");
-        sb.append(new DecimalFormat("0.00").format(linearProgramData.proportionIntegerVariables)).append(";");
+        sb.append(new DecimalFormat("0.0000").format(linearProgramData.proportionIntegerVariables)).append(";");
         sb.append(linearProgramData.isIntegerLP).append(";");
         sb.append(linearProgramData.minIntegerVariables).append(";");
         sb.append(linearProgramData.maxIntegerVariables).append(";");
