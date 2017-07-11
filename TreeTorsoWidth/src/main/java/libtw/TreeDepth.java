@@ -31,7 +31,7 @@ public class TreeDepth<D extends GraphInput.InputData> implements LowerBound<D>,
 
     class MyConverter<D extends GraphInput.InputData> implements NGraph.Convertor<D,LPInputData> {
         public LPInputData convert(NVertex<D> old ) {
-            LPInputData d = new LPInputData(old.data.id, old.data.name, false);
+            LPInputData d = new LPInputData(old.data.id, old.data.name, ((LPInputData) old.data).isInteger());
             d.setNodeHandled(false);
             return d;
         }

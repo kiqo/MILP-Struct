@@ -143,17 +143,17 @@ public class StructuralParametersComputation implements Callable<String> {
             }
         }
 
+        if (Configuration.TORSO_WIDTH && Configuration.PRIMAL) {
+            // checkInterrupted(); - checked in the torso width algorithm
+            computeTorsoWidth(gPrimal, lp);
+        }
+
         if (Configuration.TREE_DEPTH) {
             checkInterrupted();
             if (Configuration.PRIMAL) {
                 computeTreeDepth(gPrimal, lp.getStatistics().getPrimalGraphData());
                 checkInterrupted();
             }
-        }
-
-        if (Configuration.TORSO_WIDTH && Configuration.PRIMAL) {
-            // checkInterrupted(); - checked in the torso width algorithm
-            computeTorsoWidth(gPrimal, lp);
         }
 
         // append statistics of current lp

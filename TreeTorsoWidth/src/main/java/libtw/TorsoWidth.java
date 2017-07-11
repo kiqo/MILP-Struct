@@ -22,6 +22,15 @@ import java.util.*;
  *
  */
 public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>, LowerBound<D> {
+
+    class MyConverter<D extends GraphInput.InputData> implements NGraph.Convertor<D,LPInputData> {
+        public LPInputData convert(NVertex<D> old ) {
+            LPInputData d = new LPInputData(old.data.id, old.data.name, ((LPInputData) old.data).isInteger());
+            d.setNodeHandled(false);
+            return d;
+        }
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TorsoWidth.class);
 
     private int lowerbound = Integer.MIN_VALUE;
@@ -47,7 +56,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
     @Override
     public void setInput(NGraph<D> g)  {
-        this.graph = g; // TODO make a deep copy(also with LPInputData)
+        graph = g.copy(new MyConverter());
     };
 
     public void run() throws InterruptedException {
