@@ -1,2 +1,2 @@
 name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;
-tanglegram2;4714;8980;4714;1,0000;true;3.0;4490.0;3.0;3.0;4714;-1.0;1.0;4490;4714;4714;1,0000;10087125;0,9081;2;4491;4279,6457;4489;0;4515;0;0;13695;4714;0,3442;31430;0,0007;2;4490;4,5900;13;0;
+gmu-35-40;1205;424;1200;0,9959;false;0.0;425.0;11.0;11.0;1200;-1395.293305;2574.3049;1050;1205;1200;0,9959;138020;0,1903;0;625;229,0788;0;486;607;0;0;1266;837;0,6611;4843;0,0095;1;425;7,6509;21;30;

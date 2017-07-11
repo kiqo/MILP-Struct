@@ -1,2 +1,0 @@
-name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;
-gmu-35-40;1205;424;1200;0,9959;false;0.0;1050.0;13.0;13.0;1200;-158053.1529;2574.3049;1050;1205;1200;0,9959;552869;0,7621;5;1059;917,6249;1049;1049;1049;1049;1050;1630;1200;0,7362;5893;0,0115;1;1050;7,2307;22;33;

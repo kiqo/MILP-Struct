@@ -1,2 +1,0 @@
-name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_lb;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_lb;td_ub;
-iis-pima-cov;768;7201;768;1,00;true;8.0;10.0;9.0;9.0;768;1.0;1.0;768;768;768;1,0000;39463;0,1340;0;651;102,7682;0;339;10;;0;0;7937;736;0,0927;71941;0,0023;1;1324;18,1280;153;338;10;1247;

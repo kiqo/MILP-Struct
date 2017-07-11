@@ -213,6 +213,42 @@ public class Main {
             return;
         }
 
+        if (Configuration.OUTPUT_FILE == null) {
+            // construct name and path for output file by input parameters
+            int endIndex = Configuration.INPUT_FILE.lastIndexOf("/");
+            String path = "./output";
+
+            String inputFile = Configuration.INPUT_FILE.substring(endIndex+1, Configuration.INPUT_FILE.length())
+                    .replace(".txt", "")
+                    .replace(".mps", "");
+
+            String outputFile = path + "/" + inputFile;
+
+            if (Configuration.LOWER_BOUND) {
+                outputFile += "_LB";
+            }
+            if (Configuration.LOWER_BOUND) {
+                outputFile += "_UB";
+            }
+            if (Configuration.TORSO_WIDTH) {
+                outputFile += "_TO";
+            }
+            if (Configuration.TREE_DEPTH) {
+                outputFile += "_TD";
+            }
+            if (Configuration.OBJ_FUNCTION) {
+                outputFile += "_OBJ";
+            }
+            if (Configuration.PRIMAL) {
+                outputFile += "_P";
+            }
+            if (Configuration.INCIDENCE) {
+                outputFile += "_I";
+            }
+            outputFile += ".csv";
+            Configuration.OUTPUT_FILE = outputFile;
+        }
+
         Configuration.printOut();
         LOGGER.debug("Input: " + Configuration.INPUT_FILE);
     }

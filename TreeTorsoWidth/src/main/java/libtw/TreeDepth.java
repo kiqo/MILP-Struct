@@ -39,6 +39,7 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepth.class);
     // times that some DFS spanning tree are generated
     private static final int NUM_ITERATIONS = 100;
+    private static final boolean MAX_DEGREE_HEURISTIC = true;
     private int upperBound = Integer.MAX_VALUE;
 
     /*
@@ -83,7 +84,13 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
             // construct a DFS by using the node in the middle of the longest path as root
             ListVertex<D> rootNode = path.get(path.size() / 2);
             Set<ListVertex<D>> nodesHandled = new HashSet();
-            int height = DFSTreeByMaxDegreeRoot(rootNode, nodesHandled);
+
+            int height;
+            if (MAX_DEGREE_HEURISTIC) {
+                height = DFSTreeByMaxDegreeRoot(rootNode, nodesHandled);
+            } else {
+                height = DFSTree(rootNode, nodesHandled);
+            }
 
             if (nodesHandled.size() != graph.getNumberOfVertices()) {
                 // graph is not connected
@@ -103,7 +110,11 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
                             }
                         }
 
-                        heightComponent = DFSTreeByMaxDegreeRoot((ListVertex<D>) newRootNode, nodesHandled);
+                        if (MAX_DEGREE_HEURISTIC) {
+                            heightComponent = DFSTreeByMaxDegreeRoot((ListVertex<D>) newRootNode, nodesHandled);
+                        } else {
+                            heightComponent = DFSTree((ListVertex<D>) newRootNode, nodesHandled);
+                        }
                         if (heightComponent > height) {
                             height = heightComponent;
                         }
