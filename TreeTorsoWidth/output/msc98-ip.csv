@@ -1,2 +1,2 @@
-name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_lb;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_lb;td_ub;
-./../input/benchmarks/msc98-ip.mps;no result;
+name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;
+msc98-ip;21143;15850;20290;0,9597;false;0.0;92.0;5.0;5.0;21120;-1000000.0;2334530.0;7440;21143;20290;0,9597;560877;0,0025;1;759;53,0556;1;0;1867;0;0;36993;20290;0,5485;92918;0,0003;0;394;5,0235;0;0;

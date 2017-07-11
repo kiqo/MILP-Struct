@@ -84,7 +84,9 @@ public class Main {
             } catch (InterruptedException | ExecutionException e) {
                 LOGGER.error("", e);
             }
-            sb.append(resultString);
+            if (resultString != null) {
+                sb.append(resultString);
+            }
             LOGGER.debug("-------------------");
         }
 
@@ -101,7 +103,7 @@ public class Main {
                 }
             }
         } catch (InterruptedException e) {
-            LOGGER.error("", e);
+            LOGGER.error("Interrupted Exception", e);
         }
 
         // print to output file statistics about lp and primal graph
