@@ -1,9 +1,5 @@
 package tests.java;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import main.java.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
@@ -20,6 +16,8 @@ import main.java.parser.MILPParser;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by Verena on 09.03.2017.
@@ -47,10 +45,11 @@ public class GraphGeneratorTest {
 
         Graph primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
 
-        // assert statements
         assertNotNull(primalGraph.getEdges());
         assertNotNull(primalGraph.getNodes());
         assertNotNull(primalGraph.getNeighbourNodes());
+        assertNotNull(primalGraph.getComponents());
+        assertEquals(1, primalGraph.getComponents().size(), 0);
 
         boolean nodeFound;
         for (String variableName : lp.getVariables().keySet()) {
@@ -105,6 +104,11 @@ public class GraphGeneratorTest {
                 Assert.assertTrue(incidenceGraph.getEdges().contains(edge));
             }
         }
+
+        // components
+        assertNotNull(incidenceGraph.getComponents());
+        assertEquals(1, incidenceGraph.getComponents().size(), 0);
+
 
         correctGraph(incidenceGraph);
     }

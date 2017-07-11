@@ -78,6 +78,8 @@ public class GraphGenerator {
         incidenceGraph.setEdges(edges);
         incidenceGraph.setNeighbourNodes(neighbourNodes);
         incidenceGraph.setNodes(nodes);
+        this.neighbourNodes = neighbourNodes;
+        incidenceGraph.setComponents(findComponents(incidenceGraph));
         return incidenceGraph;
     }
 

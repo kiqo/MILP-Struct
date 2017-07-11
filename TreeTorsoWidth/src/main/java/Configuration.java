@@ -12,7 +12,7 @@ public class Configuration {
     private static final String TAB = "\t";
 
     public static long TERMINATION_TIMEOUT = 30;
-    public static long TIMEOUT = 600;
+    public static long TIMEOUT = 120;
     public static Class<?> UPPER_BOUND_ALG = null;
     public static Class<?> LOWER_BOUND_ALG = null;
     public static String INPUT_FILE = null;
