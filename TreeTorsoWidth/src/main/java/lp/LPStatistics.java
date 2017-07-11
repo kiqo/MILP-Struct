@@ -247,9 +247,9 @@ public class LPStatistics {
         sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
                 "numBoundVars;minCoeff;maxCoeff;sizeObjFun;");
 
-        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_lb;td_ub;";
+        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;";
         if (formatPrimalGraph) {
-            sb.append(graphDataHeader).append("torso_lb;torso_ub;");
+            sb.append(graphDataHeader).append("td_ub;torso_lb;torso_ub;");
         }
         if (formatIncidenceGraph) {
             sb.append(graphDataHeader);
@@ -277,6 +277,10 @@ public class LPStatistics {
 
         if (formatPrimalGraph) {
             formatGraphData(sb, primalGraphData);
+            if(primalGraphData.getTreeDepthUB()!=Integer.MAX_VALUE) {
+                sb.append(primalGraphData.getTreeDepthUB());
+            }
+            sb.append(";");
             if (primalGraphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
                 sb.append(primalGraphData.getTorsoWidthLB());
             }
@@ -315,14 +319,5 @@ public class LPStatistics {
         } else {
             sb.append(";");
         }
-        if (graphData.getTreeDepthLB() != Integer.MIN_VALUE) {
-            sb.append(graphData.getTreeDepthLB());
-        }
-        sb.append(";");
-        if(graphData.getTreeDepthUB()!=Integer.MAX_VALUE) {
-            sb.append(graphData.getTreeDepthUB());
-        }
-        sb.append(";");
-
     }
 }

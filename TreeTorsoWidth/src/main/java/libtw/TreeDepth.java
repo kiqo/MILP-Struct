@@ -1,8 +1,6 @@
 package main.java.libtw;
 
 import main.java.Configuration;
-import nl.uu.cs.treewidth.algorithm.GreedyFillIn;
-import nl.uu.cs.treewidth.algorithm.LowerBound;
 import nl.uu.cs.treewidth.algorithm.UpperBound;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.ListGraph;
@@ -28,7 +26,7 @@ import java.util.*;
  *
  * @author Verena Dittmer
  * */
-public class TreeDepth<D extends GraphInput.InputData> implements LowerBound<D>, UpperBound<D> {
+public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> {
 
     class MyConverter<D extends GraphInput.InputData> implements NGraph.Convertor<D,LPInputData> {
         public LPInputData convert(NVertex<D> old ) {
@@ -41,7 +39,6 @@ public class TreeDepth<D extends GraphInput.InputData> implements LowerBound<D>,
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepth.class);
     // times that some DFS spanning tree are generated
     private static final int NUM_ITERATIONS = 100;
-    private int lowerBound = Integer.MIN_VALUE;
     private int upperBound = Integer.MAX_VALUE;
 
     /*
@@ -53,11 +50,6 @@ public class TreeDepth<D extends GraphInput.InputData> implements LowerBound<D>,
 
     private List<ListVertex<D>> longestPath = null;
     private NGraph<D> graph;
-
-    @Override
-    public int getLowerBound() {
-        return lowerBound;
-    }
 
     @Override
     public int getUpperBound() {
@@ -126,7 +118,8 @@ public class TreeDepth<D extends GraphInput.InputData> implements LowerBound<D>,
                 this.upperBound = height;
             }
         }
-        lowerBound = (int) Math.ceil(Math.log(maxPathLength + 1) / Math.log(2.0));
+        // lowerBound is too bad to be useful
+        // lowerBound = (int) Math.ceil(Math.log(maxPathLength + 1) / Math.log(2.0));
     }
 
     private List<ListVertex<D>> findRandomPath() {

@@ -238,15 +238,12 @@ public class StructuralParametersComputation implements Callable<String> {
         TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
         treeDepthAlgo.setInput(g);
         treeDepthAlgo.run();
-        int treeDepthLowerBound = treeDepthAlgo.getLowerBound();
         int treeDepthUpperBound = treeDepthAlgo.getUpperBound();
         t.stop();
 
-        printTimingInfo(fileName, "LB TreeDepth", treeDepthLowerBound, g.getNumberOfVertices(), treeDepthAlgo.getName(), t.getTime()/1000);
         printTimingInfo(fileName, "UB TreeDepth", treeDepthUpperBound, g.getNumberOfVertices(), treeDepthAlgo.getName(), t.getTime()/1000);
 
         graphData.setTreeDepthUB(treeDepthUpperBound);
-        graphData.setTreeDepthLB(treeDepthLowerBound);
     }
 
     private static void printTimingInfo(String fileName, String algorithm, int result, int graphSize, String algoName, long secondsPassed) {

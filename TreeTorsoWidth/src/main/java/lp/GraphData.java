@@ -20,14 +20,7 @@ public class GraphData {
     private int torsoWidthLB;
     private int torsoMinDegree;
     private int torsoMaxDegree;
-
-    public int getTreeDepthLB() {
-        return treeDepthLB;
-    }
-
-    public void setTreeDepthLB(int treeDepthLB) {
-        this.treeDepthLB = treeDepthLB;
-    }
+    private int treeDepthUB;
 
     public int getTreeDepthUB() {
         return treeDepthUB;
@@ -36,9 +29,6 @@ public class GraphData {
     public void setTreeDepthUB(int treeDepthUB) {
         this.treeDepthUB = treeDepthUB;
     }
-
-    private int treeDepthLB;
-    private int treeDepthUB;
 
     public int getTreewidthUB() {
         return treewidthUB;

@@ -40,9 +40,7 @@ public class TreeDepthTest extends GraphTest {
         TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
         treeDepthAlgo.setInput(g);
         treeDepthAlgo.run();
-        int treeDepthLB = treeDepthAlgo.getLowerBound();
         int treeDepthUB = treeDepthAlgo.getUpperBound();
-        printTimingInfo("LB TreeDepth: ", treeDepthLB, g.getNumberOfVertices(), treeDepthAlgo.getName());
         printTimingInfo("UB TreeDepth: ", treeDepthUB, g.getNumberOfVertices(), treeDepthAlgo.getName());
 
         return treeDepthAlgo;
@@ -55,7 +53,6 @@ public class TreeDepthTest extends GraphTest {
         TreeDepth<GraphInput.InputData> algoResult = treeDepth(nodeBlockerGraph);
         printPath(algoResult.getLongestPath());
         Assert.assertEquals(7, algoResult.getLongestPath().size(), 0);
-        Assert.assertEquals(3, algoResult.getLowerBound(), 0);
         Assert.assertEquals(4, algoResult.getUpperBound(), 0);
     }
 
@@ -66,7 +63,6 @@ public class TreeDepthTest extends GraphTest {
         TreeDepth<GraphInput.InputData> algoResult = treeDepth(starShapedGraph);
         // longest path is 3, lower bound is then roundUp(ld(n+1)) = 2
         Assert.assertEquals(3, algoResult.getLongestPath().size(), 0);
-        Assert.assertEquals(2, algoResult.getLowerBound(), 0);
         Assert.assertEquals(2, algoResult.getUpperBound(), 0);
     }
 
@@ -96,7 +92,6 @@ public class TreeDepthTest extends GraphTest {
         printPath(algoResult.getLongestPath());
 
         Assert.assertEquals(7, algoResult.getLongestPath().size(), 0);
-        Assert.assertEquals(3, algoResult.getLowerBound(), 0);
         Assert.assertEquals(4, algoResult.getUpperBound(), 0);
     }
 
