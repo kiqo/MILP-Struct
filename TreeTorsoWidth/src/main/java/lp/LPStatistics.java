@@ -47,11 +47,19 @@ public class LPStatistics {
     public void computePrimalGraphData(Graph primalGraph) {
         this.primalGraph = primalGraph;
         this.primalGraphData = computeGraphData(primalGraph);
+        if (primalGraphData.numNodes <= 1) {
+            primalGraphData.density = 0;
+        } else {
+            primalGraphData.density = (double) (2 * primalGraphData.numEdges) / (double) (primalGraphData.numNodes * (primalGraphData.numNodes - 1));
+        }
     }
 
     public void computeIncidenceGraphData(Graph incidenceGraph) {
         this.incidenceGraph = incidenceGraph;
         this.incidenceGraphData = computeGraphData(incidenceGraph);
+        // define the density for the incidence graph to be num edges / left side * right side of the bipartite graph
+        // i.e. the number of edges divided by the maximum possible number of edges
+        incidenceGraphData.density = (double) (incidenceGraphData.numEdges) / (double) (linearProgramData.numConstraints * linearProgramData.numVariables);
     }
 
     /*
@@ -71,11 +79,6 @@ public class LPStatistics {
         graphData.numIntegerNodes = numIntegerNodes;
         graphData.proportionIntegerNodes = (double) numIntegerNodes / (double) graphData.numNodes;
         graphData.numEdges = graph.getEdges().size();
-        if (graphData.numNodes <= 1) {
-            graphData.density = 0;
-        } else {
-            graphData.density = (double) (2 * graphData.numEdges) / (double) (graphData.numNodes * (graphData.numNodes - 1));
-        }
 
         int sumDegree = 0;
         int minDegree = Integer.MAX_VALUE;
