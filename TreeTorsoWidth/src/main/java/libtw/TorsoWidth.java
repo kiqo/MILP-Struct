@@ -248,6 +248,10 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         FAST_ALGORITHM = fastAlgorithm;
     }
 
+    public NGraph<D> getGraph() {
+        return graph;
+    }
+
     @Override
     public int getUpperBound() {
         return this.upperbound;

@@ -59,14 +59,14 @@ public class TorsoWidthTest extends GraphTest {
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
         LOGGER.debug("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes with " + torsoWidthAlgo.getName());
 
-        for (NVertex<GraphInput.InputData> node : g) {
+        for (NVertex<GraphInput.InputData> node : torsoWidthAlgo.getGraph()) {
             Assert.assertTrue(((LPInputData) node.data).isInteger());
 
             for (NVertex<GraphInput.InputData> neighbour : ((ListVertex<GraphInput.InputData>) node).neighbors) {
                 Assert.assertTrue(((LPInputData) neighbour.data).isInteger());
             }
         }
-        return g;
+        return torsoWidthAlgo.getGraph();
     }
 
 
