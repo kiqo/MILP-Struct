@@ -1,5 +1,6 @@
 package main.java.libtw;
 
+import main.java.Configuration;
 import nl.uu.cs.treewidth.algorithm.GreedyFillIn;
 import nl.uu.cs.treewidth.algorithm.LowerBound;
 import nl.uu.cs.treewidth.algorithm.UpperBound;
@@ -93,8 +94,32 @@ public class TreeDepth<D extends GraphInput.InputData> implements LowerBound<D>,
             int height = DFSTreeByMaxDegreeRoot(rootNode, nodesHandled);
 
             if (nodesHandled.size() != graph.getNumberOfVertices()) {
-                // graph is not connected, the obtained result is not valid
-                height = Integer.MAX_VALUE;
+                // graph is not connected
+                if (!Configuration.OBJ_FUNCTION) {
+                    //objective function is not considered, then compute the tree depth over all components of the graph
+
+                    int heightComponent;
+                    while (nodesHandled.size() != graph.getNumberOfVertices()) {
+                        // choose new rootNode
+                        Iterator<NVertex<D>> iterator = graph.iterator();
+                        NVertex<D> newRootNode = null;
+                        while (iterator.hasNext()) {
+                            newRootNode = iterator.next();
+
+                            if (!nodesHandled.contains(newRootNode)) {
+                                break;
+                            }
+                        }
+
+                        heightComponent = DFSTreeByMaxDegreeRoot((ListVertex<D>) newRootNode, nodesHandled);
+                        if (heightComponent > height) {
+                            height = heightComponent;
+                        }
+                    }
+                } else {
+                    // the result is not valid
+                    height = Integer.MAX_VALUE;
+                }
             }
 
             if (height < upperBound) {

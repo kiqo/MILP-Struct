@@ -83,6 +83,23 @@ public class TreeDepthTest extends GraphTest {
         printPath(algoResult.getLongestPath());
     }
 
+    @Test
+    public void testDisconnectedGraph() throws InterruptedException {
+
+        Graph g = createDisconnectedGraph();
+        GraphTransformator transformator = new GraphTransformator();
+        NGraph<GraphInput.InputData> before = transformator.graphToNGraph(g);
+        before.printGraph(true, true);
+
+        LOGGER.debug("--Disconnected Graph--");
+        TreeDepth<GraphInput.InputData> algoResult = treeDepth(before);
+        printPath(algoResult.getLongestPath());
+
+        Assert.assertEquals(7, algoResult.getLongestPath().size(), 0);
+        Assert.assertEquals(3, algoResult.getLowerBound(), 0);
+        Assert.assertEquals(4, algoResult.getUpperBound(), 0);
+    }
+
     private void printPath(List<ListVertex<GraphInput.InputData>> path) {
         StringBuilder result = new StringBuilder("Path found: ");
         for (int i = 0; i < path.size() - 1; i++) {

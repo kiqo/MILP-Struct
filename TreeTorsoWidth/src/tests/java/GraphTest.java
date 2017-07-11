@@ -74,6 +74,27 @@ public class GraphTest {
         return createGraph(nodes, edges);
     }
 
+    Graph createDisconnectedGraph() {
+        Graph disconnectedGraph = createNodeBlockerGraph();
+
+        Node node1 = createNode("nodeDiff1" , false);
+        Node node2 = createNode("nodeDiff2" , false);
+        Edge edge = new Edge(node1, node2);
+        disconnectedGraph.getEdges().add(edge);
+
+        node1 = createNode("nodeDiff3" , false);
+        node2 = createNode("nodeDiff4" , false);
+        Node node3 = createNode("nodeDiff5" , false);
+        edge = new Edge(node1, node2);
+        disconnectedGraph.getEdges().add(edge);
+        edge = new Edge(node1, node3);
+        disconnectedGraph.getEdges().add(edge);
+        edge = new Edge(node2, node3);
+        disconnectedGraph.getEdges().add(edge);
+
+        return disconnectedGraph;
+    }
+
 
     Graph createStarShapedGraph() {
 
