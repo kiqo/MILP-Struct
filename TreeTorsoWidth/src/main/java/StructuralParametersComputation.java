@@ -205,10 +205,9 @@ public class StructuralParametersComputation implements Callable<String> {
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        LOGGER.debug("File: " + fileName + " LB TorsoWidth: " + torsoWidthLowerBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
-        LOGGER.debug("File: " + fileName + " UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes of " + torsoWidthAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
+        printTimingInfo(fileName, "LB TorsoWidth", torsoWidthLowerBound, g.getNumberOfVertices(), torsoWidthAlgo.getName(), millisecondsPassed/1000);
+        printTimingInfo(fileName, "UB TorsoWidth", torsoWidthUpperBound, g.getNumberOfVertices(), torsoWidthAlgo.getName(), millisecondsPassed/1000);
+
         GraphData primalGraphData = linearProgram.getStatistics().getPrimalGraphData();
         primalGraphData.setTorsoWidthUB(torsoWidthUpperBound);
         primalGraphData.setTorsoWidthLB(torsoWidthLowerBound);
@@ -243,7 +242,6 @@ public class StructuralParametersComputation implements Callable<String> {
         int treeDepthUpperBound = treeDepthAlgo.getUpperBound();
         t.stop();
 
-        // TODO use printTimingInfo everywhere
         printTimingInfo(fileName, "LB TreeDepth", treeDepthLowerBound, g.getNumberOfVertices(), treeDepthAlgo.getName(), t.getTime()/1000);
         printTimingInfo(fileName, "UB TreeDepth", treeDepthUpperBound, g.getNumberOfVertices(), treeDepthAlgo.getName(), t.getTime()/1000);
 
@@ -265,8 +263,8 @@ public class StructuralParametersComputation implements Callable<String> {
         int upperbound = ubAlgo.getUpperBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        LOGGER.debug("File: " + fileName + " UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + ubAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
+        printTimingInfo(fileName, "UB TreeWidth", upperbound, g.getNumberOfVertices(), ubAlgo.getName(), millisecondsPassed/1000);
+
         return upperbound;
     }
 
@@ -279,8 +277,8 @@ public class StructuralParametersComputation implements Callable<String> {
         int lowerbound = lbAlgo.getLowerBound();
         t.stop();
         long millisecondsPassed = t.getTime();
-        LOGGER.debug("File: " + fileName + " LB: " + lowerbound + " of " + g.getNumberOfVertices() + " nodes " + " of " + lbAlgo.getName()
-                + ", time: " + millisecondsPassed / 1000 + "s");
+        printTimingInfo(fileName, "LB TreeWidth", lowerbound, g.getNumberOfVertices(), lbAlgo.getName(), millisecondsPassed/1000);
+
         return lowerbound;
     }
 
