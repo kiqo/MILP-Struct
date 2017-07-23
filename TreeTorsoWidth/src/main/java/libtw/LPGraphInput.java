@@ -11,10 +11,7 @@ import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Verena on 09.03.2017.
@@ -32,7 +29,6 @@ public class LPGraphInput implements GraphInput {
     @Override
     public NGraph<InputData> get() throws InputException {
         NGraph<InputData> g = new ListGraph<>();
-        List<NVertex<InputData>> components = new ArrayList<>();
 
         Hashtable<String, NVertex<InputData>> vertices = new Hashtable<>();
         NVertex<LPInputData> vertexPrototype = new ListVertex<>();
@@ -44,14 +40,37 @@ public class LPGraphInput implements GraphInput {
                 NVertex<InputData> v = vertexPrototype.newOfSameType(new LPInputData(node.getId(), node.getName(), node.isInteger()));
                 vertices.put(node.getName(), v);
                 g.addVertex(v);
+            }
+        }
 
-                // check if current vertex is a representative of the components of the graph
-                if (graph.getComponents().contains(node)) {
-                    components.add(v);
+
+
+        // find components of the graph TODO test
+        g.setComponents(new ArrayList<>());
+        int verticesFound = 0;
+        while (verticesFound != graph.getNodes().size()) {
+            for (NVertex<InputData> vertex : g) {
+                boolean vertexFound = false;
+                for (NGraph<InputData> subGraph: g.getComponents()) {
+                    for (NVertex nVertex : subGraph) {
+                        if (nVertex.equals(vertex)) {
+                            vertexFound = true;
+                        }
+                    }
+                }
+
+                if (!vertexFound) {
+                    ArrayList<NVertex<InputData>> handledVertices = new ArrayList<>();
+                    DFSTree(vertex, handledVertices);
+                    verticesFound += handledVertices.size();
+
+                    // create component graph
+                    NGraph<InputData> gSub = new ListGraph<>();
+                    ((ListGraph) gSub).vertices = handledVertices;
+                    g.getComponents().add(gSub);
                 }
             }
         }
-        g.setComponents(components);
 
         // create edges for NGraph
         for (Map.Entry<String, List<Node>> nodeNeighboursPair : graph.getNeighbourNodes().entrySet()) {
@@ -77,5 +96,27 @@ public class LPGraphInput implements GraphInput {
         }
 
         return g;
+    }
+
+    /*
+     * Input is the root node, returns distance from the lowest descendant of the rootNode, i.e. the current
+     * height of the tree
+     */
+    private static int DFSTree(NVertex rootNode, List<NVertex<InputData>> handledVertices) {
+
+        handledVertices.add(rootNode);
+        // System.out.print(rootNode.data.name + " ");
+
+        int height = 0;
+        for (Iterator<NVertex> it = rootNode.getNeighbors(); it.hasNext(); ) {
+            NVertex neighbor = it.next();
+            if (!handledVertices.contains(neighbor)) {
+                int heightSubtree = DFSTree(neighbor, handledVertices);
+                if (heightSubtree > height) {
+                    height = heightSubtree;
+                }
+            }
+        }
+        return ++height;
     }
 }

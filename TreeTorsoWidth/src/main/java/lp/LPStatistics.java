@@ -96,7 +96,6 @@ public class LPStatistics {
         graphData.minDegree = minDegree;
         graphData.maxDegree = maxDegree;
         graphData.avgDegree = (double) sumDegree / (double) graphData.numNodes;
-        graphData.numComponents = graph.getComponents().size();
 
         return graphData;
     }
@@ -248,7 +247,7 @@ public class LPStatistics {
         sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
                 "numBoundVars;minCoeff;maxCoeff;sizeObjFun;");
 
-        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;numComponents;tw_lb;tw_ub;";
+        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;";
         if (formatPrimalGraph) {
             sb.append(graphDataHeader).append("td_ub;torso_lb;torso_ub;");
         }
@@ -310,7 +309,6 @@ public class LPStatistics {
         sb.append(graphData.minDegree).append(";");
         sb.append(graphData.maxDegree).append(";");
         sb.append(new DecimalFormat("0.0000").format(graphData.avgDegree)).append(";");
-        sb.append(graphData.numComponents).append(";");
         if (graphData.getTreewidthLB() != Integer.MIN_VALUE) {
             sb.append(graphData.getTreewidthLB()).append(";");
         } else {

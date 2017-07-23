@@ -139,7 +139,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
             lbAlg.run();
             this.lowerbound = lbAlg.getLowerBound();
         }
-        // compute upperbound of treewidth of collapsed graph
+        // compute upperbound of collapsed graph
         ubAlg.setInput(graph);
         ubAlg.run();
         this.upperbound = ubAlg.getUpperBound();

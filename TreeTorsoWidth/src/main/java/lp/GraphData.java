@@ -14,7 +14,6 @@ public class GraphData {
     int minDegree;
     int maxDegree;
     double avgDegree;
-    int numComponents;
     private int treewidthUB;
     private int treewidthLB;
     private int torsoWidthUB;

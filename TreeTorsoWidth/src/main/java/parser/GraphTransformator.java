@@ -5,6 +5,7 @@ import main.java.libtw.LPGraphInput;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.input.InputException;
 import nl.uu.cs.treewidth.ngraph.NGraph;
+import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +16,9 @@ public class GraphTransformator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphTransformator.class);
 
-    public NGraph<GraphInput.InputData> graphToNGraph(Graph primalGraph) {
+    public NGraph<GraphInput.InputData> graphToNGraph(Graph graph) {
         NGraph<GraphInput.InputData> g = null;
-        GraphInput input = new LPGraphInput(primalGraph);
+        GraphInput input = new LPGraphInput(graph);
         try {
             g = input.get();
         } catch( InputException e ) {

@@ -48,8 +48,6 @@ public class GraphGeneratorTest {
         assertNotNull(primalGraph.getEdges());
         assertNotNull(primalGraph.getNodes());
         assertNotNull(primalGraph.getNeighbourNodes());
-        assertNotNull(primalGraph.getComponents());
-        assertEquals(1, primalGraph.getComponents().size(), 0);
 
         boolean nodeFound;
         for (String variableName : lp.getVariables().keySet()) {
@@ -104,11 +102,6 @@ public class GraphGeneratorTest {
                 Assert.assertTrue(incidenceGraph.getEdges().contains(edge));
             }
         }
-
-        // components
-        assertNotNull(incidenceGraph.getComponents());
-        assertEquals(1, incidenceGraph.getComponents().size(), 0);
-
 
         correctGraph(incidenceGraph);
     }

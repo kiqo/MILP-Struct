@@ -152,7 +152,6 @@ public class GraphTest {
         graph.setEdges(edges);
         graph.setNodes(nodes);
         graph.setNeighbourNodes(neighbourNodes);
-        graph.setComponents(graphGenerator.findComponents(graph));
 
         return graph;
     }

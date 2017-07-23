@@ -77,7 +77,6 @@ public class GraphGenerator {
         incidenceGraph.setNeighbourNodes(neighbourNodes);
         incidenceGraph.setNodes(nodes);
         this.neighbourNodes = neighbourNodes;
-        incidenceGraph.setComponents(findComponents(incidenceGraph));
         return incidenceGraph;
     }
 
@@ -127,7 +126,6 @@ public class GraphGenerator {
         primalGraph.setEdges(edges);
         primalGraph.setNeighbourNodes(neighbourNodes);
         this.neighbourNodes = neighbourNodes;
-        primalGraph.setComponents(findComponents(primalGraph));
 
         return primalGraph;
     }
