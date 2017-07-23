@@ -2,23 +2,28 @@ package main.java.libtw;
 
 import main.java.Configuration;
 import nl.uu.cs.treewidth.algorithm.LowerBound;
+import nl.uu.cs.treewidth.algorithm.UpperBound;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.NGraph;
-import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 /**
+ * Wrapper class to use the lower- and upper bound algorithms of libtw, but with the possiblity
+ * to obtain better lower- and upper bounds by considering that the graph may be disconnected
+ *
  * Created by Verena on 23.07.2017.
  */
 public class TreeWidthWrapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeWidthWrapper.class);
 
-    public int computeLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    /*
+    Computes the lower bound of the graph without considering that the graph may be disconnected
+     */
+    public static int computeLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
         LowerBound<GraphInput.InputData> lowerBoundAlg = null;
         try {
             lowerBoundAlg = (LowerBound<GraphInput.InputData>) Configuration.LOWER_BOUND_ALG.getConstructor().newInstance();
@@ -31,8 +36,10 @@ public class TreeWidthWrapper {
         return lowerbound;
     }
 
-
-    public int computeLowerBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    /*
+    Computes the lower bound of the graph by taking the maximum of the treewidth of each component
+     */
+    public static int computeLowerBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
         LowerBound<GraphInput.InputData> lowerBoundAlg = null;
         try {
             lowerBoundAlg = (LowerBound<GraphInput.InputData>) Configuration.LOWER_BOUND_ALG.getConstructor().newInstance();
@@ -41,10 +48,9 @@ public class TreeWidthWrapper {
         }
 
 
-        int lowerbound = lowerBoundAlg.getLowerBound();
-        int lowerboundSubGraph = Integer.MIN_VALUE;
+        int lowerbound = Integer.MIN_VALUE;
+        int lowerboundSubGraph;
         for (NGraph subGraph : g.getComponents()) {
-            lowerboundSubGraph = Integer.MIN_VALUE;
             lowerBoundAlg.setInput(subGraph);
             lowerBoundAlg.run();
             lowerboundSubGraph = lowerBoundAlg.getLowerBound();
@@ -58,6 +64,40 @@ public class TreeWidthWrapper {
         return lowerbound;
     }
 
+    public int computeUpperBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
+        UpperBound<GraphInput.InputData> ubAlgo = null;
+        try {
+            ubAlgo = (UpperBound<GraphInput.InputData>) Configuration.UPPER_BOUND_ALG.getConstructor().newInstance();
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            LOGGER.error(e.getMessage());
+        }
+
+        int upperbound = Integer.MIN_VALUE;
+        int upperboundSubGraph;
+        for (NGraph subGraph : g.getComponents()) {
+            ubAlgo.setInput(subGraph);
+            ubAlgo.run();
+            upperboundSubGraph = ubAlgo.getUpperBound();
+
+            // take the maximum over all subgraph upper bounds to be the upper bound
+            if (upperboundSubGraph > upperbound) {
+                upperbound = upperboundSubGraph;
+            }
+        }
+        return upperbound;
+    }
 
 
+    public int computeUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+        UpperBound<GraphInput.InputData> ubAlgo = null;
+        try {
+            ubAlgo = (UpperBound<GraphInput.InputData>) Configuration.UPPER_BOUND_ALG.getConstructor().newInstance();
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            LOGGER.error(e.getMessage());
+        }
+        ubAlgo.setInput(g);
+        ubAlgo.run();
+        int upperbound = ubAlgo.getUpperBound();
+        return upperbound;
+    }
 }

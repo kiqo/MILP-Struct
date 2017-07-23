@@ -43,7 +43,28 @@ public class LPGraphInput implements GraphInput {
             }
         }
 
+        // create edges for NGraph
+        for (Map.Entry<String, List<Node>> nodeNeighboursPair : graph.getNeighbourNodes().entrySet()) {
 
+            NVertex<InputData> v1, v2;
+            String curNodeName = nodeNeighboursPair.getKey();
+
+            v1 = vertices.get(curNodeName);
+
+            for (Node neighbour : nodeNeighboursPair.getValue()) {
+                v2 = vertices.get(neighbour.getName());
+
+                boolean edgeExists = v1.isNeighbor(v2);
+                if (edgeExists && !v2.isNeighbor(v1)) {
+                    LOGGER.error("Directed edge found for node " + v1.data.name);
+                }
+
+                if (!edgeExists) {
+                    // add (undirected) edge, i.e. add v1 as neighbour of v2 and the other way around
+                    g.addEdge(v1, v2);
+                }
+            }
+        }
 
         // find components of the graph TODO test
         g.setComponents(new ArrayList<>());
@@ -68,29 +89,6 @@ public class LPGraphInput implements GraphInput {
                     NGraph<InputData> gSub = new ListGraph<>();
                     ((ListGraph) gSub).vertices = handledVertices;
                     g.getComponents().add(gSub);
-                }
-            }
-        }
-
-        // create edges for NGraph
-        for (Map.Entry<String, List<Node>> nodeNeighboursPair : graph.getNeighbourNodes().entrySet()) {
-
-            NVertex<InputData> v1, v2;
-            String curNodeName = nodeNeighboursPair.getKey();
-
-            v1 = vertices.get(curNodeName);
-
-            for (Node neighbour : nodeNeighboursPair.getValue()) {
-                v2 = vertices.get(neighbour.getName());
-
-                boolean edgeExists = v1.isNeighbor(v2);
-                if (edgeExists && !v2.isNeighbor(v1)) {
-                    LOGGER.error("Directed edge found for node " + v1.data.name);
-                }
-
-                if (!edgeExists) {
-                    // add (undirected) edge, i.e. add v1 as neighbour of v2 and the other way around
-                    g.addEdge(v1, v2);
                 }
             }
         }
