@@ -96,7 +96,6 @@ public class TorsoWidthTest extends GraphTest {
         GraphInput input = new LPDgfReader(inputFile);
         try {
             g = input.get();
-            g.addComment("test");
         } catch( InputException e ) {}
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(g);
         resultGraph.printGraph(true, true);

@@ -11,6 +11,7 @@ import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class LPGraphInput implements GraphInput {
     @Override
     public NGraph<InputData> get() throws InputException {
         NGraph<InputData> g = new ListGraph<>();
+        List<NVertex<InputData>> components = new ArrayList<>();
 
         Hashtable<String, NVertex<InputData>> vertices = new Hashtable<>();
         NVertex<LPInputData> vertexPrototype = new ListVertex<>();
@@ -42,8 +44,14 @@ public class LPGraphInput implements GraphInput {
                 NVertex<InputData> v = vertexPrototype.newOfSameType(new LPInputData(node.getId(), node.getName(), node.isInteger()));
                 vertices.put(node.getName(), v);
                 g.addVertex(v);
+
+                // check if current vertex is a representative of the components of the graph
+                if (graph.getComponents().contains(node)) {
+                    components.add(v);
+                }
             }
         }
+        g.setComponents(components);
 
         // create edges for NGraph
         for (Map.Entry<String, List<Node>> nodeNeighboursPair : graph.getNeighbourNodes().entrySet()) {

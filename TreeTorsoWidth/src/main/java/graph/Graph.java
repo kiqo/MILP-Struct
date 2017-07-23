@@ -10,6 +10,8 @@ public class Graph {
     private List<Edge> edges;
     private Map<String, List<Node>> neighbourNodes;
     private Map<String, Node> nodesMap; // TODO construct only locally?
+    private List<Node> components; // contains one representative vertex of each component of the graph
+    private boolean connected;
 
     public List<Node> getComponents() {
         return components;
@@ -18,9 +20,6 @@ public class Graph {
     public void setComponents(List<Node> components) {
         this.components = components;
     }
-
-    private List<Node> components; // contains one random vertex of each component of the graph
-    private boolean connected;
 
     public boolean isConnected() {
         return connected;

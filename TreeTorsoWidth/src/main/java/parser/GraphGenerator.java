@@ -8,9 +8,7 @@ import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
 import main.java.lp.Row;
 
-import javax.security.auth.login.Configuration;
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Verena on 09.03.2017.
@@ -137,13 +135,13 @@ public class GraphGenerator {
     /*
     Finds connected components in the graph and returns a list containing one vertex for each component
      */
-    private List<Node> findComponents(Graph graph) {
+    public static List<Node> findComponents(Graph graph) {
         List<Node> components = new ArrayList<>();
 
         List<Node> handledNodes = new ArrayList<>();
         for (Node node : graph.getNodes()) {
             if (!handledNodes.contains(node)) {
-                DFSSearch(node, handledNodes);
+                DFSSearch(node, graph.getNeighbourNodes(), handledNodes);
 
                 // add this node as representative to result set
                 components.add(node);
@@ -153,13 +151,13 @@ public class GraphGenerator {
     }
 
     // TODO remove duplicate code in TreeDepth
-    private void DFSSearch(Node rootNode, List<Node> handledNodes) {
+    private static void DFSSearch(Node rootNode, Map<String, List<Node>> neighbourNodes, List<Node> handledNodes) {
 
         handledNodes.add(rootNode);
 
         for (Node neighbor : neighbourNodes.get(rootNode.getName())) {
             if (!handledNodes.contains(neighbor)) {
-                DFSSearch(neighbor, handledNodes);
+                DFSSearch(neighbor, neighbourNodes, handledNodes);
             }
         }
     }

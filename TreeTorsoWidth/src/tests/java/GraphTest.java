@@ -3,6 +3,7 @@ package tests.java;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
+import main.java.parser.GraphGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,8 @@ public class GraphTest {
     // probabiity that a vertex is connected with another vertex
     private static final double PROB_INTEGER_NODE = 0.16;
     private static final String INTEGER_MARK = "_I";
+
+    private GraphGenerator graphGenerator = new GraphGenerator();
 
 
 
@@ -149,6 +152,7 @@ public class GraphTest {
         graph.setEdges(edges);
         graph.setNodes(nodes);
         graph.setNeighbourNodes(neighbourNodes);
+        graph.setComponents(graphGenerator.findComponents(graph));
 
         return graph;
     }

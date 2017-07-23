@@ -1,6 +1,10 @@
 package main.java.libtw;
 
 import nl.uu.cs.treewidth.input.GraphInput;
+import nl.uu.cs.treewidth.ngraph.NVertex;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Verena on 03.04.2017.
