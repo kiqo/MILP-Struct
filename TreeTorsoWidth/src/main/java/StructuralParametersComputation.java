@@ -41,52 +41,6 @@ public class StructuralParametersComputation implements Callable<String> {
         this.fileName = fileName;
     }
 
-    private static void computeTreeWidth(NGraph<GraphInput.InputData> g) {
-
-        // first calculate an upper bound
-        GreedyFillIn<GraphInput.InputData> ubAlgo = new GreedyFillIn<GraphInput.InputData>();
-        ubAlgo.setInput( g );
-        ubAlgo.run();
-        int upperbound = ubAlgo.getUpperBound();
-
-        // then calculate the exact treewidth
-        TreewidthDP<GraphInput.InputData> twdp = new TreewidthDP<GraphInput.InputData>( upperbound );
-        twdp.setInput( g );
-        twdp.run();
-        int treewidth = twdp.getTreewidth();
-    }
-
-    private static void computeTreeDecomposition(NGraph<GraphInput.InputData> g) {
-        MaximumMinimumDegreePlusLeastC<GraphInput.InputData> lbAlgo = new MaximumMinimumDegreePlusLeastC<GraphInput.InputData>();
-        lbAlgo.setInput( g );
-        lbAlgo.run();
-        int lowerbound = lbAlgo.getLowerBound();
-
-        GreedyFillIn<GraphInput.InputData> ubAlgo = new GreedyFillIn<GraphInput.InputData>();
-        ubAlgo.setInput( g );
-        ubAlgo.run();
-        int upperbound = ubAlgo.getUpperBound();
-
-        NVertexOrder<GraphInput.InputData> permutation = null;
-
-        if( lowerbound == upperbound ) {
-            permutation = ubAlgo.getPermutation();
-        } else {
-            QuickBB<GraphInput.InputData> qbbAlgo = new QuickBB<GraphInput.InputData>();
-            qbbAlgo.setInput( g );
-            qbbAlgo.run();
-            permutation = qbbAlgo.getPermutation();
-        }
-
-        PermutationToTreeDecomposition<GraphInput.InputData> convertor = new PermutationToTreeDecomposition<GraphInput.InputData>( permutation );
-        convertor.setInput( g );
-        convertor.run();
-        NGraph<NTDBag<GraphInput.InputData>> decomposition = convertor.getDecomposition();
-
-        // needs GraphViz installed
-        decomposition.printGraph( true, true );
-    }
-
     private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         // parse input file
         MILPParser milpParser = new MILPParser();
