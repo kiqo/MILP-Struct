@@ -249,7 +249,7 @@ public class Main {
             Configuration.OUTPUT_FILE = outputFile;
         }
 
-        Configuration.printOut();
+        Configuration.print();
         LOGGER.debug("Input: " + Configuration.INPUT_FILE);
     }
 

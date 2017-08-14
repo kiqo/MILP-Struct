@@ -26,10 +26,60 @@ public class Configuration {
     public static boolean TREE_DEPTH = false;
     public static boolean OBJ_FUNCTION = false;
 
-    public static void printOut() {
+    public static void print() {
         StringBuilder sb = new StringBuilder();
+        addFileInformation(sb);
+        addPrimalInformation(sb);
+        addIncidenceInformation(sb);
+        addDualInformation(sb);
+        addObjectiveFunctionInformation(sb);
+        LOGGER.debug(sb.toString());
+    }
+
+    private static void addObjectiveFunctionInformation(StringBuilder sb) {
+        if (OBJ_FUNCTION) {
+            sb.append("Objective function is considered.");
+        }
+    }
+
+    private static void addFileInformation(StringBuilder sb) {
         sb.append("Input file: " + INPUT_FILE + NL);
         sb.append("Output file: " + OUTPUT_FILE + NL);
+    }
+
+    private static void addDualInformation(StringBuilder sb) {
+        if (DUAL) {
+            sb.append("Computing for dual graph: " + NL);
+            if (LOWER_BOUND) {
+                sb.append(TAB + "- lower bound of tree width" + NL);
+            }
+            if (UPPER_BOUND) {
+                sb.append(TAB + "- upper bound of tree width" + NL);
+            }
+            if (TORSO_WIDTH) {
+                sb.append(TAB + "- lower bound of torso width" + NL);
+                sb.append(TAB + "- upper bound of torso width" + NL);
+            }
+        }
+    }
+
+    private static void addIncidenceInformation(StringBuilder sb) {
+        if (INCIDENCE) {
+            sb.append("Computing for incidence graph: " + NL);
+            if (LOWER_BOUND) {
+                sb.append(TAB + "- lower bound of tree width" + NL);
+            }
+            if (UPPER_BOUND) {
+                sb.append(TAB + "- upper bound of tree width" + NL);
+            }
+            if (TORSO_WIDTH) {
+                sb.append(TAB + "- lower bound of torso width" + NL);
+                sb.append(TAB + "- upper bound of torso width" + NL);
+            }
+        }
+    }
+
+    private static void addPrimalInformation(StringBuilder sb) {
         if (PRIMAL) {
             sb.append("Computing for primal graph: " + NL);
             if (LOWER_BOUND) {
@@ -46,37 +96,5 @@ public class Configuration {
                 sb.append(TAB + "- upper bound of tree depth" + NL);
             }
         }
-        if (INCIDENCE) {
-            sb.append("Computing for incidence graph: " + NL);
-            if (LOWER_BOUND) {
-                sb.append(TAB + "- lower bound of tree width" + NL);
-            }
-            if (UPPER_BOUND) {
-                sb.append(TAB + "- upper bound of tree width" + NL);
-            }
-            if (TORSO_WIDTH) {
-                sb.append(TAB + "- lower bound of torso width" + NL);
-                sb.append(TAB + "- upper bound of torso width" + NL);
-            }
-        }
-
-        if (DUAL) {
-            sb.append("Computing for dual graph: " + NL);
-            if (LOWER_BOUND) {
-                sb.append(TAB + "- lower bound of tree width" + NL);
-            }
-            if (UPPER_BOUND) {
-                sb.append(TAB + "- upper bound of tree width" + NL);
-            }
-            if (TORSO_WIDTH) {
-                sb.append(TAB + "- lower bound of torso width" + NL);
-                sb.append(TAB + "- upper bound of torso width" + NL);
-            }
-        }
-        if (OBJ_FUNCTION) {
-            sb.append("Objective function is considered.");
-        }
-
-        LOGGER.debug(sb.toString());
     }
 }
