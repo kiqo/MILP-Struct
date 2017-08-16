@@ -3,6 +3,9 @@ input/benchmarks/
 
 TreeTorsoWidth/out/production
 
+# File endings
+*.png
+TreeTorsoWidth/*.png
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -17,5 +20,3 @@ TreeTorsoWidth/out/production
 hs_err_pid*
 .idea/workspace.xml
 TreeTorsoWidth/.idea/workspace.xml
-*.png
-TreeTorsoWidth/*.png
