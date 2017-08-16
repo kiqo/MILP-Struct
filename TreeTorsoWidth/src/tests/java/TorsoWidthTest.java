@@ -27,15 +27,17 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TorsoWidthTest extends GraphTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TorsoWidthTest.class);
 
+    private static final boolean SHOW_GRAPH = false;
+    private static final boolean PRINT_GRAPH = false;
+    private static final boolean PRINT_RESULTS = false;
+
     /*
     Transforms a graph to a NGraph and then runs the torso width algorithm
      */
     public static NGraph<GraphInput.InputData> torsoWidth(Graph graph) throws InterruptedException {
-
-        // generate NGraph for using main.java.libtw
-        NGraph<GraphInput.InputData> g;
+        // generate NGraph for using libtw
         GraphTransformator graphTransformator = new GraphTransformator();
-        g = graphTransformator.graphToNGraph(graph);
+        NGraph<GraphInput.InputData> g = graphTransformator.graphToNGraph(graph);
 
         return torsoWidth(g);
     }
@@ -43,43 +45,62 @@ public class TorsoWidthTest extends GraphTest {
     /*
     Runs the torso width algorithm
     */
-    public static NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    public static NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> graphBefore) throws InterruptedException {
+        if (SHOW_GRAPH || PRINT_GRAPH) {
+            graphBefore.printGraph(SHOW_GRAPH, PRINT_GRAPH);
+        }
+        computeTreewidthUBBefore(graphBefore);
+        NGraph<GraphInput.InputData> graphAfter = computeTorsowidth(graphBefore);
 
-        GreedyDegree<GraphInput.InputData> ubAlgo = new GreedyDegree<>();
-        ubAlgo.setInput(g);
-        ubAlgo.run();
-        int upperbound = ubAlgo.getUpperBound();
-        LOGGER.debug("UB: " + upperbound + " of " + g.getNumberOfVertices() + " nodes with " + ubAlgo.getName());
+        if (SHOW_GRAPH || PRINT_GRAPH) {
+            graphAfter.printGraph(SHOW_GRAPH, PRINT_GRAPH);
+        }
+        assertAllNodesInteger(graphAfter);
+        return graphAfter;
+    }
 
-        ubAlgo = new GreedyDegree<>();
-
-        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(ubAlgo);
-        torsoWidthAlgo.setInput(g);
-        torsoWidthAlgo.run();
-        int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
-        LOGGER.debug("UB TorsoWidth: " + torsoWidthUpperBound + " of " + g.getNumberOfVertices() + " nodes with " + torsoWidthAlgo.getName());
-
-        for (NVertex<GraphInput.InputData> node : torsoWidthAlgo.getGraph()) {
+    private static void assertAllNodesInteger(NGraph<GraphInput.InputData> graphAfter) {
+        for (NVertex<GraphInput.InputData> node : graphAfter) {
             Assert.assertTrue(((LPInputData) node.data).isInteger());
 
             for (NVertex<GraphInput.InputData> neighbour : ((ListVertex<GraphInput.InputData>) node).neighbors) {
                 Assert.assertTrue(((LPInputData) neighbour.data).isInteger());
             }
         }
+    }
+
+    private static NGraph<GraphInput.InputData> computeTorsowidth(NGraph<GraphInput.InputData> graphBefore) throws InterruptedException {
+        GreedyDegree<GraphInput.InputData> ubAlgo = new GreedyDegree<>();
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(ubAlgo);
+        torsoWidthAlgo.setInput(graphBefore);
+        torsoWidthAlgo.run();
+        int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
+        if (PRINT_RESULTS) {
+            printResult("TorsoWidth UB", torsoWidthUpperBound, graphBefore.getNumberOfVertices(), torsoWidthAlgo.getName());
+        }
         return torsoWidthAlgo.getGraph();
+    }
+
+    private static GreedyDegree<GraphInput.InputData> computeTreewidthUBBefore(NGraph<GraphInput.InputData> graphBefore) throws InterruptedException {
+        GreedyDegree<GraphInput.InputData> ubAlgo = new GreedyDegree<>();
+        ubAlgo.setInput(graphBefore);
+        ubAlgo.run();
+        int upperbound = ubAlgo.getUpperBound();
+        if (PRINT_RESULTS) {
+            printResult("Treewidth UB", upperbound, graphBefore.getNumberOfVertices(), ubAlgo.getName());
+        }
+        return ubAlgo;
     }
 
 
     @Test
     public void testNodeBlockerGraph() throws InterruptedException {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
-        LOGGER.debug("--Node Blocker Graph--");
+
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(nodeBlockerGraph);
-        resultGraph.printGraph(true, true);
 
         Assert.assertEquals(3, resultGraph.getNumberOfVertices(), 0);
         Assert.assertEquals(2, resultGraph.getNumberOfEdges(), 0);
-
         Iterator<NVertex<GraphInput.InputData>> iterator = resultGraph.iterator();
         NVertex<GraphInput.InputData> nodeBlocker = iterator.next();
         Assert.assertTrue(nodeBlocker.isNeighbor(iterator.next()));
@@ -90,7 +111,6 @@ public class TorsoWidthTest extends GraphTest {
     @Test
     public void testGraphFromInputFile() throws InterruptedException {
         String inputFile = "./../input/tests/torsowidth_test.dgf";
-        LOGGER.debug("--"+ inputFile +" Graph--");
         NGraph<GraphInput.InputData> g = null;
 
         GraphInput input = new LPDgfReader(inputFile);
@@ -98,7 +118,6 @@ public class TorsoWidthTest extends GraphTest {
             g = input.get();
         } catch( InputException e ) {}
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(g);
-        resultGraph.printGraph(true, true);
 
         Assert.assertEquals(6, resultGraph.getNumberOfVertices(), 0);
         Assert.assertEquals(10, resultGraph.getNumberOfEdges(), 0);
@@ -107,10 +126,9 @@ public class TorsoWidthTest extends GraphTest {
 
     @Test
     public void testStarShapedGraph() throws InterruptedException {
-        LOGGER.debug("--Star Shaped Graph--");
         Graph starShapedGraph = createStarShapedGraph();
+
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(starShapedGraph);
-        resultGraph.printGraph(true, true);
 
         Assert.assertEquals(3, resultGraph.getNumberOfVertices(), 0);
         Assert.assertEquals(3, resultGraph.getNumberOfEdges(), 0);
@@ -119,19 +137,12 @@ public class TorsoWidthTest extends GraphTest {
 
     @Test
     public void testDisconnectedGraph() throws InterruptedException {
-        LOGGER.debug("--Disconnected Graph--");
-        Graph g = createDisconnectedGraph();
-        GraphTransformator transformator = new GraphTransformator();
-        NGraph<GraphInput.InputData> before = transformator.graphToNGraph(g);
-        before.printGraph(true, true);
+        Graph disconnectedGraph = createDisconnectedGraph();
 
-        NGraph<GraphInput.InputData> resultGraph = torsoWidth(before);
-        resultGraph.printGraph(true, true);
-        Assert.assertEquals(5, resultGraph.getNumberOfVertices(), 0);
+        NGraph<GraphInput.InputData> resultGraph = torsoWidth(disconnectedGraph);
+
+        Assert.assertEquals(6, resultGraph.getNumberOfVertices(), 0);
         Assert.assertEquals(5, resultGraph.getNumberOfEdges(), 0);
-        Assert.assertEquals(5, resultGraph.getNumberOfEdges(), 0);
-
-
     }
 
     private boolean isClique(NGraph<GraphInput.InputData> graph) {
@@ -152,14 +163,7 @@ public class TorsoWidthTest extends GraphTest {
 
     @Test
     public void testRandomGraph() throws InterruptedException {
-
-        Graph g = createRandomGraph();
-        GraphTransformator transformator = new GraphTransformator();
-        NGraph<GraphInput.InputData> before = transformator.graphToNGraph(g);
-        before.printGraph(true, true);
-
-        LOGGER.debug("--Random Graph--");
-        NGraph<GraphInput.InputData> after = torsoWidth(before);
-        after.printGraph(true, true);
+        Graph randomGraph = createRandomGraph();
+        NGraph<GraphInput.InputData> after = torsoWidth(randomGraph);
     }
 }
