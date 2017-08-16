@@ -117,8 +117,25 @@ public class TorsoWidthTest extends GraphTest {
         Assert.assertTrue(isClique(resultGraph));
     }
 
+    @Test
+    public void testDisconnectedGraph() throws InterruptedException {
+        LOGGER.debug("--Disconnected Graph--");
+        Graph g = createDisconnectedGraph();
+        GraphTransformator transformator = new GraphTransformator();
+        NGraph<GraphInput.InputData> before = transformator.graphToNGraph(g);
+        before.printGraph(true, true);
+
+        NGraph<GraphInput.InputData> resultGraph = torsoWidth(before);
+        resultGraph.printGraph(true, true);
+        Assert.assertEquals(5, resultGraph.getNumberOfVertices(), 0);
+        Assert.assertEquals(5, resultGraph.getNumberOfEdges(), 0);
+        Assert.assertEquals(5, resultGraph.getNumberOfEdges(), 0);
+
+
+    }
+
     private boolean isClique(NGraph<GraphInput.InputData> graph) {
-        boolean clique = true;
+        boolean clique;
         for (NVertex<GraphInput.InputData> vertex1 : graph) {
             for (NVertex<GraphInput.InputData> vertex2 : graph) {
                 if (!vertex1.equals(vertex2)) {

@@ -3,7 +3,6 @@ package tests.java;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
-import main.java.parser.GraphGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Verena on 07.06.2017.
  */
-public class GraphTest {
+public abstract class GraphTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphTest.class);
 
     private static final int MIN_NODES = 5;
@@ -29,9 +28,10 @@ public class GraphTest {
     private static final double PROB_INTEGER_NODE = 0.16;
     private static final String INTEGER_MARK = "_I";
 
-    private GraphGenerator graphGenerator = new GraphGenerator();
-
-
+    public abstract void testNodeBlockerGraph() throws InterruptedException;
+    public abstract void testStarShapedGraph() throws InterruptedException;
+    public abstract void testDisconnectedGraph() throws InterruptedException;
+    public abstract void testRandomGraph() throws InterruptedException;
 
     /*
     Creates a graph that has an integer node that separates two components, which each also contain 2 integer nodes
@@ -78,26 +78,50 @@ public class GraphTest {
     }
 
     Graph createDisconnectedGraph() {
-        Graph disconnectedGraph = createNodeBlockerGraph();
+        Graph nodeBlockerGraph = createNodeBlockerGraph();
+        Graph cliqueTwo = createClique(2, "clique1_");
+        Graph cliqueThree = createClique(3, "clique2_");
 
-        Node node1 = createNode("nodeDiff1" , false);
-        Node node2 = createNode("nodeDiff2" , false);
-        Edge edge = new Edge(node1, node2);
-        disconnectedGraph.getEdges().add(edge);
+        // make cliqueThree to be integral nodes
+        for (Node node : cliqueThree.getNodes()) {
+            node.setInteger(true);
+        }
 
-        node1 = createNode("nodeDiff3" , false);
-        node2 = createNode("nodeDiff4" , false);
-        Node node3 = createNode("nodeDiff5" , false);
-        edge = new Edge(node1, node2);
-        disconnectedGraph.getEdges().add(edge);
-        edge = new Edge(node1, node3);
-        disconnectedGraph.getEdges().add(edge);
-        edge = new Edge(node2, node3);
-        disconnectedGraph.getEdges().add(edge);
+        Graph disconnectedGraph = graphUnion(nodeBlockerGraph, cliqueTwo);
+        disconnectedGraph = graphUnion(disconnectedGraph, cliqueThree);
 
         return disconnectedGraph;
     }
 
+    private Graph graphUnion(Graph graph1, Graph graph2) {
+        List<Node> nodes = new ArrayList<>();
+        List<Edge> edges = new ArrayList<>();
+
+        nodes.addAll(graph1.getNodes());
+        nodes.addAll(graph2.getNodes());
+
+        edges.addAll(graph1.getEdges());
+        edges.addAll(graph2.getEdges());
+
+        return createGraph(nodes, edges);
+    }
+
+    private Graph createClique(int size, String nodeNamePrefix) {
+        List<Node> nodes = new ArrayList<>();
+        List<Edge> edges = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            nodes.add(createNode(nodeNamePrefix + i , false));
+        }
+
+        for (int i = 0; i < size; i++) {
+            for (int j = i+1; j < size; j++) {
+                edges.add(createEdge(nodes.get(i), nodes.get(j)));
+            }
+        }
+
+        return createGraph(nodes, edges);
+    }
 
     Graph createStarShapedGraph() {
 
@@ -194,6 +218,10 @@ public class GraphTest {
         node.setInteger(integer);
         node.setName(integer ? name + INTEGER_MARK : name);
         return node;
+    }
+
+    Edge createEdge(Node node1, Node node2) {
+        return new Edge(node1, node2);
     }
 
     static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {
