@@ -224,7 +224,7 @@ public abstract class GraphTest {
         return new Edge(node1, node2);
     }
 
-    static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {
-        LOGGER.debug(algorithm + ": " + result + " of " + graphSize + " nodes with " + algoName);
+    static void printResult(String parameterComputed, int result, int graphSize, String algoName) {
+        LOGGER.debug(parameterComputed + ": " + result + " of " + graphSize + " nodes with " + algoName);
     }
 }

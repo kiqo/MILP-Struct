@@ -19,9 +19,10 @@ import java.util.*;
 public class TreeDepthTest extends GraphTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepthTest.class);
 
-    /*
-    Transforms a graph to a NGraph and then runs the tree depth algorithm
-     */
+    private static final boolean SHOW_GRAPH = false;
+    private static final boolean PRINT_GRAPH = false;
+    private static final boolean PRINT_RESULTS = false;
+
     private TreeDepth<GraphInput.InputData> treeDepth(Graph graph) throws InterruptedException {
 
         // generate NGraph for using libtw
@@ -32,35 +33,39 @@ public class TreeDepthTest extends GraphTest {
         return treeDepth(g);
     }
 
-    /*
-    Runs the tree depth algorithm
-    */
-    private TreeDepth<GraphInput.InputData> treeDepth(NGraph<GraphInput.InputData> g) throws InterruptedException {
-
+    private TreeDepth<GraphInput.InputData> treeDepth(NGraph<GraphInput.InputData> nGraph) throws InterruptedException {
+        if (SHOW_GRAPH || PRINT_GRAPH) {
+            nGraph.printGraph(SHOW_GRAPH, PRINT_GRAPH);
+        }
         TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
-        treeDepthAlgo.setInput(g);
+        treeDepthAlgo.setInput(nGraph);
         treeDepthAlgo.run();
         int treeDepthUB = treeDepthAlgo.getUpperBound();
-        printTimingInfo("UB TreeDepth: ", treeDepthUB, g.getNumberOfVertices(), treeDepthAlgo.getName());
-
+        if (PRINT_RESULTS) {
+            printResult("UB TreeDepth: ", treeDepthUB, nGraph.getNumberOfVertices(), treeDepthAlgo.getName());
+        }
         return treeDepthAlgo;
     }
 
     @Test
     public void testNodeBlockerGraph() throws InterruptedException {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
-        LOGGER.debug("--Node Blocker Graph--");
+
         TreeDepth<GraphInput.InputData> algoResult = treeDepth(nodeBlockerGraph);
-        printPath(algoResult.getLongestPath());
+
+        if (PRINT_RESULTS) {
+            printPath(algoResult.getLongestPath());
+        }
         Assert.assertEquals(7, algoResult.getLongestPath().size(), 0);
         Assert.assertEquals(4, algoResult.getUpperBound(), 0);
     }
 
     @Test
     public void testStarShapedGraph() throws InterruptedException {
-        LOGGER.debug("--Star Shaped Graph--");
         Graph starShapedGraph = createStarShapedGraph();
+
         TreeDepth<GraphInput.InputData> algoResult = treeDepth(starShapedGraph);
+
         // longest path is 3, lower bound is then roundUp(ld(n+1)) = 2
         Assert.assertEquals(3, algoResult.getLongestPath().size(), 0);
         Assert.assertEquals(2, algoResult.getUpperBound(), 0);
@@ -68,28 +73,21 @@ public class TreeDepthTest extends GraphTest {
 
     @Test
     public void testRandomGraph() throws InterruptedException {
-
-        Graph g = createRandomGraph();
-        GraphTransformator transformator = new GraphTransformator();
-        NGraph<GraphInput.InputData> before = transformator.graphToNGraph(g);
-        before.printGraph(true, true);
-
-        LOGGER.debug("--Random Graph--");
-        TreeDepth<GraphInput.InputData> algoResult = treeDepth(before);
-        printPath(algoResult.getLongestPath());
+        Graph randomGraph = createRandomGraph();
+        TreeDepth<GraphInput.InputData> algoResult = treeDepth(randomGraph);
+        if (PRINT_RESULTS) {
+            printPath(algoResult.getLongestPath());
+        }
     }
 
     @Test
     public void testDisconnectedGraph() throws InterruptedException {
+        Graph disconnectedGraph = createDisconnectedGraph();
 
-        Graph g = createDisconnectedGraph();
-        GraphTransformator transformator = new GraphTransformator();
-        NGraph<GraphInput.InputData> before = transformator.graphToNGraph(g);
-        before.printGraph(true, true);
-
-        LOGGER.debug("--Disconnected Graph--");
-        TreeDepth<GraphInput.InputData> algoResult = treeDepth(before);
-        printPath(algoResult.getLongestPath());
+        TreeDepth<GraphInput.InputData> algoResult = treeDepth(disconnectedGraph);
+        if (PRINT_RESULTS) {
+            printPath(algoResult.getLongestPath());
+        }
 
         Assert.assertEquals(7, algoResult.getLongestPath().size(), 0);
         Assert.assertEquals(4, algoResult.getUpperBound(), 0);

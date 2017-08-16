@@ -29,28 +29,22 @@ public class TorsoWidthTest extends GraphTest {
 
     private static final boolean SHOW_GRAPH = false;
     private static final boolean PRINT_GRAPH = false;
-    private static final boolean PRINT_RESULTS = false;
+    private static final boolean PRINT_RESULTS = true;
 
-    /*
-    Transforms a graph to a NGraph and then runs the torso width algorithm
-     */
     public static NGraph<GraphInput.InputData> torsoWidth(Graph graph) throws InterruptedException {
         // generate NGraph for using libtw
         GraphTransformator graphTransformator = new GraphTransformator();
-        NGraph<GraphInput.InputData> g = graphTransformator.graphToNGraph(graph);
+        NGraph<GraphInput.InputData> nGraph = graphTransformator.graphToNGraph(graph);
 
-        return torsoWidth(g);
+        return torsoWidth(nGraph);
     }
 
-    /*
-    Runs the torso width algorithm
-    */
-    public static NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> graphBefore) throws InterruptedException {
+    public static NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> nGraph) throws InterruptedException {
         if (SHOW_GRAPH || PRINT_GRAPH) {
-            graphBefore.printGraph(SHOW_GRAPH, PRINT_GRAPH);
+            nGraph.printGraph(SHOW_GRAPH, PRINT_GRAPH);
         }
-        computeTreewidthUBBefore(graphBefore);
-        NGraph<GraphInput.InputData> graphAfter = computeTorsowidth(graphBefore);
+        computeTreewidthUBBefore(nGraph);
+        NGraph<GraphInput.InputData> graphAfter = computeTorsowidth(nGraph);
 
         if (SHOW_GRAPH || PRINT_GRAPH) {
             graphAfter.printGraph(SHOW_GRAPH, PRINT_GRAPH);
