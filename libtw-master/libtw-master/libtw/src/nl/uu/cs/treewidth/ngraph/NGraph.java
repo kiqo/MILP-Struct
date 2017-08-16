@@ -21,10 +21,7 @@
  
 package nl.uu.cs.treewidth.ngraph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 import nl.uu.cs.treewidth.output.Output;
 
@@ -38,6 +35,8 @@ public abstract class NGraph< D > implements Iterable<NVertex<D>> {
 	public abstract NVertex<D> getVertex( int i );
 	public abstract Iterator<NVertex<D>> getVertices();
 	public abstract int getNumberOfVertices();
+
+	private List<NGraph<D>> components;
 	
 	public void addComment( String c ) {
 		comments = comments.concat( "\n" + c );
@@ -191,7 +190,15 @@ public abstract class NGraph< D > implements Iterable<NVertex<D>> {
 	}
 	
 	public abstract void setVertices( ArrayList<NVertex<D>> vs );
-	
+
+	public List<NGraph<D>> getComponents() {
+		return components;
+	}
+
+	public void setComponents(List<NGraph<D>> components) {
+		this.components = components;
+	}
+
 	public static interface Convertor< From, To > {
 		public To convert( NVertex<From> v );
 	}

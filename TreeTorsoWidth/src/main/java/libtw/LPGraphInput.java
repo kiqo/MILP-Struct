@@ -50,14 +50,10 @@ public class LPGraphInput implements GraphInput {
     }
 
     private void createEdges(ListGraph<InputData> resultGraph, Hashtable<String, NVertex<InputData>> vertices) {
-
         for (Map.Entry<String, List<Node>> nodeNeighboursPair : graph.getNeighbourNodes().entrySet()) {
-
             NVertex<InputData> v1, v2;
             String curNodeName = nodeNeighboursPair.getKey();
-
             v1 = vertices.get(curNodeName);
-
             for (Node neighbour : nodeNeighboursPair.getValue()) {
                 v2 = vertices.get(neighbour.getName());
 
