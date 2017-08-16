@@ -167,22 +167,6 @@ public class StructuralParametersComputation implements Callable<String> {
         GraphData primalGraphData = linearProgram.getStatistics().getPrimalGraphData();
         primalGraphData.setTorsoWidthUB(torsoWidthUpperBound);
         primalGraphData.setTorsoWidthLB(torsoWidthLowerBound);
-
-        // get statistics of torso graph
-        int minDegree = Integer.MAX_VALUE;
-        int maxDegree = Integer.MIN_VALUE;
-
-        for (NVertex<GraphInput.InputData> vertex : g) {
-            int degree = vertex.getNumberOfNeighbors();
-            if (degree < minDegree) {
-                minDegree = degree;
-            }
-            if (degree > maxDegree) {
-                maxDegree = degree;
-            }
-        }
-        primalGraphData.setTorsoMinDegree(minDegree);
-        primalGraphData.setTorsoMaxDegree(maxDegree);
     }
 
     /*

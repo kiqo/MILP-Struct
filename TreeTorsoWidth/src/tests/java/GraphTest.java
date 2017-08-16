@@ -182,7 +182,6 @@ public abstract class GraphTest {
 
 
     Graph createRandomGraph() {
-
         // creates a number in between min and max (inclusive)
         int numNodes = ThreadLocalRandom.current().nextInt(MIN_NODES, MAX_NODES + 1);
 

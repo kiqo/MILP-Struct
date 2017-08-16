@@ -24,8 +24,4 @@ public class MatrixEntry {
     public double getCoefficient() {
         return coefficient;
     }
-
-    public void setCoefficient(double coefficient) {
-        this.coefficient = coefficient;
-    }
 }
