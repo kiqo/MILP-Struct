@@ -12,7 +12,6 @@ public class Node {
     private String name;
     private int id;
     private boolean isInteger;
-    private List<Node> neighbours;
 
     public Node() {
     }

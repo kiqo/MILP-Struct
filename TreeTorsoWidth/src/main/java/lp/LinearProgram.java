@@ -19,7 +19,7 @@ public class LinearProgram {
 
         private int value;
 
-        private Equality(int value) {
+        Equality(int value) {
             this.value = value;
         }
 

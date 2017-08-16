@@ -9,24 +9,6 @@ public class Graph {
     private List<Node> nodes;
     private List<Edge> edges;
     private Map<String, List<Node>> neighbourNodes;
-    private Map<String, Node> nodesMap; // TODO construct only locally?
-    private boolean connected;
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-    }
-
-    public Map<String, Node> getNodesMap() {
-        return nodesMap;
-    }
-
-    public void setNodesMap(Map<String, Node> nodesMap) {
-        this.nodesMap = nodesMap;
-    }
 
     public List<Edge> getEdges() {
         return edges;
