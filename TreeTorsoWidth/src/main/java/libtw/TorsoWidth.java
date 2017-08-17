@@ -37,7 +37,6 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     private NGraph<D> graph;
     private LowerBound<D> lbAlg;
     private UpperBound<D> ubAlg;
-    private static boolean FAST_ALGORITHM = true;
 
     public TorsoWidth(UpperBound<D> ubAlg){
         this.ubAlg = ubAlg;
@@ -59,79 +58,10 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     };
 
     public void run() throws InterruptedException {
-
         if (this.ubAlg == null) {
-            LOGGER.error("TorsoWidth algorithm needs to haven an upperbound algorithm defined!");
+            LOGGER.error("TorsoWidth algorithm needs to have an upperbound algorithm defined!");
             return;
         }
-
-        LOGGER.debug("Num vertices before " + getName() + ": " + graph.getNumberOfVertices());
-        LOGGER.debug("Num edges before " + getName() + ": " + graph.getNumberOfEdges());
-
-        if (FAST_ALGORITHM) {
-            runAlternative();
-            return;
-        }
-
-        // create a ∞-torso which is a graph obtained by collapsing (at least) all the non-integer vertices
-        Iterator<NVertex<D>> vertexIterator = graph.iterator();
-        NVertex<D> vertex;
-
-        int iteration = 0;
-        while (vertexIterator.hasNext()) {
-            checkInterruped(iteration);
-            vertex = vertexIterator.next();
-            LPInputData data = (LPInputData) vertex.data;
-
-            // vertex corresponds to a real valued variable
-            if (!data.isInteger()) {
-                Iterator<NVertex<D>> iter1 = vertex.getNeighbors();
-                while (iter1.hasNext()) {
-                    NVertex<D> neighbour1 = iter1.next();
-
-                    Iterator<NVertex<D>> iter2 = vertex.getNeighbors();
-                    while (iter2.hasNext()) {
-                        NVertex<D> neighbour2 = iter2.next();
-                        if (!neighbour1.equals(neighbour2)) {
-                            neighbour1.ensureNeighbor(neighbour2);
-                        }
-                    }
-                }
-                vertexIterator.remove();
-            }
-        }
-
-        ArrayList<NVertex<D>> vertices = ((ListGraph) graph).vertices;
-
-        Map<NVertex<D>, List<NVertex<D>>> neighboursToRemove = new HashMap<>();
-
-        // remove now all the invalid edges, i.e. edges that contain references to nodes which were deleted
-        for (Iterator<NVertex<D>> iterator = graph.iterator(); iterator.hasNext(); ) {
-            NVertex<D> next = iterator.next();
-
-            for (NVertex<D> vNeighbour : next) {
-                if (!vertices.contains(vNeighbour)) {
-
-                    // vNeighbour needs to be deleted, save it to next
-                    if (!neighboursToRemove.containsKey(next)) {
-                        neighboursToRemove.put(next, new ArrayList<>());
-                    }
-                    neighboursToRemove.get(next).add(vNeighbour);
-                }
-            }
-        }
-
-        Iterator<Map.Entry<NVertex<D>, List<NVertex<D>>>> iterator = neighboursToRemove.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<NVertex<D>, List<NVertex<D>>> next = iterator.next();
-            ((ListVertex<D>) next.getKey()).neighbors.removeAll(next.getValue());
-        }
-        computeLowerBound();
-        computeUpperBound();
-    }
-
-
-    private void runAlternative() throws InterruptedException {
         constructTorsoGraph();
         computeLowerBound();
         computeUpperBound();
