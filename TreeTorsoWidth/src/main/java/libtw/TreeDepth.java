@@ -37,14 +37,11 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepth.class);
-    // times that some DFS spanning tree are generated
-    private static final int NUM_ITERATIONS = 100;
+    private static final int NUM_DFS_TREE_GENERATION = 100;
     private static final boolean MAX_DEGREE_HEURISTIC = true;
+
     private int upperBound = Integer.MAX_VALUE;
 
-    /*
-    returns the longest path found by a random algorithm
-     */
     public List<ListVertex<D>> getLongestPath() {
         return longestPath;
     }
@@ -72,107 +69,110 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
         // Lower bound of tree depth
         int maxPathLength = Integer.MIN_VALUE;
 
-        for (int i = 0; i < NUM_ITERATIONS; i++) {
+        for (int i = 0; i < NUM_DFS_TREE_GENERATION; i++) {
             List<ListVertex<D>> path = findRandomPath();
-            int pathLength = path.size();
-            if (pathLength > maxPathLength) {
-                longestPath = path;
-                maxPathLength = pathLength;
-            }
+            maxPathLength = checkLongestPath(maxPathLength, path);
 
-            // try to get better upper bound
-            // construct a DFS by using the node in the middle of the longest path as root
-            ListVertex<D> rootNode = path.get(path.size() / 2);
-            Set<ListVertex<D>> nodesHandled = new HashSet();
+            Set<ListVertex<D>> nodesHandled = new HashSet<>();
+            ListVertex<D> rootNode = computeRootNodeByPath(path);
+            int height = constructDFSTreeWithRootNode(rootNode, nodesHandled);
 
-            int height;
-            if (MAX_DEGREE_HEURISTIC) {
-                height = DFSTreeByMaxDegreeRoot(rootNode, nodesHandled);
-            } else {
-                height = DFSTree(rootNode, nodesHandled);
-            }
-
-            if (nodesHandled.size() != graph.getNumberOfVertices()) {
+            if (!allNodesOfGraphHandled(nodesHandled)) {
                 // graph is not connected
                 if (!Configuration.OBJ_FUNCTION) {
-                    //objective function is not considered, then compute the tree depth over all components of the graph
-
-                    int heightComponent;
-                    while (nodesHandled.size() != graph.getNumberOfVertices()) {
-                        // choose new rootNode
-                        Iterator<NVertex<D>> iterator = graph.iterator();
-                        NVertex<D> newRootNode = null;
-                        while (iterator.hasNext()) {
-                            newRootNode = iterator.next();
-
-                            if (!nodesHandled.contains(newRootNode)) {
-                                break;
-                            }
-                        }
-
-                        if (MAX_DEGREE_HEURISTIC) {
-                            heightComponent = DFSTreeByMaxDegreeRoot((ListVertex<D>) newRootNode, nodesHandled);
-                        } else {
-                            heightComponent = DFSTree((ListVertex<D>) newRootNode, nodesHandled);
-                        }
-                        if (heightComponent > height) {
-                            height = heightComponent;
-                        }
-                    }
+                    height = computeTreeDepthOverComponents(nodesHandled, height);
                 } else {
                     // the result is not valid
                     height = Integer.MAX_VALUE;
                 }
             }
+            updateUpperBound(height);
+        }
+    }
 
-            if (height < upperBound) {
-                this.upperBound = height;
+    private ListVertex<D> computeRootNodeByPath(List<ListVertex<D>> path) {
+        return path.get(path.size() / 2);
+    }
+
+    private int constructDFSTreeWithRootNode(ListVertex<D> rootNode, Set<ListVertex<D>> nodesHandled) {
+        int height;
+        if (MAX_DEGREE_HEURISTIC) {
+            height = DFSTreeByMaxDegreeRoot(rootNode, nodesHandled);
+        } else {
+            height = DFSTree(rootNode, nodesHandled);
+        }
+        return height;
+    }
+
+    private void updateUpperBound(int height) {
+        if (height < upperBound) {
+            this.upperBound = height;
+        }
+    }
+
+    private boolean allNodesOfGraphHandled(Set<ListVertex<D>> nodesHandled) {
+        return nodesHandled.size() == graph.getNumberOfVertices();
+    }
+
+    private int computeTreeDepthOverComponents(Set<ListVertex<D>> nodesHandled, int maxHeight) {
+        int heightComponent;
+        while (!allNodesOfGraphHandled(nodesHandled)) {
+            NVertex<D> newRootNode = computeRootNodeInDifferentComponent(nodesHandled);
+            heightComponent = constructDFSTreeWithRootNode((ListVertex<D>) newRootNode, nodesHandled);
+            maxHeight = checkTreeDepthIncreases(maxHeight, heightComponent);
+        }
+        return maxHeight;
+    }
+
+    private int checkTreeDepthIncreases(int maxHeight, int upperBoundComponent) {
+        if (upperBoundComponent > maxHeight) {
+            maxHeight = upperBoundComponent;
+        }
+        return maxHeight;
+    }
+
+    private NVertex<D> computeRootNodeInDifferentComponent(Set<ListVertex<D>> nodesHandled) {
+        Iterator<NVertex<D>> iterator = graph.iterator();
+        NVertex<D> newRootNode = null;
+        while (iterator.hasNext()) {
+            newRootNode = iterator.next();
+
+            if (!nodesHandled.contains(newRootNode)) {
+                break;
             }
         }
-        // lowerBound is too bad to be useful
-        // lowerBound = (int) Math.ceil(Math.log(maxPathLength + 1) / Math.log(2.0));
+        return newRootNode;
+    }
+
+    private int checkLongestPath(int maxPathLength, List<ListVertex<D>> path) {
+        int pathLength = path.size();
+        if (pathLength > maxPathLength) {
+            longestPath = path;
+            maxPathLength = pathLength;
+        }
+        return maxPathLength;
     }
 
     private List<ListVertex<D>> findRandomPath() {
-        ArrayList<NVertex<D>> vertices = ((ListGraph) graph).vertices;
-
-        // random start at some vertex
         Random rand = new Random();
-        int startVertexIndex = rand.nextInt(graph.getNumberOfVertices()-1);
+        ListVertex<D> curVertex = getRandomVertex(rand);
 
-        ListVertex<D> curVertex = (ListVertex<D>) vertices.get(startVertexIndex);
         List<ListVertex<D>> pathFound = new ArrayList<>();
         pathFound.add(curVertex);
 
         boolean startVertexHandledAgain = false;
         while (true) {
-
             // get the last vertex in the path
             curVertex = pathFound.get(pathFound.size()-1);
 
-            if (curVertex.getNumberOfNeighbors() == 0) {
-                // may only happen if the graph is not connected
-                LOGGER.warn("Vertex " + curVertex.data.name + " with id " + curVertex.data.id + " has no neighbours!");
+            if (hasNoNeighbours(curVertex)) {
                 break;
             }
 
             // first try to randomly select a neighbour to be the next vertex in the path
-            ListVertex<D> nextVertex = (ListVertex<D>) curVertex.neighbors.get(rand.nextInt(curVertex.getNumberOfNeighbors()));
-            if (!pathFound.contains(nextVertex)) {
-                pathFound.add(nextVertex);
-            } else {
-
-                // iterate over all neighbours and take the first that is not yet in the path
-                Iterator<NVertex<D>> iter = curVertex.getNeighbors();
-
-                boolean pathIncreased = false;
-                while (!pathIncreased && iter.hasNext()) {
-                    ListVertex<D> listVertex = (ListVertex<D>) iter.next();
-                    if (!pathFound.contains(listVertex)) {
-                        pathFound.add(listVertex);
-                        pathIncreased = true;
-                    }
-                }
+            boolean pathIncreased = addRandomNeighbourNotInPath(rand, curVertex, pathFound);
+            if (!pathIncreased) {
+                pathIncreased = addFirstNeighbourNotInPath(curVertex, pathFound);
 
                 if (!pathIncreased) {
                     if (startVertexHandledAgain) {
@@ -191,6 +191,48 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
         return pathFound;
     }
 
+    private ListVertex<D> getRandomVertex(Random rand) {
+        ArrayList<NVertex<D>> vertices = ((ListGraph) graph).vertices;
+        int startVertexIndex = randomVertexIndex(rand, graph.getNumberOfVertices() - 1);
+        return (ListVertex<D>) vertices.get(startVertexIndex);
+    }
+
+    private boolean addRandomNeighbourNotInPath(Random rand, ListVertex<D> curVertex, List<ListVertex<D>> pathFound) {
+        ListVertex<D> nextVertex = (ListVertex<D>) curVertex.neighbors.get(randomVertexIndex(rand, curVertex.getNumberOfNeighbors()));
+        if (!pathFound.contains(nextVertex)) {
+            pathFound.add(nextVertex);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasNoNeighbours(ListVertex<D> curVertex) {
+        if (curVertex.getNumberOfNeighbors() == 0) {
+            // may only happen if the graph is not connected
+            LOGGER.warn("Vertex " + curVertex.data.name + " with id " + curVertex.data.id + " has no neighbours!");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean addFirstNeighbourNotInPath(ListVertex<D> curVertex, List<ListVertex<D>> pathFound) {
+        Iterator<NVertex<D>> iter = curVertex.getNeighbors();
+
+        boolean pathIncreased = false;
+        while (!pathIncreased && iter.hasNext()) {
+            ListVertex<D> listVertex = (ListVertex<D>) iter.next();
+            if (!pathFound.contains(listVertex)) {
+                pathFound.add(listVertex);
+                pathIncreased = true;
+            }
+        }
+        return pathIncreased;
+    }
+
+    private int randomVertexIndex(Random rand, int bound) {
+        return rand.nextInt(bound);
+    }
+
 
     /*
      * Input is the root node, returns distance from the lowest descendant of the rootNode, i.e. the current
@@ -200,7 +242,6 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
     private int DFSTreeByMaxDegreeRoot(ListVertex<D> rootNode, Set<ListVertex<D>> handledVertices) {
 
         handledVertices.add(rootNode);
-        // System.out.print(rootNode.data.name + " ");
 
         int height = 0;
         int maxDegree;
