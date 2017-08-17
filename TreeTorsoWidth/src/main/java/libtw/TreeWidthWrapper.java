@@ -24,12 +24,7 @@ public class TreeWidthWrapper {
     Computes the lower bound of the graph without considering that the graph may be disconnected
      */
     public static int computeLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        LowerBound<GraphInput.InputData> lowerBoundAlg = null;
-        try {
-            lowerBoundAlg = (LowerBound<GraphInput.InputData>) Configuration.LOWER_BOUND_ALG.getConstructor().newInstance();
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            LOGGER.error(e.getMessage());
-        }
+        LowerBound<GraphInput.InputData> lowerBoundAlg = getLowerBoundAlgo();
         lowerBoundAlg.setInput(g);
         lowerBoundAlg.run();
         int lowerbound = lowerBoundAlg.getLowerBound();
@@ -40,20 +35,13 @@ public class TreeWidthWrapper {
     Computes the lower bound of the graph by taking the maximum of the treewidth of each component
      */
     public static int computeLowerBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        LowerBound<GraphInput.InputData> lowerBoundAlg = null;
-        try {
-            lowerBoundAlg = (LowerBound<GraphInput.InputData>) Configuration.LOWER_BOUND_ALG.getConstructor().newInstance();
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            LOGGER.error(e.getMessage());
-        }
+        LowerBound<GraphInput.InputData> lowerBoundAlg = getLowerBoundAlgo();
 
 
         int lowerbound = Integer.MIN_VALUE;
         int lowerboundSubGraph;
         for (NGraph subGraph : g.getComponents()) {
-            lowerBoundAlg.setInput(subGraph);
-            lowerBoundAlg.run();
-            lowerboundSubGraph = lowerBoundAlg.getLowerBound();
+            lowerboundSubGraph = computeLowerBoundForComponent(lowerBoundAlg, subGraph);
 
             // take the maximum over all subgraph lower bounds to be the lower bound
             if (lowerboundSubGraph > lowerbound) {
@@ -64,20 +52,31 @@ public class TreeWidthWrapper {
         return lowerbound;
     }
 
-    public int computeUpperBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        UpperBound<GraphInput.InputData> ubAlgo = null;
+    private static int computeLowerBoundForComponent(LowerBound<GraphInput.InputData> lowerBoundAlg, NGraph subGraph) throws InterruptedException {
+        int lowerboundSubGraph;
+        lowerBoundAlg.setInput(subGraph);
+        lowerBoundAlg.run();
+        lowerboundSubGraph = lowerBoundAlg.getLowerBound();
+        return lowerboundSubGraph;
+    }
+
+    private static LowerBound<GraphInput.InputData> getLowerBoundAlgo() {
+        LowerBound<GraphInput.InputData> lowerBoundAlg = null;
         try {
-            ubAlgo = (UpperBound<GraphInput.InputData>) Configuration.UPPER_BOUND_ALG.getConstructor().newInstance();
+            lowerBoundAlg = (LowerBound<GraphInput.InputData>) Configuration.LOWER_BOUND_ALG.getConstructor().newInstance();
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             LOGGER.error(e.getMessage());
         }
+        return lowerBoundAlg;
+    }
+
+    public int computeUpperBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
+        UpperBound<GraphInput.InputData> ubAlgo = getUpperBoundAlgo();
 
         int upperbound = Integer.MIN_VALUE;
         int upperboundSubGraph;
         for (NGraph subGraph : g.getComponents()) {
-            ubAlgo.setInput(subGraph);
-            ubAlgo.run();
-            upperboundSubGraph = ubAlgo.getUpperBound();
+            upperboundSubGraph = computeUpperBoundForComponent(ubAlgo, subGraph);
 
             // take the maximum over all subgraph upper bounds to be the upper bound
             if (upperboundSubGraph > upperbound) {
@@ -87,14 +86,27 @@ public class TreeWidthWrapper {
         return upperbound;
     }
 
+    private int computeUpperBoundForComponent(UpperBound<GraphInput.InputData> ubAlgo, NGraph subGraph) throws InterruptedException {
+        int upperboundSubGraph;
+        ubAlgo.setInput(subGraph);
+        ubAlgo.run();
+        upperboundSubGraph = ubAlgo.getUpperBound();
+        return upperboundSubGraph;
+    }
 
-    public int computeUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    private UpperBound<GraphInput.InputData> getUpperBoundAlgo() {
         UpperBound<GraphInput.InputData> ubAlgo = null;
         try {
             ubAlgo = (UpperBound<GraphInput.InputData>) Configuration.UPPER_BOUND_ALG.getConstructor().newInstance();
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             LOGGER.error(e.getMessage());
         }
+        return ubAlgo;
+    }
+
+
+    public int computeUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+        UpperBound<GraphInput.InputData> ubAlgo = getUpperBoundAlgo();
         ubAlgo.setInput(g);
         ubAlgo.run();
         int upperbound = ubAlgo.getUpperBound();

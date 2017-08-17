@@ -22,6 +22,10 @@ public class LPGraphInput implements GraphInput {
 
     private Graph graph;
 
+    public LPGraphInput(Graph graph) {
+        this.graph = graph;
+    }
+
     @Override
     public NGraph<InputData> get() throws InputException {
         ListGraph<InputData> resultGraph = new ListGraph<>();
