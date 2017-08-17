@@ -32,7 +32,6 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TorsoWidth.class);
-
     private int lowerbound = Integer.MIN_VALUE;
     private int upperbound = Integer.MAX_VALUE;
     private NGraph<D> graph;
@@ -51,7 +50,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
     @Override
     public String getName() {
-        return "TorsoWidth" + (FAST_ALGORITHM ? "(Fast implementation)" : "");
+        return "TorsoWidth";
     }
 
     @Override
@@ -78,11 +77,9 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         Iterator<NVertex<D>> vertexIterator = graph.iterator();
         NVertex<D> vertex;
 
-        int i = 0;
+        int iteration = 0;
         while (vertexIterator.hasNext()) {
-            if ((i % 10 == 0) && Thread.currentThread().isInterrupted()) {
-                throw new InterruptedException();
-            }
+            checkInterruped(iteration);
             vertex = vertexIterator.next();
             LPInputData data = (LPInputData) vertex.data;
 
@@ -129,96 +126,36 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
             Map.Entry<NVertex<D>, List<NVertex<D>>> next = iterator.next();
             ((ListVertex<D>) next.getKey()).neighbors.removeAll(next.getValue());
         }
-
-        LOGGER.debug("Num vertices after " + getName() + ": " + graph.getNumberOfVertices());
-        LOGGER.debug("Num edges after " + getName() + ": " + graph.getNumberOfEdges());
-
-        // compute lowerbound of treewidth of collapsed graph
-        if (lbAlg != null) {
-            lbAlg.setInput(graph);
-            lbAlg.run();
-            this.lowerbound = lbAlg.getLowerBound();
-        }
-        // compute upperbound of collapsed graph
-        ubAlg.setInput(graph);
-        ubAlg.run();
-        this.upperbound = ubAlg.getUpperBound();
-
+        computeLowerBound();
+        computeUpperBound();
     }
 
-    /*
-    Instead of eliminating each non-integer vertex, find a vertex set of non-integer nodes of a connected component in
-    the graph and collapse this set in the graph by connecting the neighbours of such a set
-     */
-    private void runAlternative() throws InterruptedException {
 
+    private void runAlternative() throws InterruptedException {
+        constructTorsoGraph();
+        computeLowerBound();
+        computeUpperBound();
+    }
+
+    private void constructTorsoGraph() throws InterruptedException {
         Set<NVertex<D>> verticesToRemove = new HashSet<>();
         Iterator<NVertex<D>> vertexIterator = graph.iterator();
 
-        int i = 0;
+        int iteration = 0;
         while (vertexIterator.hasNext()) {
-            if ((i % 10 == 0) && Thread.currentThread().isInterrupted()) {
-                throw new InterruptedException();
-            }
+            checkInterruped(iteration++);
+
             NVertex<D> vertex = vertexIterator.next();
 
             // a non-integer node not yet handled
             if (!((LPInputData) vertex.data).isInteger() && !verticesToRemove.contains(vertex)) {
-
-                // choose this vertex as a starting vertex for the current connected component
-                Set<NVertex<D>> currentNonIntegerSet = new HashSet<>();
-                Set<NVertex<D>> currentIntegerSet = new HashSet<>();
-                List<NVertex<D>> nodesToHandle = new LinkedList<>();
-                nodesToHandle.add(vertex);
-
-                while (!nodesToHandle.isEmpty()) {
-                    NVertex<D> next = nodesToHandle.get(0);
-
-                    if (((LPInputData) next.data).isInteger()) {
-                        if (!currentIntegerSet.contains(next)) {
-                            currentIntegerSet.add(next);
-                        }
-                    } else {
-                        if (!currentNonIntegerSet.contains(next)) {
-                            currentNonIntegerSet.add(next);
-
-                            // old : until now as fast as new implementation ?
-                            // nodesToHandle.addAll(((ListVertex) next).neighbors);
-
-                            // new :
-                            List<NVertex<D>> notYetHandled = new ArrayList<>();
-                            for (NVertex<D> neighbour : ((ListVertex<D>) next).neighbors) {
-                                LPInputData data = (LPInputData) neighbour.data;
-                                if (!data.isNodeHandled()) {
-                                    notYetHandled.add(neighbour);
-                                    data.setNodeHandled(true);
-                                } else if (data.isInteger()) {
-                                    // make sure that the integer node is handled again even though it was before already
-                                    notYetHandled.add(neighbour);
-                                }
-                            }
-                            nodesToHandle.addAll(notYetHandled); // TODO only those not yet contained
-                        }
-                    }
-                    ((LPInputData) next.data).setNodeHandled(true);
-                    nodesToHandle.remove(0);
-                }
-
-                // mark nodes in currentSet to be deleted
-                verticesToRemove.addAll(currentNonIntegerSet);
-
-                // form a clique of the nodes in currentIntegerNeighbours
-                for (NVertex<D> integerNode1 : currentIntegerSet) {
-                    for (NVertex<D> integerNode2 : currentIntegerSet) {
-                        if (!integerNode1.equals(integerNode2)) {
-                            integerNode1.ensureNeighbor(integerNode2);
-                        }
-                    }
-                }
+                handleComponent(verticesToRemove, vertex);
             }
         }
+        deleteMarkedNodes(verticesToRemove);
+    }
 
-        // delete nodes
+    private void deleteMarkedNodes(Set<NVertex<D>> verticesToRemove) {
         ((ListGraph) graph).vertices.removeAll(verticesToRemove);
 
         // delete nodes in neighbour lists of integer nodes
@@ -227,21 +164,96 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
                 vertex.removeNeighbor(vertexToDel);
             }
         }
+    }
 
-        LOGGER.debug("Num vertices after " + getName() + ": " + graph.getNumberOfVertices());
-        LOGGER.debug("Num edges after " + getName() + ": " + graph.getNumberOfEdges());
+    private void handleComponent(Set<NVertex<D>> verticesToRemove, NVertex<D> startingVertex) {
+        Set<NVertex<D>> currentNonIntegerSet = new HashSet<>();
+        Set<NVertex<D>> currentIntegerSet = new HashSet<>();
+        List<NVertex<D>> nodesToHandle = new LinkedList<>();
+        nodesToHandle.add(startingVertex);
 
-        // compute lowerbound of treewidth of collapsed graph
+        while (!nodesToHandle.isEmpty()) {
+            handleVertex(currentNonIntegerSet, currentIntegerSet, nodesToHandle);
+        }
+        markNodesForDeletion(verticesToRemove, currentNonIntegerSet);
+        addEdgesToFormClique(currentIntegerSet);
+    }
+
+    private void handleVertex(Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> currentIntegerSet, List<NVertex<D>> nodesToHandle) {
+        NVertex<D> next = nodesToHandle.get(0);
+
+        if (((LPInputData) next.data).isInteger()) {
+            handleIntegerVertex(currentIntegerSet, next);
+        } else {
+            handleNonIntegerVertex(currentNonIntegerSet, nodesToHandle, next);
+        }
+        ((LPInputData) next.data).setNodeHandled(true);
+        nodesToHandle.remove(0);
+    }
+
+    private void markNodesForDeletion(Set<NVertex<D>> verticesToRemove, Set<NVertex<D>> currentNonIntegerSet) {
+        // mark nodes in currentSet to be deleted
+        verticesToRemove.addAll(currentNonIntegerSet);
+    }
+
+    private void addEdgesToFormClique(Set<NVertex<D>> currentIntegerSet) {
+        // form a clique of the nodes in currentIntegerNeighbours
+        for (NVertex<D> integerNode1 : currentIntegerSet) {
+            for (NVertex<D> integerNode2 : currentIntegerSet) {
+                if (!integerNode1.equals(integerNode2)) {
+                    integerNode1.ensureNeighbor(integerNode2);
+                }
+            }
+        }
+    }
+
+    private void handleIntegerVertex(Set<NVertex<D>> currentIntegerSet, NVertex<D> next) {
+        if (!currentIntegerSet.contains(next)) {
+            currentIntegerSet.add(next);
+        }
+    }
+
+    private void handleNonIntegerVertex(Set<NVertex<D>> currentNonIntegerSet, List<NVertex<D>> nodesToHandle, NVertex<D> next) {
+        if (!currentNonIntegerSet.contains(next)) {
+            currentNonIntegerSet.add(next);
+
+            // old : until now as fast as new implementation ?
+            // nodesToHandle.addAll(((ListVertex) next).neighbors);
+
+            // new :
+            List<NVertex<D>> notYetHandled = new ArrayList<>();
+            for (NVertex<D> neighbour : ((ListVertex<D>) next).neighbors) {
+                LPInputData data = (LPInputData) neighbour.data;
+                if (!data.isNodeHandled()) {
+                    notYetHandled.add(neighbour);
+                    data.setNodeHandled(true);
+                } else if (data.isInteger()) {
+                    // make sure that the integer node is handled again even though it was before already
+                    notYetHandled.add(neighbour);
+                }
+            }
+            nodesToHandle.addAll(notYetHandled); // TODO only those not yet contained
+        }
+    }
+
+    private void checkInterruped(int i) throws InterruptedException {
+        if ((i % 10 == 0) && Thread.currentThread().isInterrupted()) {
+            throw new InterruptedException();
+        }
+    }
+
+    private void computeLowerBound() throws InterruptedException {
         if (lbAlg != null) {
             lbAlg.setInput(graph);
             lbAlg.run();
             this.lowerbound = lbAlg.getLowerBound();
         }
-        // compute upperbound of treewidth of collapsed graph
+    }
+
+    private void computeUpperBound() throws InterruptedException {
         ubAlg.setInput(graph);
         ubAlg.run();
         this.upperbound = ubAlg.getUpperBound();
-
     }
 
     public NGraph<D> getGraph() {
