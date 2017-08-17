@@ -1,5 +1,6 @@
 package tests.java;
 
+import main.java.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
@@ -13,6 +14,7 @@ import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,17 @@ public class TorsoWidthTest extends GraphTest {
     private static final boolean SHOW_GRAPH = false;
     private static final boolean PRINT_GRAPH = false;
     private static final boolean PRINT_RESULTS = true;
+    private Configuration configuration = new Configuration();
+
+    @Before
+    public void init() {
+        try {
+            Configuration.UPPER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.GreedyDegree");
+            Configuration.LOWER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC");
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("", e);
+        }
+    }
 
     public static NGraph<GraphInput.InputData> torsoWidth(Graph graph) throws InterruptedException {
         // generate NGraph for using libtw
@@ -64,8 +77,7 @@ public class TorsoWidthTest extends GraphTest {
     }
 
     private static NGraph<GraphInput.InputData> computeTorsowidth(NGraph<GraphInput.InputData> graphBefore) throws InterruptedException {
-        GreedyDegree<GraphInput.InputData> ubAlgo = new GreedyDegree<>();
-        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(ubAlgo);
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>();
         torsoWidthAlgo.setInput(graphBefore);
         torsoWidthAlgo.run();
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();

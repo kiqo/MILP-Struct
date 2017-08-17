@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.Hashtable;
 
-/**
- * Created by Verena on 09.04.2017.
- */
 public class LPDgfReader extends DgfReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LPDgfReader.class);

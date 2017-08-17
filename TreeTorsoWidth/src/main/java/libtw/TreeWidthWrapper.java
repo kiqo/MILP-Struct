@@ -70,7 +70,7 @@ public class TreeWidthWrapper {
         return lowerBoundAlg;
     }
 
-    public int computeUpperBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    public static int computeUpperBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
         UpperBound<GraphInput.InputData> ubAlgo = getUpperBoundAlgo();
 
         int upperbound = Integer.MIN_VALUE;
@@ -86,7 +86,7 @@ public class TreeWidthWrapper {
         return upperbound;
     }
 
-    private int computeUpperBoundForComponent(UpperBound<GraphInput.InputData> ubAlgo, NGraph subGraph) throws InterruptedException {
+    private static int computeUpperBoundForComponent(UpperBound<GraphInput.InputData> ubAlgo, NGraph subGraph) throws InterruptedException {
         int upperboundSubGraph;
         ubAlgo.setInput(subGraph);
         ubAlgo.run();
@@ -94,7 +94,7 @@ public class TreeWidthWrapper {
         return upperboundSubGraph;
     }
 
-    private UpperBound<GraphInput.InputData> getUpperBoundAlgo() {
+    private static UpperBound<GraphInput.InputData> getUpperBoundAlgo() {
         UpperBound<GraphInput.InputData> ubAlgo = null;
         try {
             ubAlgo = (UpperBound<GraphInput.InputData>) Configuration.UPPER_BOUND_ALG.getConstructor().newInstance();

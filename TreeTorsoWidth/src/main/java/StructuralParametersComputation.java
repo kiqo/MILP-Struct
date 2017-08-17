@@ -1,6 +1,7 @@
 package main.java;
 
 import main.java.graph.Graph;
+import main.java.libtw.LPInputData;
 import main.java.libtw.TorsoWidth;
 import main.java.libtw.TreeDepth;
 import main.java.libtw.TreeWidthWrapper;
@@ -35,7 +36,6 @@ public class StructuralParametersComputation implements Callable<String> {
     private static final Stopwatch t = new Stopwatch();
     private static String fileName;
     private StringBuilder sb = new StringBuilder();
-    private TreeWidthWrapper wrapper = new TreeWidthWrapper();
 
     public StructuralParametersComputation (String fileName) {
         this.fileName = fileName;
@@ -154,7 +154,7 @@ public class StructuralParametersComputation implements Callable<String> {
         t.reset();
         t.start();
 
-        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>(createUpperBound(), createLowerBound());
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth();
         torsoWidthAlgo.setInput(g);
         torsoWidthAlgo.run();
         int torsoWidthLowerBound = torsoWidthAlgo.getLowerBound();
@@ -194,7 +194,7 @@ public class StructuralParametersComputation implements Callable<String> {
     private int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
         t.reset();
         t.start();
-        int upperbound = wrapper.computeUpperBoundWithComponents(g);
+        int upperbound = TreeWidthWrapper.computeUpperBoundWithComponents(g);
         t.stop();
         long millisecondsPassed = t.getTime();
         printTimingInfo(fileName, "UB TreeWidth", upperbound, g.getNumberOfVertices(), Configuration.UPPER_BOUND_ALG.getName(), millisecondsPassed/1000);
@@ -204,7 +204,7 @@ public class StructuralParametersComputation implements Callable<String> {
     private int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
         t.reset();
         t.start();
-        int lowerbound = wrapper.computeLowerBoundWithComponents(g);
+        int lowerbound = TreeWidthWrapper.computeLowerBoundWithComponents(g);
         t.stop();
         long millisecondsPassed = t.getTime();
         printTimingInfo(fileName, "LB TreeWidth", lowerbound, g.getNumberOfVertices(), Configuration.LOWER_BOUND_ALG.getName(), millisecondsPassed/1000);

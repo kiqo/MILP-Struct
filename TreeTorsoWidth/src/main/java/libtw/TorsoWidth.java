@@ -32,20 +32,9 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TorsoWidth.class);
-    private int lowerbound = Integer.MIN_VALUE;
-    private int upperbound = Integer.MAX_VALUE;
+    private int lowerBound = Integer.MIN_VALUE;
+    private int upperBound = Integer.MAX_VALUE;
     private NGraph<D> graph;
-    private LowerBound<D> lbAlg;
-    private UpperBound<D> ubAlg;
-
-    public TorsoWidth(UpperBound<D> ubAlg){
-        this.ubAlg = ubAlg;
-    }
-
-    public TorsoWidth(UpperBound<D> ubAlg, LowerBound<D> lbAlg){
-        this.ubAlg = ubAlg;
-        this.lbAlg = lbAlg;
-    }
 
     @Override
     public String getName() {
@@ -55,13 +44,10 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     @Override
     public void setInput(NGraph<D> g)  {
         graph = g.copy(new MyConverter());
+        graph.setComponents(g.getComponents());
     };
 
     public void run() throws InterruptedException {
-        if (this.ubAlg == null) {
-            LOGGER.error("TorsoWidth algorithm needs to have an upperbound algorithm defined!");
-            return;
-        }
         constructTorsoGraph();
         computeLowerBound();
         computeUpperBound();
@@ -137,29 +123,29 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         }
     }
 
-    private void handleIntegerVertex(Set<NVertex<D>> currentIntegerSet, NVertex<D> next) {
-        if (!currentIntegerSet.contains(next)) {
-            currentIntegerSet.add(next);
+    private void handleIntegerVertex(Set<NVertex<D>> currentIntegerSet, NVertex<D> integerVertex) {
+        if (!currentIntegerSet.contains(integerVertex)) {
+            currentIntegerSet.add(integerVertex);
         }
     }
 
-    private void handleNonIntegerVertex(Set<NVertex<D>> currentNonIntegerSet, List<NVertex<D>> nodesToHandle, NVertex<D> next) {
-        if (!currentNonIntegerSet.contains(next)) {
-            currentNonIntegerSet.add(next);
+    private void handleNonIntegerVertex(Set<NVertex<D>> currentNonIntegerSet, List<NVertex<D>> nodesToHandle, NVertex<D> curVertex) {
+        if (!currentNonIntegerSet.contains(curVertex)) {
+            currentNonIntegerSet.add(curVertex);
 
             // old : until now as fast as new implementation ?
             // nodesToHandle.addAll(((ListVertex) next).neighbors);
 
             // new :
             List<NVertex<D>> notYetHandled = new ArrayList<>();
-            for (NVertex<D> neighbour : ((ListVertex<D>) next).neighbors) {
+            for (NVertex<D> neighbour : ((ListVertex<D>) curVertex).neighbors) {
                 LPInputData data = (LPInputData) neighbour.data;
                 if (!data.isNodeHandled()) {
                     notYetHandled.add(neighbour);
                     data.setNodeHandled(true);
                 } else if (data.isInteger()) {
                     // make sure that the integer node is handled again even though it was before already
-                    notYetHandled.add(neighbour);
+                    notYetHandled.add(neighbour); // TODO check if needed?
                 }
             }
             nodesToHandle.addAll(notYetHandled); // TODO only those not yet contained
@@ -173,17 +159,12 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     }
 
     private void computeLowerBound() throws InterruptedException {
-        if (lbAlg != null) {
-            lbAlg.setInput(graph);
-            lbAlg.run();
-            this.lowerbound = lbAlg.getLowerBound();
-        }
+        this.lowerBound = TreeWidthWrapper.computeLowerBoundWithComponents((NGraph<GraphInput.InputData>) graph);
     }
 
     private void computeUpperBound() throws InterruptedException {
-        ubAlg.setInput(graph);
-        ubAlg.run();
-        this.upperbound = ubAlg.getUpperBound();
+        this.upperBound = TreeWidthWrapper.computeUpperBoundWithComponents((NGraph<GraphInput.InputData>) graph);
+
     }
 
     public NGraph<D> getGraph() {
@@ -192,11 +173,11 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
     @Override
     public int getUpperBound() {
-        return this.upperbound;
+        return this.upperBound;
     }
 
     @Override
     public int getLowerBound() {
-        return this.lowerbound;
+        return this.lowerBound;
     }
 }

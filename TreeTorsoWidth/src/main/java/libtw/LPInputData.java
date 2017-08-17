@@ -11,7 +11,13 @@ import java.util.List;
  */
 public class LPInputData extends GraphInput.InputData {
 
+    public LPInputData( int id, String name, boolean isInteger) {
+        super( id, name );
+        this.isInteger = isInteger;
+    }
+
     private boolean isInteger = false;
+    private boolean nodeHandled = false;
 
     public boolean isNodeHandled() {
         return nodeHandled;
@@ -21,12 +27,7 @@ public class LPInputData extends GraphInput.InputData {
         this.nodeHandled = nodeHandled;
     }
 
-    private boolean nodeHandled = false;
 
-    public LPInputData( int id, String name, boolean isInteger) {
-        super( id, name );
-        this.isInteger = isInteger;
-    }
     public boolean isInteger() { return this.isInteger; }
 
     public void setInteger(boolean integer) {
