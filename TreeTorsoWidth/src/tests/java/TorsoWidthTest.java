@@ -39,7 +39,7 @@ public class TorsoWidthTest extends GraphTest {
         }
     }
 
-    public static NGraph<GraphInput.InputData> torsoWidth(Graph graph) throws InterruptedException {
+    public static TorsoWidth<GraphInput.InputData> torsoWidth(Graph graph) throws InterruptedException {
         // generate NGraph for using libtw
         GraphTransformator graphTransformator = new GraphTransformator();
         NGraph<GraphInput.InputData> nGraph = graphTransformator.graphToNGraph(graph);
@@ -47,15 +47,15 @@ public class TorsoWidthTest extends GraphTest {
         return torsoWidth(nGraph);
     }
 
-    public static NGraph<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> nGraph) throws InterruptedException {
+    public static TorsoWidth<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> nGraph) throws InterruptedException {
         if (SHOW_GRAPH || PRINT_GRAPH) {
             nGraph.printGraph(SHOW_GRAPH, PRINT_GRAPH);
         }
         computeTreewidthUBBefore(nGraph);
-        NGraph<GraphInput.InputData> graphAfter = computeTorsowidth(nGraph);
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = computeTorsowidth(nGraph);
 
-        assertAllNodesInComponentsInteger(graphAfter);
-        return graphAfter;
+        assertAllNodesInComponentsInteger(torsoWidthAlgo.getGraph());
+        return torsoWidthAlgo;
     }
 
     private static void assertAllNodesInComponentsInteger(NGraph<GraphInput.InputData> graphAfter) {
@@ -70,7 +70,7 @@ public class TorsoWidthTest extends GraphTest {
         }
     }
 
-    private static NGraph<GraphInput.InputData> computeTorsowidth(NGraph<GraphInput.InputData> graphBefore) throws InterruptedException {
+    private static TorsoWidth<GraphInput.InputData> computeTorsowidth(NGraph<GraphInput.InputData> graphBefore) throws InterruptedException {
         TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth<>();
         torsoWidthAlgo.setInput(graphBefore);
         torsoWidthAlgo.run();
@@ -78,7 +78,7 @@ public class TorsoWidthTest extends GraphTest {
         if (PRINT_RESULTS) {
             printResult("TorsoWidth UB", torsoWidthUpperBound, graphBefore.getNumberOfVertices(), torsoWidthAlgo.getName());
         }
-        return torsoWidthAlgo.getGraph();
+        return torsoWidthAlgo;
     }
 
     private static GreedyDegree<GraphInput.InputData> computeTreewidthUBBefore(NGraph<GraphInput.InputData> graphBefore) throws InterruptedException {
@@ -97,7 +97,8 @@ public class TorsoWidthTest extends GraphTest {
     public void testNodeBlockerGraph() throws InterruptedException {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
 
-        NGraph<GraphInput.InputData> resultGraph = torsoWidth(nodeBlockerGraph);
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = torsoWidth(nodeBlockerGraph);
+        NGraph<GraphInput.InputData> resultGraph = torsoWidthAlgo.getGraph();
         NGraph<GraphInput.InputData> onlyComponent = resultGraph.getComponents().get(0);
 
         Assert.assertEquals(1, resultGraph.getComponents().size(), 0);
@@ -108,32 +109,46 @@ public class TorsoWidthTest extends GraphTest {
         Assert.assertTrue(nodeBlocker.isNeighbor(iterator.next()));
         Assert.assertTrue(nodeBlocker.isNeighbor(iterator.next()));
         Assert.assertEquals(2, nodeBlocker.getNumberOfNeighbors(), 0);
+        Assert.assertEquals(1, torsoWidthAlgo.getUpperBound(), 0);
+        Assert.assertEquals(1, torsoWidthAlgo.getLowerBound(), 0);
     }
 
     @Test
     public void testStarShapedGraph() throws InterruptedException {
         Graph starShapedGraph = createStarShapedGraph();
 
-        NGraph<GraphInput.InputData> resultGraph = torsoWidth(starShapedGraph);
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = torsoWidth(starShapedGraph);
+        NGraph<GraphInput.InputData> resultGraph = torsoWidthAlgo.getGraph();
         NGraph<GraphInput.InputData> onlyComponent = resultGraph.getComponents().get(0);
 
         Assert.assertEquals(1, resultGraph.getComponents().size(), 0);
         Assert.assertEquals(3, onlyComponent.getNumberOfVertices(), 0);
         Assert.assertEquals(3, onlyComponent.getNumberOfEdges(), 0);
         Assert.assertTrue(isClique(onlyComponent));
+        Assert.assertEquals(2, torsoWidthAlgo.getUpperBound(), 0);
+        Assert.assertEquals(2, torsoWidthAlgo.getLowerBound(), 0);
     }
 
     @Test
     public void testDisconnectedGraph() throws InterruptedException {
         Graph disconnectedGraph = createDisconnectedGraph();
 
-        NGraph<GraphInput.InputData> resultGraph = torsoWidth(disconnectedGraph);
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = torsoWidth(disconnectedGraph);
+        NGraph<GraphInput.InputData> resultGraph = torsoWidthAlgo.getGraph();
 
         Assert.assertEquals(2, resultGraph.getComponents().size(), 0);
         Assert.assertEquals(3, resultGraph.getComponents().get(0).getNumberOfVertices(), 0);
         Assert.assertEquals(3, resultGraph.getComponents().get(1).getNumberOfVertices(), 0);
         Assert.assertEquals(2, resultGraph.getComponents().get(0).getNumberOfEdges(), 0);
         Assert.assertEquals(3, resultGraph.getComponents().get(1).getNumberOfEdges(), 0);
+        Assert.assertEquals(2, torsoWidthAlgo.getUpperBound(), 0);
+        Assert.assertEquals(2, torsoWidthAlgo.getLowerBound(), 0);
+    }
+
+    @Test
+    public void testRandomGraph() throws InterruptedException {
+        Graph randomGraph = createRandomGraph();
+        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = torsoWidth(randomGraph);
     }
 
     private boolean isClique(NGraph<GraphInput.InputData> graph) {
@@ -150,11 +165,5 @@ public class TorsoWidthTest extends GraphTest {
             }
         }
         return true;
-    }
-
-    @Test
-    public void testRandomGraph() throws InterruptedException {
-        Graph randomGraph = createRandomGraph();
-        NGraph<GraphInput.InputData> after = torsoWidth(randomGraph);
     }
 }
