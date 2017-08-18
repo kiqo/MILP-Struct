@@ -124,10 +124,11 @@ public class LPGraphInput implements GraphInput {
         // System.out.print(rootNode.data.name + " ");
 
         int height = 0;
+        int heightSubtree;
         for (Iterator<NVertex> it = rootNode.getNeighbors(); it.hasNext(); ) {
             NVertex neighbor = it.next();
             if (!handledVertices.contains(neighbor)) {
-                int heightSubtree = DFSTree(neighbor, handledVertices);
+                heightSubtree = DFSTree(neighbor, handledVertices);
                 if (heightSubtree > height) {
                     height = heightSubtree;
                 }

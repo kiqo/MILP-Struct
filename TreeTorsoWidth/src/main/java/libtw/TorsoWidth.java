@@ -43,19 +43,29 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
     @Override
     public void setInput(NGraph<D> g)  {
-        graph = g.copy(new MyConverter());
-        graph.setComponents(g.getComponents());
-    };
-
-    public void run() throws InterruptedException {
-        constructTorsoGraph();
-        computeLowerBound();
-        computeUpperBound();
+        MyConverter converter = new MyConverter();
+        graph = g.copy(converter);
+        List<NGraph<D>> components = g.getComponents();
+        List<NGraph<D>> componentsCopy = new ArrayList<>();
+        for (NGraph<D> oldComponent : components) {
+            componentsCopy.add(oldComponent.copy(converter));
+        }
+        graph.setComponents(componentsCopy);
     }
 
-    private void constructTorsoGraph() throws InterruptedException {
-        for (NGraph<D> component : graph.getComponents()) {
+    public void run() throws InterruptedException {
+        // only handle the components and keep the graph itself as it was
+        constructTorsoGraphOnComponents();
+        computeLowerBoundOnComponents();
+        computeUpperBoundOnComponents();
+    }
+
+    private void constructTorsoGraphOnComponents() throws InterruptedException {
+        Iterator<NGraph<D>> iterator = graph.getComponents().iterator();
+        while (iterator.hasNext()) {
+            NGraph<D> component = iterator.next();
             constructTorsoForComponent(component);
+            deleteComponentIfEmpty(iterator, component);
         }
     }
 
@@ -75,6 +85,12 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
             }
         }
         deleteMarkedNodes(component, verticesToRemove);
+    }
+
+    private void deleteComponentIfEmpty(Iterator<NGraph<D>> iterator, NGraph<D> component) {
+        if (component.getNumberOfVertices() == 0) {
+            iterator.remove();
+        }
     }
 
     private void deleteMarkedNodes(NGraph<D> component, Set<NVertex<D>> verticesToRemove) {
@@ -164,11 +180,11 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         }
     }
 
-    private void computeLowerBound() throws InterruptedException {
+    private void computeLowerBoundOnComponents() throws InterruptedException {
         this.lowerBound = TreeWidthWrapper.computeLowerBoundWithComponents((NGraph<GraphInput.InputData>) graph);
     }
 
-    private void computeUpperBound() throws InterruptedException {
+    private void computeUpperBoundOnComponents() throws InterruptedException {
         this.upperBound = TreeWidthWrapper.computeUpperBoundWithComponents((NGraph<GraphInput.InputData>) graph);
 
     }

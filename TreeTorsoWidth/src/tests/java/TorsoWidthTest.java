@@ -6,7 +6,6 @@ import main.java.libtw.LPInputData;
 import main.java.libtw.TorsoWidth;
 import nl.uu.cs.treewidth.algorithm.GreedyDegree;
 import nl.uu.cs.treewidth.input.GraphInput;
-import nl.uu.cs.treewidth.input.InputException;
 import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
@@ -25,8 +24,8 @@ import java.util.*;
 public class TorsoWidthTest extends GraphTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TorsoWidthTest.class);
 
-    private static final boolean SHOW_GRAPH = false;
-    private static final boolean PRINT_GRAPH = false;
+    private static final boolean SHOW_GRAPH = true;
+    private static final boolean PRINT_GRAPH = true;
     private static final boolean PRINT_RESULTS = true;
     private Configuration configuration = new Configuration();
 
@@ -55,19 +54,18 @@ public class TorsoWidthTest extends GraphTest {
         computeTreewidthUBBefore(nGraph);
         NGraph<GraphInput.InputData> graphAfter = computeTorsowidth(nGraph);
 
-        if (SHOW_GRAPH || PRINT_GRAPH) {
-            graphAfter.printGraph(SHOW_GRAPH, PRINT_GRAPH);
-        }
-        assertAllNodesInteger(graphAfter);
+        assertAllNodesInComponentsInteger(graphAfter);
         return graphAfter;
     }
 
-    private static void assertAllNodesInteger(NGraph<GraphInput.InputData> graphAfter) {
-        for (NVertex<GraphInput.InputData> node : graphAfter) {
-            Assert.assertTrue(((LPInputData) node.data).isInteger());
+    private static void assertAllNodesInComponentsInteger(NGraph<GraphInput.InputData> graphAfter) {
+        for (NGraph<GraphInput.InputData> component : graphAfter.getComponents()) {
+            for (NVertex<GraphInput.InputData> node : component) {
+                Assert.assertTrue(((LPInputData) node.data).isInteger());
 
-            for (NVertex<GraphInput.InputData> neighbour : ((ListVertex<GraphInput.InputData>) node).neighbors) {
-                Assert.assertTrue(((LPInputData) neighbour.data).isInteger());
+                for (NVertex<GraphInput.InputData> neighbour : ((ListVertex<GraphInput.InputData>) node).neighbors) {
+                    Assert.assertTrue(((LPInputData) neighbour.data).isInteger());
+                }
             }
         }
     }
@@ -100,9 +98,11 @@ public class TorsoWidthTest extends GraphTest {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
 
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(nodeBlockerGraph);
+        NGraph<GraphInput.InputData> onlyComponent = resultGraph.getComponents().get(0);
 
-        Assert.assertEquals(3, resultGraph.getNumberOfVertices(), 0);
-        Assert.assertEquals(2, resultGraph.getNumberOfEdges(), 0);
+        Assert.assertEquals(1, resultGraph.getComponents().size(), 0);
+        Assert.assertEquals(3, onlyComponent.getNumberOfVertices(), 0);
+        Assert.assertEquals(2, onlyComponent.getNumberOfEdges(), 0);
         Iterator<NVertex<GraphInput.InputData>> iterator = resultGraph.iterator();
         NVertex<GraphInput.InputData> nodeBlocker = iterator.next();
         Assert.assertTrue(nodeBlocker.isNeighbor(iterator.next()));
@@ -115,10 +115,12 @@ public class TorsoWidthTest extends GraphTest {
         Graph starShapedGraph = createStarShapedGraph();
 
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(starShapedGraph);
+        NGraph<GraphInput.InputData> onlyComponent = resultGraph.getComponents().get(0);
 
-        Assert.assertEquals(3, resultGraph.getNumberOfVertices(), 0);
-        Assert.assertEquals(3, resultGraph.getNumberOfEdges(), 0);
-        Assert.assertTrue(isClique(resultGraph));
+        Assert.assertEquals(1, resultGraph.getComponents().size(), 0);
+        Assert.assertEquals(3, onlyComponent.getNumberOfVertices(), 0);
+        Assert.assertEquals(3, onlyComponent.getNumberOfEdges(), 0);
+        Assert.assertTrue(isClique(onlyComponent));
     }
 
     @Test
@@ -127,8 +129,11 @@ public class TorsoWidthTest extends GraphTest {
 
         NGraph<GraphInput.InputData> resultGraph = torsoWidth(disconnectedGraph);
 
-        Assert.assertEquals(6, resultGraph.getNumberOfVertices(), 0);
-        Assert.assertEquals(5, resultGraph.getNumberOfEdges(), 0);
+        Assert.assertEquals(2, resultGraph.getComponents().size(), 0);
+        Assert.assertEquals(3, resultGraph.getComponents().get(0).getNumberOfVertices(), 0);
+        Assert.assertEquals(3, resultGraph.getComponents().get(1).getNumberOfVertices(), 0);
+        Assert.assertEquals(2, resultGraph.getComponents().get(0).getNumberOfEdges(), 0);
+        Assert.assertEquals(3, resultGraph.getComponents().get(1).getNumberOfEdges(), 0);
     }
 
     private boolean isClique(NGraph<GraphInput.InputData> graph) {
