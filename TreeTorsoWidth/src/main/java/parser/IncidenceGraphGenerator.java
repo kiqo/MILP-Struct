@@ -6,109 +6,93 @@ import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.LinearProgram;
 import main.java.lp.MatrixEntry;
-import main.java.lp.MatrixRow;
 import main.java.lp.Row;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Verena on 18.08.2017.
  */
 public class IncidenceGraphGenerator extends GraphGenerator {
 
+    private static int uniqueId = 0;
 
     /**
      *
      * @param lp
-     * @return Primal graph of the linear program
+     * @return Incidence graph of the linear program
      * @throws InterruptedException
-     * The primal graph is constructed by taking the variables of the lp as nodes and a variable is connected by an edge
-     * to another variable b iff they occur in the same constraint or they occur together in the objective function
+     *  The incidence graph is constructed by taking the variables of the lp and the constraints as nodes
+     *  and a variable is connected by an edge to a constraint iff the variable occurs in the constraint
      */
     public Graph linearProgramToGraph(LinearProgram lp) throws InterruptedException {
-        Graph primalGraph = new Graph();
         List<Node> nodes = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
         Map<String, List<Node>> neighbourNodes = new HashMap<>();
-        Map<String, Node> nodesMap = new HashMap<>();
-        List<Node> neighbours;
 
-        int uniqueId = 0;
-        Node node;
-        // generate nodes
-        for (String variableName : lp.getVariables().keySet()) {
-            node = new Node(variableName, uniqueId++);
-            node.setInteger(lp.getVariables().get(variableName).isInteger());
-            nodes.add(node);
-            nodesMap.put(node.getName(), node);
-            neighbours = new ArrayList<>();
-            neighbourNodes.put(variableName, neighbours);
-        }
-        primalGraph.setNodes(nodes);
-
-        // generate edges for constraints
-        for (MatrixRow row : lp.getConstraints()) {
+        for (Row matrixRow : getRows(lp)) {
             checkInterrupted();
-            convertRowToEdge(row, nodesMap, neighbourNodes, edges);
+
+            Node constraintNode = generateConstraintNode(nodes, matrixRow.getName());
+            for (MatrixEntry matrixEntry : matrixRow.getEntries()) {
+                Node variableNode = generateNodeIfNotExists(lp, nodes, matrixEntry);
+                generateEdge(edges, constraintNode, variableNode);
+                createNeighbours(neighbourNodes, constraintNode, variableNode);
+            }
         }
 
-        // definition for primal graph varies here: sometimes the objective function is considered and sometimes not
-        // generate edges for objective function
-        if (Configuration.OBJ_FUNCTION) {
-            convertRowToEdge(lp.getObjectiveFunction(), nodesMap, neighbourNodes, edges);
-        }
-
-        primalGraph.setEdges(edges);
-        primalGraph.setNeighbourNodes(neighbourNodes);
-        return primalGraph;
+        Graph incidenceGraph = createGraph(nodes ,edges , neighbourNodes);
+        return incidenceGraph;
     }
 
-
-    private void convertRowToEdge(Row row, Map<String, Node> nodesMap, Map<String, List<Node>> neighbourNodes, List<Edge> edges) throws InterruptedException {
-        List<MatrixEntry> variablesInRow = row.getEntries();
-
-        Node curNode, neighbourNode;
-        String curNodeName, neighbourNodeName;
-        List<Node> neighbours;
-        for (int i = 0; i < variablesInRow.size(); i++) {
-            if (i % 50 == 0) {
-                checkInterrupted();
-            }
-
-            curNodeName = variablesInRow.get(i).getVariable().getName();
-            curNode = nodesMap.get(curNodeName);
-
-            for (int j = i+1; j < variablesInRow.size(); j++) {
-
-                neighbourNodeName = variablesInRow.get(j).getVariable().getName();
-
-                neighbours = neighbourNodes.get(curNodeName);
-
-                // check if neighbourNode is already in neighbours of curNode
-                boolean found = false;
-                for (Node neighbour : neighbours) {
-                    if (neighbour.getName().equals(neighbourNodeName)) {
-                        found = true;
-                    }
-                }
-
-                if (found){
-                    // skip node if already known that they are connected
-                    continue;
-                }
-
-                neighbourNode = nodesMap.get(neighbourNodeName);
-
-                // add neighbourNode to curNode and curNode to neighbourNode and generate edge for them
-                neighbours.add(neighbourNode);
-                neighbours = neighbourNodes.get(neighbourNode.getName());
-                neighbours.add(curNode);
-
-                edges.add(new Edge(curNode, neighbourNode));
-            }
+    private Collection<Row> getRows(LinearProgram lp) {
+        Collection<Row> rows;
+        if (Configuration.OBJ_FUNCTION) {
+            // objective function is considered like a row in the matrix
+            rows = lp.getRows().values();
+        } else {
+            // objective function just ignored
+            rows = new ArrayList<>(lp.getConstraints());
         }
+        return rows;
+    }
+
+    private Node generateConstraintNode(List<Node> nodes, String nodeName) {
+        Node constraintNode = new Node(nodeName, uniqueId++);
+        nodes.add(constraintNode);
+        return constraintNode;
+    }
+
+    private void createNeighbours(Map<String, List<Node>> neighbourNodes, Node node1, Node node2) {
+        addNeighbour(neighbourNodes, node2, node1);
+        addNeighbour(neighbourNodes, node1, node2);
+
+
+    }
+
+    private void addNeighbour(Map<String, List<Node>> neighbourNodes, Node node, Node neighbourNode) {
+        if (!neighbourNodes.containsKey(neighbourNode.getName())) {
+            List<Node> neighboursVariableNode = new ArrayList<>();
+            neighboursVariableNode.add(node);
+            neighbourNodes.put(neighbourNode.getName(), neighboursVariableNode);
+        } else {
+            neighbourNodes.get(neighbourNode.getName()).add(node);
+        }
+    }
+
+    private Node generateNodeIfNotExists(LinearProgram lp, List<Node> nodes, MatrixEntry matrixEntry) {
+        Node variableNode = new Node(matrixEntry.getVariable().getName(), uniqueId);
+        if (!nodes.contains(variableNode)) {
+            variableNode.setInteger(lp.getVariables().get(variableNode.getName()).isInteger());
+            variableNode.setId(uniqueId++);
+            nodes.add(variableNode);
+        }
+        return variableNode;
+    }
+
+    private void generateEdge(List<Edge> edges, Node constraintNode, Node variableNode) {
+        // generate edges and neighbours relations
+        Edge edge = new Edge(constraintNode, variableNode);
+        edges.add(edge);
     }
 }

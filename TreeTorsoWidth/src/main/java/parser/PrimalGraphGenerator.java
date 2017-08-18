@@ -6,6 +6,7 @@ import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.LinearProgram;
 import main.java.lp.MatrixEntry;
+import main.java.lp.MatrixRow;
 import main.java.lp.Row;
 
 import java.util.*;
@@ -15,67 +16,92 @@ import java.util.*;
  */
 public class PrimalGraphGenerator extends GraphGenerator {
 
-
     /**
      *
      * @param lp
-     * @return Incidence graph of the linear program
+     * @return Primal graph of the linear program
      * @throws InterruptedException
-     *  The incidence graph is constructed by taking the variables of the lp and the constraints as nodes
-     *  and a variable is connected by an edge to a constraint iff the variable occurs in the constraint
+     * The primal graph is constructed by taking the variables of the lp as nodes and a variable is connected by an edge
+     * to another variable b iff they occur in the same constraint or they occur together in the objective function
      */
     public Graph linearProgramToGraph(LinearProgram lp) throws InterruptedException {
-        Graph incidenceGraph = new Graph();
         List<Node> nodes = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
         Map<String, List<Node>> neighbourNodes = new HashMap<>();
+        Map<String, Node> nodesMap = new HashMap<>();
+        List<Node> neighbours;
 
-        int numVariable = 0;
-        Collection<Row> rows;
-        if (Configuration.OBJ_FUNCTION) {
-            // objective function is considered like a row in the matrix
-            rows = lp.getRows().values();
-        } else {
-            // objective function just ignored
-            rows = new ArrayList<>(lp.getConstraints());
+        int uniqueId = 0;
+        Node node;
+        // generate nodes
+        for (String variableName : lp.getVariables().keySet()) {
+            node = new Node(variableName, uniqueId++);
+            node.setInteger(lp.getVariables().get(variableName).isInteger());
+            nodes.add(node);
+            nodesMap.put(node.getName(), node);
+            neighbours = new ArrayList<>();
+            neighbourNodes.put(variableName, neighbours);
         }
-        for (Row matrixRow : rows) {
+
+        // generate edges for constraints
+        for (MatrixRow row : lp.getConstraints()) {
             checkInterrupted();
+            convertRowToEdge(row, nodesMap, neighbourNodes, edges);
+        }
 
-            Node constraintNode = new Node(matrixRow.getName(), numVariable++);
-            nodes.add(constraintNode);
-            List<Node> neighboursConstraintNode = new ArrayList<>();
+        // definition for primal graph varies here: sometimes the objective function is considered and sometimes not
+        // generate edges for objective function
+        if (Configuration.OBJ_FUNCTION) {
+            convertRowToEdge(lp.getObjectiveFunction(), nodesMap, neighbourNodes, edges);
+        }
 
-            for (MatrixEntry matrixEntry : matrixRow.getEntries()) {
-                Node variableNode = new Node(matrixEntry.getVariable().getName(), numVariable++);
+        Graph primalGraph = createGraph(nodes, edges, neighbourNodes);
+        return primalGraph;
+    }
 
-                if (!nodes.contains(variableNode)) {
-                    variableNode.setInteger(lp.getVariables().get(variableNode.getName()).isInteger());
-                    nodes.add(variableNode);
-                }
 
-                // generate edges and neighbours relations
-                Edge edge = new Edge(constraintNode, variableNode);
-                edges.add(edge);
+    private void convertRowToEdge(Row row, Map<String, Node> nodesMap, Map<String, List<Node>> neighbourNodes, List<Edge> edges) throws InterruptedException {
+        List<MatrixEntry> variablesInRow = row.getEntries();
 
-                neighboursConstraintNode.add(variableNode);
-
-                // add constraintNode as neighbour to variable node
-                if (!neighbourNodes.containsKey(variableNode.getName())) {
-                    List<Node> neighboursVariableNode = new ArrayList<>();
-                    neighboursVariableNode.add(constraintNode);
-                    neighbourNodes.put(variableNode.getName(), neighboursVariableNode);
-                } else {
-                    neighbourNodes.get(variableNode.getName()).add(constraintNode);
-                }
+        Node curNode, neighbourNode;
+        String curNodeName, neighbourNodeName;
+        List<Node> neighbours;
+        for (int i = 0; i < variablesInRow.size(); i++) {
+            if (i % 50 == 0) {
+                checkInterrupted();
             }
 
-            neighbourNodes.put(constraintNode.getName(), neighboursConstraintNode);
-        }
+            curNodeName = variablesInRow.get(i).getVariable().getName();
+            curNode = nodesMap.get(curNodeName);
 
-        incidenceGraph.setEdges(edges);
-        incidenceGraph.setNeighbourNodes(neighbourNodes);
-        incidenceGraph.setNodes(nodes);
-        return incidenceGraph;
+            for (int j = i+1; j < variablesInRow.size(); j++) {
+
+                neighbourNodeName = variablesInRow.get(j).getVariable().getName();
+
+                neighbours = neighbourNodes.get(curNodeName);
+
+                // check if neighbourNode is already in neighbours of curNode
+                boolean found = false;
+                for (Node neighbour : neighbours) {
+                    if (neighbour.getName().equals(neighbourNodeName)) {
+                        found = true;
+                    }
+                }
+
+                if (found){
+                    // skip node if already known that they are connected
+                    continue;
+                }
+
+                neighbourNode = nodesMap.get(neighbourNodeName);
+
+                // add neighbourNode to curNode and curNode to neighbourNode and generate edge for them
+                neighbours.add(neighbourNode);
+                neighbours = neighbourNodes.get(neighbourNode.getName());
+                neighbours.add(curNode);
+
+                edges.add(new Edge(curNode, neighbourNode));
+            }
+        }
     }
 }

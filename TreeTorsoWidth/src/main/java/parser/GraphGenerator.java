@@ -1,7 +1,12 @@
 package main.java.parser;
 
+import main.java.graph.Edge;
 import main.java.graph.Graph;
+import main.java.graph.Node;
 import main.java.lp.LinearProgram;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -15,5 +20,13 @@ public abstract class GraphGenerator {
         if (Thread.currentThread().isInterrupted()) {
             throw new InterruptedException();
         }
+    }
+
+    Graph createGraph(List<Node> nodes, List<Edge> edges, Map<String, List<Node>> neighbourNodes) {
+        Graph incidenceGraph = new Graph();
+        incidenceGraph.setEdges(edges);
+        incidenceGraph.setNeighbourNodes(neighbourNodes);
+        incidenceGraph.setNodes(nodes);
+        return incidenceGraph;
     }
 }
