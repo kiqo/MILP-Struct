@@ -45,18 +45,6 @@ public class IncidenceGraphGenerator extends GraphGenerator {
         return incidenceGraph;
     }
 
-    private Collection<Row> getRows(LinearProgram lp) {
-        Collection<Row> rows;
-        if (Configuration.OBJ_FUNCTION) {
-            // objective function is considered like a row in the matrix
-            rows = lp.getRows().values();
-        } else {
-            // objective function just ignored
-            rows = new ArrayList<>(lp.getConstraints());
-        }
-        return rows;
-    }
-
     private Node generateConstraintNode(List<Node> nodes, String nodeName) {
         Node constraintNode = new Node(nodeName, uniqueId++);
         nodes.add(constraintNode);

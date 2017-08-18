@@ -16,6 +16,8 @@ import java.util.*;
  */
 public class PrimalGraphGenerator extends GraphGenerator {
 
+    private static int uniqueId = 0;
+
     /**
      *
      * @param lp
@@ -29,11 +31,24 @@ public class PrimalGraphGenerator extends GraphGenerator {
         List<Edge> edges = new ArrayList<>();
         Map<String, List<Node>> neighbourNodes = new HashMap<>();
         Map<String, Node> nodesMap = new HashMap<>();
-        List<Node> neighbours;
 
-        int uniqueId = 0;
+        generateNodes(lp, nodes, neighbourNodes, nodesMap);
+        generateEdges(lp, edges, neighbourNodes, nodesMap);
+
+        Graph primalGraph = createGraph(nodes, edges, neighbourNodes);
+        return primalGraph;
+    }
+
+    private void generateEdges(LinearProgram lp, List<Edge> edges, Map<String, List<Node>> neighbourNodes, Map<String, Node> nodesMap) throws InterruptedException {
+        for (Row row : getRows(lp)) {
+            checkInterrupted();
+            convertRowToEdge(row, nodesMap, neighbourNodes, edges);
+        }
+    }
+
+    private void generateNodes(LinearProgram lp, List<Node> nodes, Map<String, List<Node>> neighbourNodes, Map<String, Node> nodesMap) {
+        List<Node> neighbours;
         Node node;
-        // generate nodes
         for (String variableName : lp.getVariables().keySet()) {
             node = new Node(variableName, uniqueId++);
             node.setInteger(lp.getVariables().get(variableName).isInteger());
@@ -42,21 +57,6 @@ public class PrimalGraphGenerator extends GraphGenerator {
             neighbours = new ArrayList<>();
             neighbourNodes.put(variableName, neighbours);
         }
-
-        // generate edges for constraints
-        for (MatrixRow row : lp.getConstraints()) {
-            checkInterrupted();
-            convertRowToEdge(row, nodesMap, neighbourNodes, edges);
-        }
-
-        // definition for primal graph varies here: sometimes the objective function is considered and sometimes not
-        // generate edges for objective function
-        if (Configuration.OBJ_FUNCTION) {
-            convertRowToEdge(lp.getObjectiveFunction(), nodesMap, neighbourNodes, edges);
-        }
-
-        Graph primalGraph = createGraph(nodes, edges, neighbourNodes);
-        return primalGraph;
     }
 
 
@@ -77,21 +77,8 @@ public class PrimalGraphGenerator extends GraphGenerator {
             for (int j = i+1; j < variablesInRow.size(); j++) {
 
                 neighbourNodeName = variablesInRow.get(j).getVariable().getName();
-
                 neighbours = neighbourNodes.get(curNodeName);
-
-                // check if neighbourNode is already in neighbours of curNode
-                boolean found = false;
-                for (Node neighbour : neighbours) {
-                    if (neighbour.getName().equals(neighbourNodeName)) {
-                        found = true;
-                    }
-                }
-
-                if (found){
-                    // skip node if already known that they are connected
-                    continue;
-                }
+                if (isAlreadyNeighbour(neighbourNodeName, neighbours)) continue;
 
                 neighbourNode = nodesMap.get(neighbourNodeName);
 
@@ -99,9 +86,23 @@ public class PrimalGraphGenerator extends GraphGenerator {
                 neighbours.add(neighbourNode);
                 neighbours = neighbourNodes.get(neighbourNode.getName());
                 neighbours.add(curNode);
-
                 edges.add(new Edge(curNode, neighbourNode));
             }
         }
+    }
+
+    private boolean isAlreadyNeighbour(String neighbourNodeName, List<Node> neighbours) {
+        boolean found = false;
+        for (Node neighbour : neighbours) {
+            if (neighbour.getName().equals(neighbourNodeName)) {
+                found = true;
+            }
+        }
+
+        if (found){
+            // skip node if already known that they are connected
+            return true;
+        }
+        return false;
     }
 }

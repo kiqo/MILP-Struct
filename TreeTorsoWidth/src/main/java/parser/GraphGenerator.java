@@ -1,10 +1,14 @@
 package main.java.parser;
 
+import main.java.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.LinearProgram;
+import main.java.lp.Row;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -28,5 +32,17 @@ public abstract class GraphGenerator {
         incidenceGraph.setNeighbourNodes(neighbourNodes);
         incidenceGraph.setNodes(nodes);
         return incidenceGraph;
+    }
+
+    Collection<Row> getRows(LinearProgram lp) {
+        Collection<Row> rows;
+        if (Configuration.OBJ_FUNCTION) {
+            // objective function is considered like a row in the matrix
+            rows = lp.getRows().values();
+        } else {
+            // objective function just ignored
+            rows = new ArrayList<>(lp.getConstraints());
+        }
+        return rows;
     }
 }
