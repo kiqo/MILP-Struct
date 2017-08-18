@@ -87,7 +87,7 @@ public class Main {
             if (resultString != null) {
                 sb.append(resultString);
             }
-            LOGGER.debug("-------------------");
+            LOGGER.debug("Finished");
         }
 
         // disable new tasks from being submitted

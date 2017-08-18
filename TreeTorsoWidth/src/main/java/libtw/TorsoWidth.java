@@ -54,8 +54,14 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     }
 
     private void constructTorsoGraph() throws InterruptedException {
+        for (NGraph<D> component : graph.getComponents()) {
+            constructTorsoForComponent(component);
+        }
+    }
+
+    private void constructTorsoForComponent(NGraph<D> component) throws InterruptedException {
         Set<NVertex<D>> verticesToRemove = new HashSet<>();
-        Iterator<NVertex<D>> vertexIterator = graph.iterator();
+        Iterator<NVertex<D>> vertexIterator = component.iterator();
 
         int iteration = 0;
         while (vertexIterator.hasNext()) {
@@ -65,24 +71,24 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
             // a non-integer node not yet handled
             if (!((LPInputData) vertex.data).isInteger() && !verticesToRemove.contains(vertex)) {
-                handleComponent(verticesToRemove, vertex);
+                handleVertexInComponent(verticesToRemove, vertex);
             }
         }
-        deleteMarkedNodes(verticesToRemove);
+        deleteMarkedNodes(component, verticesToRemove);
     }
 
-    private void deleteMarkedNodes(Set<NVertex<D>> verticesToRemove) {
-        ((ListGraph) graph).vertices.removeAll(verticesToRemove);
+    private void deleteMarkedNodes(NGraph<D> component, Set<NVertex<D>> verticesToRemove) {
+        ((ListGraph<D>) component).vertices.removeAll(verticesToRemove);
 
         // delete nodes in neighbour lists of integer nodes
-        for (NVertex<D> vertex : graph) {
+        for (NVertex<D> vertex : component) {
             for (NVertex<D> vertexToDel : verticesToRemove) {
                 vertex.removeNeighbor(vertexToDel);
             }
         }
     }
 
-    private void handleComponent(Set<NVertex<D>> verticesToRemove, NVertex<D> startingVertex) {
+    private void handleVertexInComponent(Set<NVertex<D>> verticesToRemove, NVertex<D> startingVertex) {
         Set<NVertex<D>> currentNonIntegerSet = new HashSet<>();
         Set<NVertex<D>> currentIntegerSet = new HashSet<>();
         List<NVertex<D>> nodesToHandle = new LinkedList<>();
