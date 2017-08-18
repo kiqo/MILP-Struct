@@ -1,10 +1,7 @@
 package tests.java;
 
 import main.java.Configuration;
-import main.java.graph.Edge;
 import main.java.graph.Graph;
-import main.java.graph.Node;
-import main.java.libtw.LPDgfReader;
 import main.java.libtw.LPInputData;
 import main.java.libtw.TorsoWidth;
 import nl.uu.cs.treewidth.algorithm.GreedyDegree;
@@ -21,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import main.java.parser.GraphTransformator;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Verena on 08.04.2017.
@@ -112,22 +108,6 @@ public class TorsoWidthTest extends GraphTest {
         Assert.assertTrue(nodeBlocker.isNeighbor(iterator.next()));
         Assert.assertTrue(nodeBlocker.isNeighbor(iterator.next()));
         Assert.assertEquals(2, nodeBlocker.getNumberOfNeighbors(), 0);
-    }
-
-    @Test
-    public void testGraphFromInputFile() throws InterruptedException {
-        String inputFile = "./../input/tests/torsowidth_test.dgf";
-        NGraph<GraphInput.InputData> g = null;
-
-        GraphInput input = new LPDgfReader(inputFile);
-        try {
-            g = input.get();
-        } catch( InputException e ) {}
-        NGraph<GraphInput.InputData> resultGraph = torsoWidth(g);
-
-        Assert.assertEquals(6, resultGraph.getNumberOfVertices(), 0);
-        Assert.assertEquals(10, resultGraph.getNumberOfEdges(), 0);
-        Assert.assertFalse(isClique(resultGraph));
     }
 
     @Test
