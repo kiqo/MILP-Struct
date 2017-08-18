@@ -27,7 +27,6 @@ public class TorsoWidthTest extends GraphTest {
     private static final boolean SHOW_GRAPH = false;
     private static final boolean PRINT_GRAPH = false;
     private static final boolean PRINT_RESULTS = true;
-    private Configuration configuration = new Configuration();
 
     @Before
     public void init() {

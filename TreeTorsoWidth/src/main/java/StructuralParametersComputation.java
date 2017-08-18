@@ -7,9 +7,7 @@ import main.java.libtw.TreeDepth;
 import main.java.libtw.TreeWidthWrapper;
 import main.java.lp.GraphData;
 import main.java.lp.LinearProgram;
-import main.java.parser.GraphGenerator;
-import main.java.parser.GraphTransformator;
-import main.java.parser.MILPParser;
+import main.java.parser.*;
 import nl.uu.cs.treewidth.algorithm.*;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.NGraph;
@@ -48,7 +46,6 @@ public class StructuralParametersComputation implements Callable<String> {
 
         checkInterrupted();
 
-        GraphGenerator graphGenerator = new GraphGenerator();
         Graph primalGraph = null;
         Graph incidenceGraph = null;
 
@@ -57,13 +54,13 @@ public class StructuralParametersComputation implements Callable<String> {
         GraphTransformator graphTransformator = new GraphTransformator();
 
         if (Configuration.PRIMAL) {
-            primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
+            primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
             checkInterrupted();
             lp.getStatistics().computePrimalGraphData(primalGraph);
             gPrimal = graphTransformator.graphToNGraph(primalGraph);
         }
         if (Configuration.INCIDENCE) {
-            incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
+            incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
             checkInterrupted();
             lp.getStatistics().computeIncidenceGraphData(incidenceGraph);
             gIncidence = graphTransformator.graphToNGraph(incidenceGraph);

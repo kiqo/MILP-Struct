@@ -7,6 +7,8 @@ import main.java.graph.Node;
 import main.java.lp.LinearProgram;
 import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
+import main.java.parser.IncidenceGraphGenerator;
+import main.java.parser.PrimalGraphGenerator;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,6 @@ import static org.junit.Assert.*;
 public class GraphGeneratorTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphGeneratorTest.class);
-    private GraphGenerator graphGenerator = new GraphGenerator();
     private MILPParser milpParser = new MILPParser();
     private LinearProgram lp = null;
 
@@ -43,7 +44,7 @@ public class GraphGeneratorTest {
             parseInputLP();
         }
 
-        Graph primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
+        Graph primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
 
         assertNotNull(primalGraph.getEdges());
         assertNotNull(primalGraph.getNodes());
@@ -70,7 +71,7 @@ public class GraphGeneratorTest {
             parseInputLP();
         }
 
-        Graph incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
+        Graph incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
 
         // number of nodes
         int numNodesExpected = lp.getConstraints().size() + lp.getVariables().size();

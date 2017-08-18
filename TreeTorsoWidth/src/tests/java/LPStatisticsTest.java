@@ -4,7 +4,9 @@ import main.java.graph.Graph;
 import main.java.lp.LPStatistics;
 import main.java.lp.LinearProgram;
 import main.java.parser.GraphGenerator;
+import main.java.parser.IncidenceGraphGenerator;
 import main.java.parser.MILPParser;
+import main.java.parser.PrimalGraphGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -29,9 +31,8 @@ public class LPStatisticsTest {
         } catch (IOException e) {
             LOGGER.error("", e);
         }
-        GraphGenerator graphGenerator = new GraphGenerator();
-        Graph primalGraph = graphGenerator.linearProgramToPrimalGraph(lp);
-        Graph incidenceGraph = graphGenerator.linearProgramToIncidenceGraph(lp);
+        Graph primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
+        Graph incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
         LPStatistics statistics = new LPStatistics(lp);
         lp.setStatistics(statistics);
         statistics.computePrimalGraphData(primalGraph);
