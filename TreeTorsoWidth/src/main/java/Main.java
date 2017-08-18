@@ -27,8 +27,8 @@ public class Main {
 
     private static void init() {
         try {
-            Configuration.UPPER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.GreedyDegree");
-            Configuration.LOWER_BOUND_ALG = Class.forName("nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC");
+            Configuration.UPPER_BOUND_ALG = Class.forName(Configuration.DEFAULT_UPPER_BOUND_ALG);
+            Configuration.LOWER_BOUND_ALG = Class.forName(Configuration.DEFAULT_LOWER_BOUND_ALG);
         } catch (ClassNotFoundException e) {
             LOGGER.error("", e);
         }
