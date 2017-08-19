@@ -107,7 +107,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     private void handleVertexInComponent(Set<NVertex<D>> verticesToRemove, NVertex<D> startingVertex) {
         Set<NVertex<D>> currentNonIntegerSet = new HashSet<>();
         Set<NVertex<D>> currentIntegerSet = new HashSet<>();
-        List<NVertex<D>> nodesToHandle = new LinkedList<>();
+        Set<NVertex<D>> nodesToHandle = new HashSet<>();
         nodesToHandle.add(startingVertex);
 
         while (!nodesToHandle.isEmpty()) {
@@ -117,16 +117,20 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         addEdgesToFormClique(currentIntegerSet);
     }
 
-    private void handleVertex(Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> currentIntegerSet, List<NVertex<D>> nodesToHandle) {
-        NVertex<D> next = nodesToHandle.get(0);
-
+    private void handleVertex(Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> currentIntegerSet, Set<NVertex<D>> nodesToHandle) {
+        Iterator<NVertex<D>> iterator = nodesToHandle.iterator();
+        NVertex<D> next = iterator.next();
+        Set<NVertex<D>> notYetHandled = null;
         if (((LPInputData) next.data).isInteger()) {
             handleIntegerVertex(currentIntegerSet, next);
         } else {
-            handleNonIntegerVertex(currentNonIntegerSet, nodesToHandle, next);
+            notYetHandled = handleNonIntegerVertex(currentNonIntegerSet, nodesToHandle, next);
         }
         ((LPInputData) next.data).setNodeHandled(true);
-        nodesToHandle.remove(0);
+        iterator.remove();
+        if (notYetHandled != null) {
+            nodesToHandle.addAll(notYetHandled);
+        }
     }
 
     private void markNodesForDeletion(Set<NVertex<D>> verticesToRemove, Set<NVertex<D>> currentNonIntegerSet) {
@@ -151,27 +155,24 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         }
     }
 
-    private void handleNonIntegerVertex(Set<NVertex<D>> currentNonIntegerSet, List<NVertex<D>> nodesToHandle, NVertex<D> curVertex) {
+    private Set<NVertex<D>> handleNonIntegerVertex(Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> nodesToHandle, NVertex<D> curVertex) {
+        Set<NVertex<D>> notYetHandled = new HashSet<>();
         if (!currentNonIntegerSet.contains(curVertex)) {
             currentNonIntegerSet.add(curVertex);
 
-            // old : until now as fast as new implementation ?
-            // nodesToHandle.addAll(((ListVertex) next).neighbors);
-
-            // new :
-            List<NVertex<D>> notYetHandled = new ArrayList<>();
             for (NVertex<D> neighbour : ((ListVertex<D>) curVertex).neighbors) {
                 LPInputData data = (LPInputData) neighbour.data;
                 if (!data.isNodeHandled()) {
                     notYetHandled.add(neighbour);
                     data.setNodeHandled(true);
                 } else if (data.isInteger()) {
-                    // make sure that the integer node is handled again even though it was before already
-                    notYetHandled.add(neighbour); // TODO check if needed?
+                    // make sure that the integer node is handled again (if it is adjacent to a different component,
+                    // then it must also be added to the current integer set and thus be handled again)
+                    notYetHandled.add(neighbour);
                 }
             }
-            nodesToHandle.addAll(notYetHandled); // TODO only those not yet contained
         }
+        return notYetHandled;
     }
 
     private void checkInterruped(int i) throws InterruptedException {

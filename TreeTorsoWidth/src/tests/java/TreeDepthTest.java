@@ -66,7 +66,6 @@ public class TreeDepthTest extends GraphTest {
 
         TreeDepth<GraphInput.InputData> algoResult = treeDepth(starShapedGraph);
 
-        // longest path is 3, lower bound is then roundUp(ld(n+1)) = 2
         Assert.assertEquals(3, algoResult.getLongestPath().size(), 0);
         Assert.assertEquals(2, algoResult.getUpperBound(), 0);
     }

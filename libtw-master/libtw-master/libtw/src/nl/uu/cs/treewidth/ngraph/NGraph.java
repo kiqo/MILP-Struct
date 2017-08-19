@@ -204,7 +204,7 @@ public abstract class NGraph< D > implements Iterable<NVertex<D>> {
 	}
 	public <To> NGraph<To> copy( Convertor<D,To> c ) {
 				
-		NGraph<To> newG = new ListGraph<To>();
+		NGraph<To> newG = new ListGraph<>();
 		
 		HashMap<NVertex<D>, NVertex<To>> oldToNew = new HashMap<NVertex<D>, NVertex<To>>();
 		
