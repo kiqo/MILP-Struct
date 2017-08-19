@@ -45,8 +45,7 @@ public class StructuralParametersTest {
     }
 
     protected static NGraph<GraphInput.InputData> createNGraph(Graph graph) throws InterruptedException {
-        GraphTransformator graphTransformator = new GraphTransformator();
-        NGraph<GraphInput.InputData> nGraph = graphTransformator.graphToNGraph(graph);
+        NGraph<GraphInput.InputData> nGraph = GraphTransformator.graphToNGraph(graph);
         return nGraph;
     }
 

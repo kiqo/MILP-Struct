@@ -16,7 +16,7 @@ public class GraphTransformator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphTransformator.class);
 
-    public NGraph<GraphInput.InputData> graphToNGraph(Graph graph) {
+    public static NGraph<GraphInput.InputData> graphToNGraph(Graph graph) {
         NGraph<GraphInput.InputData> g = null;
         GraphInput input = new LPGraphInput(graph);
         try {
