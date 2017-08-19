@@ -7,13 +7,11 @@ import main.java.graph.Node;
 import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
 import main.java.parser.IncidenceGraphGenerator;
-import main.java.parser.PrimalGraphGenerator;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.*;
@@ -27,9 +25,7 @@ public class GraphGeneratorTest extends GraphTest {
 
     @Test
     public void testLinearProgramToPrimalGraph() throws TimeoutException, InterruptedException {
-        if (lp == null) {
-            parseInputLP();
-        }
+        lp = createLinearProgram("./../input/benchmarks/bienst2.mps");
         Graph primalGraph = createPrimalGraph(lp);
 
         assertNotNull(primalGraph.getEdges());
@@ -53,9 +49,7 @@ public class GraphGeneratorTest extends GraphTest {
 
     @Test
     public void testLinearProgramToIncidenceGraph() throws InterruptedException {
-        if (lp == null) {
-            parseInputLP();
-        }
+        lp = createLinearProgram("./../input/benchmarks/bienst2.mps");
 
         Graph incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
 

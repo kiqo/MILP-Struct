@@ -27,7 +27,7 @@ public class TorsoWidthTest extends GraphTest implements AlgoTest {
 
     private static final boolean SHOW_GRAPH = false;
     private static final boolean PRINT_GRAPH = false;
-    private static final boolean PRINT_RESULTS = true;
+    private static final boolean PRINT_RESULTS = false;
 
     public static TorsoWidth<GraphInput.InputData> torsoWidth(Graph graph) throws InterruptedException {
         return torsoWidth(createNGraph(graph));

@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by Verena on 18.08.2017.
  */
-public class GraphTransformatorTest extends GraphTest implements AlgoTest{
+public class GraphTransformatorTest extends GraphTest implements AlgoTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphTransformatorTest.class);
 
@@ -25,14 +25,13 @@ public class GraphTransformatorTest extends GraphTest implements AlgoTest{
     private static final boolean PRINT_GRAPH = false;
     private static final boolean PRINT_RESULTS = false;
 
-
     @Test
     public void testNodeBlockerGraph() throws InterruptedException {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
 
         NGraph result = createNGraph(nodeBlockerGraph);
-        
-        assertCorrectGraph(result);
+
+        assertCorrectNGraph(result);
         assertSameGraph(nodeBlockerGraph, result);
         assertOneComponent(result);
     }
@@ -43,15 +42,38 @@ public class GraphTransformatorTest extends GraphTest implements AlgoTest{
 
         NGraph result = createNGraph(starShapedGraph);
 
-        assertCorrectGraph(result);
+        assertCorrectNGraph(result);
         assertSameGraph(starShapedGraph, result);
         assertOneComponent(result);
+    }
+
+    @Test
+    public void testDisconnectedGraph() throws InterruptedException {
+        Graph disconnectedGraph = createDisconnectedGraph();
+
+        NGraph result = createNGraph(disconnectedGraph);
+
+        assertCorrectNGraph(result);
+        assertSameGraph(disconnectedGraph, result);
+        Assert.assertEquals(3, result.getComponents().size(), 0);
+        List<NGraph> components = result.getComponents();
+        assertSameGraph(createNodeBlockerGraph(), components.get(0));
+        assertSameGraph(createClique(2, "clique1_"), components.get(1));
+        assertSameGraph(createClique(3, "clique2_"), components.get(2));
+    }
+
+    @Test
+    public void testRandomGraph() throws InterruptedException {
+        Graph randomGraph = createRandomGraph();
+        NGraph result = createNGraph(randomGraph);
+        assertCorrectNGraph(result);
+        assertSameGraph(randomGraph, result);
     }
 
     private void assertOneComponent(NGraph result) {
         Assert.assertEquals(1, result.getComponents().size(), 0);
         List<NGraph> components = result.getComponents();
-        assertCorrectGraph(result);
+        assertCorrectNGraph(result);
         assertSameNGraph(result, components.get(0));
     }
 
@@ -107,7 +129,7 @@ public class GraphTransformatorTest extends GraphTest implements AlgoTest{
         }
     }
 
-    private void assertCorrectGraph(NGraph<GraphInput.InputData> graph) {
+    private void assertCorrectNGraph(NGraph<GraphInput.InputData> graph) {
         for (NVertex<GraphInput.InputData> vertex : graph) {
             assertCorrectNeighbours(vertex);
             assertCorrectData(vertex);
@@ -137,27 +159,5 @@ public class GraphTransformatorTest extends GraphTest implements AlgoTest{
         Assert.assertEquals(1, countVertex, 0);
     }
 
-    @Test
-    public void testDisconnectedGraph() throws InterruptedException {
-        Graph disconnectedGraph = createDisconnectedGraph();
-
-        NGraph result = createNGraph(disconnectedGraph);
-        
-        assertCorrectGraph(result);
-        assertSameGraph(disconnectedGraph, result);
-        Assert.assertEquals(3, result.getComponents().size(), 0);
-        List<NGraph> components = result.getComponents();
-        assertSameGraph(createNodeBlockerGraph(), components.get(0));
-        assertSameGraph(createClique(2, "clique1_"), components.get(1));
-        assertSameGraph(createClique(3, "clique2_"), components.get(2));
-    }
-
-    @Test
-    public void testRandomGraph() throws InterruptedException {
-        Graph randomGraph = createRandomGraph();
-        NGraph result = createNGraph(randomGraph);
-        assertCorrectGraph(result);
-        assertSameGraph(randomGraph, result);
-    }
 
 }

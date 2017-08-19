@@ -1,13 +1,9 @@
 package tests.java;
 
-import main.java.graph.Graph;
 import main.java.libtw.TreeWidthWrapper;
-import main.java.lp.LinearProgram;
-import main.java.parser.GraphTransformator;
-import main.java.parser.MILPParser;
-import main.java.parser.PrimalGraphGenerator;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.NGraph;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +19,25 @@ public class TreeWidthWrapperTest extends StructuralParametersTest {
 
     @Test
     public void testLowerBound() throws InterruptedException {
-        LinearProgram lp = createLinearProgram("../input/tests/bienst2_small_test.mps");
+        lp = createLinearProgram("../input/tests/bienst2_small_test_components.mps");
         NGraph<GraphInput.InputData> primalGraph = createNGraph(createPrimalGraph(lp));
 
         int lowerBound = TreeWidthWrapper.computeLowerBound(primalGraph);
         int lowerBoundWithComponents = TreeWidthWrapper.computeLowerBoundWithComponents(primalGraph);
+
+        Assert.assertEquals(5, lowerBoundWithComponents);
+        Assert.assertEquals(5, lowerBound);
     }
 
     @Test
     public void testUpperBound() throws InterruptedException {
-        LinearProgram lp = createLinearProgram("../input/tests/bienst2_small_test.mps");
+        lp = createLinearProgram("../input/tests/bienst2_small_test_components.mps");
         NGraph<GraphInput.InputData> nGraph = createNGraph(createPrimalGraph(lp));
 
         int upperBound = TreeWidthWrapper.computeUpperBound(nGraph);
         int upperBoundWithComponents = TreeWidthWrapper.computeUpperBoundWithComponents(nGraph);
+
+        Assert.assertEquals(5, upperBound);
+        Assert.assertEquals(5, upperBoundWithComponents);
     }
 }

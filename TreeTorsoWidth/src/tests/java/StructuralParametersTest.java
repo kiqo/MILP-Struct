@@ -23,14 +23,6 @@ public class StructuralParametersTest {
     protected MILPParser milpParser = new MILPParser();
     protected LinearProgram lp = null;
 
-    protected void parseInputLP() {
-        try {
-            lp = milpParser.parseMPS("./../input/benchmarks/bienst2.mps", false);
-        } catch (IOException e) {
-            LOGGER.error("", e);
-        }
-    }
-
     @Before
     public void init() {
         try {

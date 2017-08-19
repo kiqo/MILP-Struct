@@ -27,13 +27,15 @@ public class MILPParserTest extends StructuralParametersTest {
     public void testMILPParser() {
         lp = createLinearProgram("../input/tests/bienst2_test.mps");
 
-        assertNotNull(lp);
-        assertNotNull(lp.getName());
-        assertNotNull(lp.getConstraints());
-        assertNotNull(lp.getObjectiveFunction());
-        assertNotNull(lp.getRows());
-        assertNotNull(lp.getVariables());
+        assertCorrectResult();
+    }
 
+    private void assertCorrectResult() {
+        assertLPNotNull();
+        testSingleMatrixEntryInColumns();
+    }
+
+    private void testSingleMatrixEntryInColumns() {
         // test variables
         for (Variable var : lp.getVariables().values()) {
 
@@ -103,19 +105,26 @@ public class MILPParserTest extends StructuralParametersTest {
         Assert.assertEquals(10, lp.getConstraints().stream().filter(entry -> entry.getName().equals("BALhe")).findFirst().get().getRightHandSide(), 0.0f);
     }
 
+    private void assertLPNotNull() {
+        assertNotNull(lp);
+        assertNotNull(lp.getName());
+        assertNotNull(lp.getConstraints());
+        assertNotNull(lp.getObjectiveFunction());
+        assertNotNull(lp.getRows());
+        assertNotNull(lp.getVariables());
+    }
+
     /*
     Tests the MILPParser in case that the COLUMNS section contains for one variable two MatrixEntries in one line
      */
     @Test
     public void testMoreColumns() {
-        MILPParser milpParser = new MILPParser();
-        LinearProgram lp = null;
-        try {
-            lp = milpParser.parseMPS("./../input/benchmarks/roll3000.mps", false);
-        } catch (IOException e) {
-            LOGGER.error("", e);
-        }
+        lp = createLinearProgram("./../input/benchmarks/roll3000.mps");
+        assertLPNotNull();
+        testDoubleMatrixEntryInColumns();
+    }
 
+    private void testDoubleMatrixEntryInColumns() {
         // test objective function
         Assert.assertEquals(lp.getObjectiveFunction().getName(), "obj");
         Assert.assertEquals(lp.getConstraints().get(0).getEquality(), LinearProgram.Equality.GREATER_THAN);
