@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Verena on 07.06.2017.
  */
-public abstract class GraphTest {
+public abstract class GraphTest extends StructuralParametersTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphTest.class);
 
     private static final int MIN_NODES = 5;
@@ -28,15 +28,10 @@ public abstract class GraphTest {
     private static final double PROB_INTEGER_NODE = 0.16;
     private static final String INTEGER_MARK = "_I";
 
-    public abstract void testNodeBlockerGraph() throws InterruptedException;
-    public abstract void testStarShapedGraph() throws InterruptedException;
-    public abstract void testDisconnectedGraph() throws InterruptedException;
-    public abstract void testRandomGraph() throws InterruptedException;
-
     /*
     Creates a graph that has an integer node that separates two components, which each also contain 2 integer nodes
      */
-    Graph createNodeBlockerGraph() {
+    public static Graph createNodeBlockerGraph() {
         List<Node> nodes = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
 
@@ -149,7 +144,7 @@ public abstract class GraphTest {
         return createGraph(nodes, edges);
     }
 
-    Graph createGraph(List<Node> nodes, List<Edge> edges) {
+    static Graph createGraph(List<Node> nodes, List<Edge> edges) {
         Graph graph = new Graph();
         Map<String, List<Node>> neighbourNodes = new HashMap<>();
 
@@ -212,7 +207,7 @@ public abstract class GraphTest {
         return createGraph(nodes, edges);
     }
 
-    Node createNode(String name, boolean integer) {
+    static Node createNode(String name, boolean integer) {
         Node node = new Node();
         node.setInteger(integer);
         node.setName(integer ? name + INTEGER_MARK : name);

@@ -4,7 +4,6 @@ import main.java.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
-import main.java.lp.LinearProgram;
 import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
 import main.java.parser.IncidenceGraphGenerator;
@@ -13,8 +12,6 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.junit.Test;
-import main.java.parser.GraphGenerator;
-import main.java.parser.MILPParser;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -24,27 +21,16 @@ import static org.junit.Assert.*;
 /**
  * Created by Verena on 09.03.2017.
  */
-public class GraphGeneratorTest {
+public class GraphGeneratorTest extends GraphTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphGeneratorTest.class);
-    private MILPParser milpParser = new MILPParser();
-    private LinearProgram lp = null;
-
-    private void parseInputLP() {
-        try {
-            lp = milpParser.parseMPS("./../input/benchmarks/bienst2.mps", false);
-        } catch (IOException e) {
-            LOGGER.error("", e);
-        }
-    }
 
     @Test
     public void testLinearProgramToPrimalGraph() throws TimeoutException, InterruptedException {
         if (lp == null) {
             parseInputLP();
         }
-
-        Graph primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
+        Graph primalGraph = createPrimalGraph(lp);
 
         assertNotNull(primalGraph.getEdges());
         assertNotNull(primalGraph.getNodes());

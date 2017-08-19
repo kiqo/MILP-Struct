@@ -20,20 +20,6 @@ public class TreeWidthWrapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeWidthWrapper.class);
 
-    /*
-    Computes the lower bound of the graph without considering that the graph may be disconnected
-     */
-    public static int computeLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        LowerBound<GraphInput.InputData> lowerBoundAlg = getLowerBoundAlgo();
-        lowerBoundAlg.setInput(g);
-        lowerBoundAlg.run();
-        int lowerbound = lowerBoundAlg.getLowerBound();
-        return lowerbound;
-    }
-
-    /*
-    Computes the lower bound of the graph by taking the maximum of the treewidth of each component
-     */
     public static int computeLowerBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
         LowerBound<GraphInput.InputData> lowerBoundAlg = getLowerBoundAlgo();
 
@@ -94,7 +80,7 @@ public class TreeWidthWrapper {
         return upperboundSubGraph;
     }
 
-    private static UpperBound<GraphInput.InputData> getUpperBoundAlgo() {
+    public static UpperBound<GraphInput.InputData> getUpperBoundAlgo() {
         UpperBound<GraphInput.InputData> ubAlgo = null;
         try {
             ubAlgo = (UpperBound<GraphInput.InputData>) Configuration.UPPER_BOUND_ALG.getConstructor().newInstance();
@@ -105,11 +91,19 @@ public class TreeWidthWrapper {
     }
 
 
-    public int computeUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    public static int computeUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
         UpperBound<GraphInput.InputData> ubAlgo = getUpperBoundAlgo();
         ubAlgo.setInput(g);
         ubAlgo.run();
         int upperbound = ubAlgo.getUpperBound();
         return upperbound;
+    }
+
+    public static int computeLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+        LowerBound<GraphInput.InputData> lowerBoundAlg = getLowerBoundAlgo();
+        lowerBoundAlg.setInput(g);
+        lowerBoundAlg.run();
+        int lowerbound = lowerBoundAlg.getLowerBound();
+        return lowerbound;
     }
 }

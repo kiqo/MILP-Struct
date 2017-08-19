@@ -19,19 +19,13 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Verena on 28.03.2017.
  */
-public class MILPParserTest {
+public class MILPParserTest extends StructuralParametersTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MILPParserTest.class);
 
     @Test
     public void testMILPParser() {
-        MILPParser milpParser = new MILPParser();
-        LinearProgram lp = null;
-        try {
-            lp = milpParser.parseMPS("../input/tests/bienst2_test.mps", false);
-        } catch (IOException e) {
-            LOGGER.error("", e);
-        }
+        lp = createLinearProgram("../input/tests/bienst2_test.mps");
 
         assertNotNull(lp);
         assertNotNull(lp.getName());
@@ -107,7 +101,6 @@ public class MILPParserTest {
 
         // test RHS
         Assert.assertEquals(10, lp.getConstraints().stream().filter(entry -> entry.getName().equals("BALhe")).findFirst().get().getRightHandSide(), 0.0f);
-
     }
 
     /*

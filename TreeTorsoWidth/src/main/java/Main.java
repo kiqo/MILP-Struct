@@ -87,8 +87,8 @@ public class Main {
             if (resultString != null) {
                 sb.append(resultString);
             }
-            LOGGER.debug("Finished");
         }
+        LOGGER.debug("Finished with structural parameter computation");
 
         // disable new tasks from being submitted
         executor.shutdown();

@@ -4,6 +4,7 @@ import main.java.Configuration;
 import main.java.graph.Graph;
 import main.java.libtw.LPInputData;
 import main.java.libtw.TorsoWidth;
+import main.java.libtw.TreeWidthWrapper;
 import nl.uu.cs.treewidth.algorithm.GreedyDegree;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.ListVertex;
@@ -21,29 +22,15 @@ import java.util.*;
 /**
  * Created by Verena on 08.04.2017.
  */
-public class TorsoWidthTest extends GraphTest {
+public class TorsoWidthTest extends GraphTest implements AlgoTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TorsoWidthTest.class);
 
     private static final boolean SHOW_GRAPH = false;
     private static final boolean PRINT_GRAPH = false;
     private static final boolean PRINT_RESULTS = true;
 
-    @Before
-    public void init() {
-        try {
-            Configuration.UPPER_BOUND_ALG = Class.forName(Configuration.DEFAULT_UPPER_BOUND_ALG);
-            Configuration.LOWER_BOUND_ALG = Class.forName(Configuration.DEFAULT_LOWER_BOUND_ALG);
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("", e);
-        }
-    }
-
     public static TorsoWidth<GraphInput.InputData> torsoWidth(Graph graph) throws InterruptedException {
-        // generate NGraph for using libtw
-        GraphTransformator graphTransformator = new GraphTransformator();
-        NGraph<GraphInput.InputData> nGraph = graphTransformator.graphToNGraph(graph);
-
-        return torsoWidth(nGraph);
+        return torsoWidth(createNGraph(graph));
     }
 
     public static TorsoWidth<GraphInput.InputData> torsoWidth(NGraph<GraphInput.InputData> nGraph) throws InterruptedException {
@@ -90,7 +77,6 @@ public class TorsoWidthTest extends GraphTest {
         }
         return ubAlgo;
     }
-
 
     @Test
     public void testNodeBlockerGraph() throws InterruptedException {

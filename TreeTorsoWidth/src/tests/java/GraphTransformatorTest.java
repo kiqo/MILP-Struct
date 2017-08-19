@@ -4,7 +4,6 @@ import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.libtw.LPInputData;
-import main.java.parser.GraphTransformator;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
@@ -18,7 +17,7 @@ import java.util.List;
 /**
  * Created by Verena on 18.08.2017.
  */
-public class GraphTransformatorTest extends GraphTest{
+public class GraphTransformatorTest extends GraphTest implements AlgoTest{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphTransformatorTest.class);
 
@@ -31,8 +30,9 @@ public class GraphTransformatorTest extends GraphTest{
     public void testNodeBlockerGraph() throws InterruptedException {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
 
-        NGraph result = graphToNGraph(nodeBlockerGraph);
-
+        NGraph result = createNGraph(nodeBlockerGraph);
+        
+        assertCorrectGraph(result);
         assertSameGraph(nodeBlockerGraph, result);
         assertOneComponent(result);
     }
@@ -41,8 +41,9 @@ public class GraphTransformatorTest extends GraphTest{
     public void testStarShapedGraph() throws InterruptedException {
         Graph starShapedGraph = createStarShapedGraph();
 
-        NGraph result = graphToNGraph(starShapedGraph);
+        NGraph result = createNGraph(starShapedGraph);
 
+        assertCorrectGraph(result);
         assertSameGraph(starShapedGraph, result);
         assertOneComponent(result);
     }
@@ -50,6 +51,7 @@ public class GraphTransformatorTest extends GraphTest{
     private void assertOneComponent(NGraph result) {
         Assert.assertEquals(1, result.getComponents().size(), 0);
         List<NGraph> components = result.getComponents();
+        assertCorrectGraph(result);
         assertSameNGraph(result, components.get(0));
     }
 
@@ -139,8 +141,9 @@ public class GraphTransformatorTest extends GraphTest{
     public void testDisconnectedGraph() throws InterruptedException {
         Graph disconnectedGraph = createDisconnectedGraph();
 
-        NGraph result = graphToNGraph(disconnectedGraph);
-
+        NGraph result = createNGraph(disconnectedGraph);
+        
+        assertCorrectGraph(result);
         assertSameGraph(disconnectedGraph, result);
         Assert.assertEquals(3, result.getComponents().size(), 0);
         List<NGraph> components = result.getComponents();
@@ -152,23 +155,9 @@ public class GraphTransformatorTest extends GraphTest{
     @Test
     public void testRandomGraph() throws InterruptedException {
         Graph randomGraph = createRandomGraph();
-
-        NGraph result = graphToNGraph(randomGraph);
-
+        NGraph result = createNGraph(randomGraph);
+        assertCorrectGraph(result);
         assertSameGraph(randomGraph, result);
-    }
-
-    private NGraph graphToNGraph(Graph graph) {
-        GraphTransformator transformator = new GraphTransformator();
-
-        NGraph<GraphInput.InputData> nGraph =  transformator.graphToNGraph(graph);
-
-        if (SHOW_GRAPH || PRINT_GRAPH) {
-            nGraph.printGraph(SHOW_GRAPH, PRINT_GRAPH);
-        }
-        assertCorrectGraph(nGraph);
-
-        return nGraph;
     }
 
 }

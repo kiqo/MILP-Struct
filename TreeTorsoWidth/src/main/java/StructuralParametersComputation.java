@@ -28,7 +28,6 @@ import java.util.concurrent.*;
  */
 public class StructuralParametersComputation implements Callable<String> {
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(StructuralParametersComputation.class);
 
     private static final Stopwatch t = new Stopwatch();

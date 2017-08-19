@@ -124,7 +124,7 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
         if (((LPInputData) next.data).isInteger()) {
             handleIntegerVertex(currentIntegerSet, next);
         } else {
-            notYetHandled = handleNonIntegerVertex(currentNonIntegerSet, nodesToHandle, next);
+            notYetHandled = handleNonIntegerVertex(currentNonIntegerSet, next);
         }
         ((LPInputData) next.data).setNodeHandled(true);
         iterator.remove();
@@ -150,12 +150,10 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
     }
 
     private void handleIntegerVertex(Set<NVertex<D>> currentIntegerSet, NVertex<D> integerVertex) {
-        if (!currentIntegerSet.contains(integerVertex)) {
-            currentIntegerSet.add(integerVertex);
-        }
+        currentIntegerSet.add(integerVertex);
     }
 
-    private Set<NVertex<D>> handleNonIntegerVertex(Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> nodesToHandle, NVertex<D> curVertex) {
+    private Set<NVertex<D>> handleNonIntegerVertex(Set<NVertex<D>> currentNonIntegerSet, NVertex<D> curVertex) {
         Set<NVertex<D>> notYetHandled = new HashSet<>();
         if (!currentNonIntegerSet.contains(curVertex)) {
             currentNonIntegerSet.add(curVertex);

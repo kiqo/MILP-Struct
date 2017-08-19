@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * Created by Verena on 08.04.2017.
  */
-public class TreeDepthTest extends GraphTest {
+public class TreeDepthTest extends GraphTest implements AlgoTest{
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepthTest.class);
 
     private static final boolean SHOW_GRAPH = false;
@@ -24,13 +24,7 @@ public class TreeDepthTest extends GraphTest {
     private static final boolean PRINT_RESULTS = false;
 
     private TreeDepth<GraphInput.InputData> treeDepth(Graph graph) throws InterruptedException {
-
-        // generate NGraph for using libtw
-        NGraph<GraphInput.InputData> g;
-        GraphTransformator graphTransformator = new GraphTransformator();
-        g = graphTransformator.graphToNGraph(graph);
-
-        return treeDepth(g);
+        return treeDepth(createNGraph(graph));
     }
 
     private TreeDepth<GraphInput.InputData> treeDepth(NGraph<GraphInput.InputData> nGraph) throws InterruptedException {
