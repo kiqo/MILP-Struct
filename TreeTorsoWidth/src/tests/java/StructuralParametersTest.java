@@ -20,7 +20,6 @@ import java.io.IOException;
 public class StructuralParametersTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(StructuralParametersTest.class);
 
-    protected MILPParser milpParser = new MILPParser();
     protected LinearProgram lp = null;
 
     @Before

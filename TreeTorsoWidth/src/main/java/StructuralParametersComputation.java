@@ -50,8 +50,8 @@ public class StructuralParametersComputation implements Callable<String> {
     private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         LinearProgram lp = parseLinearProgram(fileName);
 
-        Graph primalGraph = null;
-        Graph incidenceGraph = null;
+        Graph primalGraph;
+        Graph incidenceGraph;
 
         NGraph<GraphInput.InputData> gPrimal = null, gIncidence = null;
         if (Configuration.PRIMAL) {
@@ -75,21 +75,60 @@ public class StructuralParametersComputation implements Callable<String> {
         computeStatistics(lp);
     }
 
-    private void computeStatistics(LinearProgram lp) {
-        if (Configuration.OUTPUT_FILE.endsWith(".csv")) {
-            sb.append(lp.getStatistics().csvFormat(Configuration.PRIMAL, Configuration.INCIDENCE));
-        } else {
-            sb.append(lp.getStatistics().shortDescription());
+    private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
+        MILPParser milpParser = new MILPParser();
+        LinearProgram lp = milpParser.parseMPS(fileName, false);
+        checkInterrupted();
+        return lp;
+    }
+
+    protected static void checkInterrupted() throws InterruptedException {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedException();
         }
     }
 
-    private void computeTreeDepthOnPrimalGraph(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal) throws InterruptedException {
-        if (Configuration.TREE_DEPTH) {
-            checkInterrupted();
+    private void computeTWLowerBounds(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal, NGraph<GraphInput.InputData> gIncidence) throws InterruptedException {
+        if (Configuration.LOWER_BOUND) {
             if (Configuration.PRIMAL) {
-                computeTreeDepth(gPrimal, lp.getStatistics().getPrimalGraphData());
+                int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
+                lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
+            }
+            checkInterrupted();
+            if (Configuration.INCIDENCE) {
+                int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
+                lp.getStatistics().getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
             }
         }
+    }
+
+    protected int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+        startTimer();
+        int lowerbound = TreeWidthWrapper.computeLowerBoundWithComponents(g);
+        stopTimer();
+        printTimingInfo("LB TreeWidth", lowerbound, g.getNumberOfVertices(), Configuration.LOWER_BOUND_ALG.getName());
+        return lowerbound;
+    }
+
+    private void computeTWUpperBounds(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal, NGraph<GraphInput.InputData> gIncidence) throws InterruptedException {
+        if (Configuration.UPPER_BOUND) {
+            if (Configuration.PRIMAL) {
+                int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
+                lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
+            }
+            if (Configuration.INCIDENCE) {
+                int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
+                lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
+            }
+        }
+    }
+
+    protected int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+        startTimer();
+        int upperbound = TreeWidthWrapper.computeUpperBoundWithComponents(g);
+        stopTimer();
+        printTimingInfo("UB TreeWidth", upperbound, g.getNumberOfVertices(), Configuration.UPPER_BOUND_ALG.getName());
+        return upperbound;
     }
 
     private void computeTorsoWidthOnPrimalGraph(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal) throws InterruptedException {
@@ -98,9 +137,6 @@ public class StructuralParametersComputation implements Callable<String> {
         }
     }
 
-    /*
-    Computes TorsoWidth of a graph and sets the result to the lp statistics
-    */
     private static void computeTorsoWidthOnPrimalGraph(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) throws InterruptedException {
         TorsoWidth torsoWidthAlgo = new TorsoWidth();
         runAlgo(g, torsoWidthAlgo);
@@ -125,59 +161,19 @@ public class StructuralParametersComputation implements Callable<String> {
         t.start();
     }
 
-    private void computeTWUpperBounds(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal, NGraph<GraphInput.InputData> gIncidence) throws InterruptedException {
-        if (Configuration.UPPER_BOUND) {
-            if (Configuration.PRIMAL) {
-                int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
-                lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
-            }
-            if (Configuration.INCIDENCE) {
-                int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
-                lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
-            }
-        }
+    private static void stopTimer() {
+        t.stop();
     }
 
-    private void computeTWLowerBounds(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal, NGraph<GraphInput.InputData> gIncidence) throws InterruptedException {
-        if (Configuration.LOWER_BOUND) {
-            if (Configuration.PRIMAL) {
-                int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
-                lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
-            }
+    private void computeTreeDepthOnPrimalGraph(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal) throws InterruptedException {
+        if (Configuration.TREE_DEPTH) {
             checkInterrupted();
-            if (Configuration.INCIDENCE) {
-                int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
-                lp.getStatistics().getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
+            if (Configuration.PRIMAL) {
+                computeTreeDepth(gPrimal, lp.getStatistics().getPrimalGraphData());
             }
         }
     }
 
-    private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
-        MILPParser milpParser = new MILPParser();
-        LinearProgram lp = milpParser.parseMPS(fileName, false);
-        checkInterrupted();
-        return lp;
-    }
-
-    protected static void checkInterrupted() throws InterruptedException {
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException();
-        }
-    }
-
-    private static UpperBound<GraphInput.InputData> createUpperBound() {
-        UpperBound upperBoundAlg = null;
-        try {
-            upperBoundAlg = (UpperBound) Configuration.UPPER_BOUND_ALG.getConstructor().newInstance();
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            LOGGER.error("", e);
-        }
-        return upperBoundAlg;
-    }
-
-    /*
-    Computes TreeDepthLB of a graph and sets the result to the lp statistics
-    */
     private static void computeTreeDepth(NGraph<GraphInput.InputData> g, GraphData graphData) throws InterruptedException {
         TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
         runAlgo(g, treeDepthAlgo);
@@ -186,28 +182,16 @@ public class StructuralParametersComputation implements Callable<String> {
         graphData.setTreeDepthUB(treeDepthUpperBound);
     }
 
+    private void computeStatistics(LinearProgram lp) {
+        if (Configuration.OUTPUT_FILE.endsWith(".csv")) {
+            sb.append(lp.getStatistics().csvFormat(Configuration.PRIMAL, Configuration.INCIDENCE));
+        } else {
+            sb.append(lp.getStatistics().shortDescription());
+        }
+    }
+
     protected static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {
         LOGGER.debug(fileName + " " + algorithm + ": " + result + " of  " + graphSize + " nodes with " + algoName
                 + ", time: " + t.getTime() / 1000 + "s");
-    }
-
-    protected int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        startTimer();
-        int upperbound = TreeWidthWrapper.computeUpperBoundWithComponents(g);
-        stopTimer();
-        printTimingInfo("UB TreeWidth", upperbound, g.getNumberOfVertices(), Configuration.UPPER_BOUND_ALG.getName());
-        return upperbound;
-    }
-
-    private static void stopTimer() {
-        t.stop();
-    }
-
-    protected int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        startTimer();
-        int lowerbound = TreeWidthWrapper.computeLowerBoundWithComponents(g);
-        stopTimer();
-        printTimingInfo("LB TreeWidth", lowerbound, g.getNumberOfVertices(), Configuration.LOWER_BOUND_ALG.getName());
-        return lowerbound;
     }
 }

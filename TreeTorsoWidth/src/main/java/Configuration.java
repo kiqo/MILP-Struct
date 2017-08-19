@@ -40,7 +40,7 @@ public class Configuration {
 
     private static void addObjectiveFunctionInformation(StringBuilder sb) {
         if (OBJ_FUNCTION) {
-            sb.append("Objective function is considered.");
+            sb.append("Objective function is considered." + NL);
         }
     }
 
