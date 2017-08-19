@@ -27,10 +27,29 @@ public class LPInputData extends GraphInput.InputData {
         this.nodeHandled = nodeHandled;
     }
 
-
     public boolean isInteger() { return this.isInteger; }
 
     public void setInteger(boolean integer) {
         isInteger = integer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LPInputData that = (LPInputData) o;
+
+        if (isInteger != that.isInteger) return false;
+        if (nodeHandled != that.nodeHandled) return false;
+        if (super.id != that.id) return false;
+        return super.name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (isInteger ? 1 : 0);
+        result = 31 * result + (nodeHandled ? 1 : 0);
+        return result;
     }
 }

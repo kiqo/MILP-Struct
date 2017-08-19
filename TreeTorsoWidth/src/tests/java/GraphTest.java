@@ -106,7 +106,7 @@ public abstract class GraphTest {
         return createGraph(nodes, edges);
     }
 
-    private Graph createClique(int size, String nodeNamePrefix) {
+    protected Graph createClique(int size, String nodeNamePrefix) {
         List<Node> nodes = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
 
