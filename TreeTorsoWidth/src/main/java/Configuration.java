@@ -99,4 +99,13 @@ public class Configuration {
             }
         }
     }
+
+    public static void setDefaultAlgorithms() {
+        try {
+            Configuration.UPPER_BOUND_ALG = Class.forName(Configuration.DEFAULT_UPPER_BOUND_ALG);
+            Configuration.LOWER_BOUND_ALG = Class.forName(Configuration.DEFAULT_LOWER_BOUND_ALG);
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("", e);
+        }
+    }
 }
