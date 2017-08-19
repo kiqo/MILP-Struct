@@ -6,7 +6,6 @@ import main.java.graph.Node;
 import main.java.libtw.LPInputData;
 import main.java.parser.GraphTransformator;
 import nl.uu.cs.treewidth.input.GraphInput;
-import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.junit.Assert;

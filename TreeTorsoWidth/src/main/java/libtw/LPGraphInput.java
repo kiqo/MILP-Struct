@@ -81,7 +81,7 @@ public class LPGraphInput implements GraphInput {
         while (verticesFound != graph.getNodes().size()) {
             for (NVertex<InputData> vertex : resultGraph) {
                 if (!vertexInSomeComponent(components, vertex)) {
-                    ArrayList<NVertex<InputData>> verticesOfNewComponent = getVerticesOfNewComponent(vertex);
+                    Set<NVertex<InputData>> verticesOfNewComponent = getVerticesOfNewComponent(vertex);
                     verticesFound += verticesOfNewComponent.size();
                     NGraph<InputData> componentGraph = createComponentGraph(verticesOfNewComponent);
                     components.add(componentGraph);
@@ -102,38 +102,17 @@ public class LPGraphInput implements GraphInput {
         return false;
     }
 
-    private ArrayList<NVertex<InputData>> getVerticesOfNewComponent(NVertex<InputData> vertex) {
-        ArrayList<NVertex<InputData>> handledVertices = new ArrayList<>();
-        DFSTree(vertex, handledVertices);
+    private Set<NVertex<InputData>> getVerticesOfNewComponent(NVertex<InputData> vertex) {
+        Set<NVertex<GraphInput.InputData>> handledVertices = new HashSet<>();
+        DepthFirstSearch.DFSTree(vertex, handledVertices);
         return handledVertices;
     }
 
-    private NGraph<InputData> createComponentGraph(ArrayList<NVertex<InputData>> verticesOfNewComponent) {
+    private NGraph<InputData> createComponentGraph(Set<NVertex<InputData>> verticesOfNewComponent) {
         NGraph<InputData> gSub = new ListGraph<>();
-        ((ListGraph) gSub).vertices = verticesOfNewComponent;
+        ArrayList<NVertex<InputData>> verticesAsList = new ArrayList<>();
+        verticesAsList.addAll(verticesOfNewComponent);
+        ((ListGraph) gSub).vertices = verticesAsList;
         return gSub;
-    }
-
-    /*
-     * Input is the root node, returns distance from the lowest descendant of the rootNode, i.e. the current
-     * height of the tree
-     */
-    private static int DFSTree(NVertex rootNode, List<NVertex<InputData>> handledVertices) {
-
-        handledVertices.add(rootNode);
-        // System.out.print(rootNode.data.name + " ");
-
-        int height = 0;
-        int heightSubtree;
-        for (Iterator<NVertex> it = rootNode.getNeighbors(); it.hasNext(); ) {
-            NVertex neighbor = it.next();
-            if (!handledVertices.contains(neighbor)) {
-                heightSubtree = DFSTree(neighbor, handledVertices);
-                if (heightSubtree > height) {
-                    height = heightSubtree;
-                }
-            }
-        }
-        return ++height;
     }
 }

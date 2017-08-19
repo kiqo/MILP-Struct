@@ -94,12 +94,12 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
         return path.get(path.size() / 2);
     }
 
-    private int constructDFSTreeWithRootNode(ListVertex<D> rootNode, Set<ListVertex<D>> nodesHandled) {
+    private int constructDFSTreeWithRootNode(ListVertex<D> rootNode, Set nodesHandled) {
         int height;
         if (MAX_DEGREE_HEURISTIC) {
-            height = DFSTreeByMaxDegreeRoot(rootNode, nodesHandled);
+            height = DepthFirstSearch.DFSTreeByMaxDegreeRoot(rootNode, nodesHandled);
         } else {
-            height = DFSTree(rootNode, nodesHandled);
+            height = DepthFirstSearch.DFSTree(rootNode, nodesHandled);
         }
         return height;
     }
@@ -231,66 +231,5 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
 
     private int randomVertexIndex(Random rand, int bound) {
         return rand.nextInt(bound);
-    }
-
-
-    /*
-     * Input is the root node, returns distance from the lowest descendant of the rootNode, i.e. the current
-     * height of the tree
-     * Starts by constructing first the subtree for the neighbour of the rootNode with maximal degree in the graph
-     */
-    private int DFSTreeByMaxDegreeRoot(ListVertex<D> rootNode, Set<ListVertex<D>> handledVertices) {
-
-        handledVertices.add(rootNode);
-
-        int height = 0;
-        int maxDegree;
-        NVertex<D> maxDegreeVertex;
-
-        while (true) {
-            maxDegree = Integer.MIN_VALUE;
-            maxDegreeVertex = null;
-            for (NVertex<D> neighbor : rootNode.neighbors) {
-                if (!handledVertices.contains(neighbor) && maxDegree < neighbor.getNumberOfNeighbors()) {
-                    maxDegreeVertex = neighbor;
-                    maxDegree = neighbor.getNumberOfNeighbors();
-                }
-            }
-
-            // all neighbours of current root node already in tree
-            if (maxDegreeVertex == null) {
-                break;
-            }
-
-            // take maxDegreeVertex as root for subtree
-            int heightSubtree = DFSTreeByMaxDegreeRoot((ListVertex<D>) maxDegreeVertex, handledVertices);
-            if (heightSubtree > height) {
-                height = heightSubtree;
-            }
-        }
-
-        return ++height;
-    }
-
-
-    /*
-     * Input is the root node, returns distance from the lowest descendant of the rootNode, i.e. the current
-     * height of the tree
-     */
-    private int DFSTree(ListVertex<D> rootNode, Set<ListVertex<D>> handledVertices) {
-
-        handledVertices.add(rootNode);
-        // System.out.print(rootNode.data.name + " ");
-
-        int height = 0;
-        for (NVertex<D> neighbor : rootNode.neighbors) {
-            if (!handledVertices.contains(neighbor)) {
-                int heightSubtree = DFSTree((ListVertex<D>) neighbor, handledVertices);
-                if (heightSubtree > height) {
-                    height = heightSubtree;
-                }
-            }
-        }
-        return ++height;
     }
 }
