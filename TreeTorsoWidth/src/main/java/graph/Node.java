@@ -13,6 +13,10 @@ public class Node {
     private int id;
     private boolean isInteger;
 
+    public Node() {
+
+    }
+
     public Node(String name) {
         this.name = name;
     }

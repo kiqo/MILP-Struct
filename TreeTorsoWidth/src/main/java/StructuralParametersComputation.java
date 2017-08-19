@@ -54,7 +54,6 @@ public class StructuralParametersComputation implements Callable<String> {
         Graph incidenceGraph = null;
 
         NGraph<GraphInput.InputData> gPrimal = null, gIncidence = null;
-        GraphGenerator generator = null;
         if (Configuration.PRIMAL) {
             primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
             checkInterrupted();
@@ -68,9 +67,6 @@ public class StructuralParametersComputation implements Callable<String> {
             gIncidence = GraphTransformator.graphToNGraph(incidenceGraph);
         }
         checkInterrupted();
-
-        // Displays and writes graph to file system using GraphViz but too slow for large graphs
-        // g.printGraph(true, true);
 
         computeTWLowerBounds(lp, gPrimal, gIncidence);
         computeTWUpperBounds(lp, gPrimal, gIncidence);
@@ -106,20 +102,27 @@ public class StructuralParametersComputation implements Callable<String> {
     Computes TorsoWidth of a graph and sets the result to the lp statistics
     */
     private static void computeTorsoWidthOnPrimalGraph(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) throws InterruptedException {
-        t.reset();
-        t.start();
-        TorsoWidth<GraphInput.InputData> torsoWidthAlgo = new TorsoWidth();
-        torsoWidthAlgo.setInput(g);
-        torsoWidthAlgo.run();
+        TorsoWidth torsoWidthAlgo = new TorsoWidth();
+        runAlgo(g, torsoWidthAlgo);
         int torsoWidthLowerBound = torsoWidthAlgo.getLowerBound();
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
-        t.stop();
-        long millisecondsPassed = t.getTime();
-        printTimingInfo("LB TorsoWidth", torsoWidthLowerBound, g.getNumberOfVertices(), torsoWidthAlgo.getName(), millisecondsPassed/1000);
-        printTimingInfo("UB TorsoWidth", torsoWidthUpperBound, g.getNumberOfVertices(), torsoWidthAlgo.getName(), millisecondsPassed/1000);
+        printTimingInfo("LB TorsoWidth", torsoWidthLowerBound, g.getNumberOfVertices(), torsoWidthAlgo.getName());
+        printTimingInfo("UB TorsoWidth", torsoWidthUpperBound, g.getNumberOfVertices(), torsoWidthAlgo.getName());
         GraphData primalGraphData = linearProgram.getStatistics().getPrimalGraphData();
         primalGraphData.setTorsoWidthUB(torsoWidthUpperBound);
         primalGraphData.setTorsoWidthLB(torsoWidthLowerBound);
+    }
+
+    protected static void runAlgo(NGraph<GraphInput.InputData> g, Algorithm algorithm) throws InterruptedException {
+        startTimer();
+        algorithm.setInput(g);
+        algorithm.run();
+        stopTimer();
+    }
+
+    private static void startTimer() {
+        t.reset();
+        t.start();
     }
 
     private void computeTWUpperBounds(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal, NGraph<GraphInput.InputData> gIncidence) throws InterruptedException {
@@ -172,54 +175,39 @@ public class StructuralParametersComputation implements Callable<String> {
         return upperBoundAlg;
     }
 
-
-    private static LowerBound<GraphInput.InputData> createLowerBound() {
-        LowerBound<GraphInput.InputData> lowerBoundAlg = null;
-        try {
-            lowerBoundAlg = (LowerBound<GraphInput.InputData>) Configuration.LOWER_BOUND_ALG.getConstructor().newInstance();
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            LOGGER.error(e.getMessage());
-        }
-        return lowerBoundAlg;
-    }
-
     /*
     Computes TreeDepthLB of a graph and sets the result to the lp statistics
     */
     private static void computeTreeDepth(NGraph<GraphInput.InputData> g, GraphData graphData) throws InterruptedException {
-        t.reset();
-        t.start();
         TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
-        treeDepthAlgo.setInput(g);
-        treeDepthAlgo.run();
+        runAlgo(g, treeDepthAlgo);
         int treeDepthUpperBound = treeDepthAlgo.getUpperBound();
-        t.stop();
-        printTimingInfo("UB TreeDepth", treeDepthUpperBound, g.getNumberOfVertices(), treeDepthAlgo.getName(), t.getTime()/1000);
+        printTimingInfo("UB TreeDepth", treeDepthUpperBound, g.getNumberOfVertices(), treeDepthAlgo.getName());
         graphData.setTreeDepthUB(treeDepthUpperBound);
     }
 
-    protected static void printTimingInfo(String algorithm, int result, int graphSize, String algoName, long secondsPassed) {
+    protected static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {
         LOGGER.debug(fileName + " " + algorithm + ": " + result + " of  " + graphSize + " nodes with " + algoName
-                + ", time: " + secondsPassed + "s");
+                + ", time: " + t.getTime() / 1000 + "s");
     }
 
     protected int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        t.reset();
-        t.start();
+        startTimer();
         int upperbound = TreeWidthWrapper.computeUpperBoundWithComponents(g);
-        t.stop();
-        long millisecondsPassed = t.getTime();
-        printTimingInfo("UB TreeWidth", upperbound, g.getNumberOfVertices(), Configuration.UPPER_BOUND_ALG.getName(), millisecondsPassed/1000);
+        stopTimer();
+        printTimingInfo("UB TreeWidth", upperbound, g.getNumberOfVertices(), Configuration.UPPER_BOUND_ALG.getName());
         return upperbound;
     }
 
-    protected int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        t.reset();
-        t.start();
-        int lowerbound = TreeWidthWrapper.computeLowerBoundWithComponents(g);
+    private static void stopTimer() {
         t.stop();
-        long millisecondsPassed = t.getTime();
-        printTimingInfo("LB TreeWidth", lowerbound, g.getNumberOfVertices(), Configuration.LOWER_BOUND_ALG.getName(), millisecondsPassed/1000);
+    }
+
+    protected int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+        startTimer();
+        int lowerbound = TreeWidthWrapper.computeLowerBoundWithComponents(g);
+        stopTimer();
+        printTimingInfo("LB TreeWidth", lowerbound, g.getNumberOfVertices(), Configuration.LOWER_BOUND_ALG.getName());
         return lowerbound;
     }
 }
