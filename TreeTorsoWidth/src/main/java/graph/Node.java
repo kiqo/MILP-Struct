@@ -13,9 +13,6 @@ public class Node {
     private int id;
     private boolean isInteger;
 
-    public Node() {
-    }
-
     public Node(String name) {
         this.name = name;
     }
@@ -33,22 +30,6 @@ public class Node {
         this.name = name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Node node = (Node) o;
-
-        return name != null ? name.equals(node.name) : node.name == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return name != null ? name.hashCode() : 0;
-    }
-
     public int getId() {
         return id;
     }
@@ -63,5 +44,21 @@ public class Node {
 
     public void setInteger(boolean integer) {
         isInteger = integer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Node node = (Node) o;
+
+        return name != null ? name.equals(node.name) : node.name == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }

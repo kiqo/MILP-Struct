@@ -88,7 +88,7 @@ public class MILPParser {
                         integerVariable = false;
                     }
                 } else {
-                    lineContents = getData(line);
+                    lineContents = getDataWithoutSpaces(line);
 
                     Variable variable;
                     if (integerVariable) {
@@ -120,7 +120,7 @@ public class MILPParser {
 
             // parse RHS
             while (!line.startsWith("BOUNDS") && !line.startsWith("ENDATA")) {
-                lineContents = getData(line);
+                lineContents = getDataWithoutSpaces(line);
 
                 String rowName = lineContents[1];
                 double rightHandSideValue = Double.valueOf(lineContents[2]);
@@ -141,7 +141,7 @@ public class MILPParser {
 
             // parse BOUNDS (optional)
             while (line != null && !line.startsWith("ENDATA")) {
-                lineContents = getData(line);
+                lineContents = getDataWithoutSpaces(line);
 
                 String boundType = lineContents[0];
                 String variableName = lineContents[2];
@@ -206,8 +206,7 @@ public class MILPParser {
         row.getEntries().add(new MatrixEntry(variable, coefficient));
     }
 
-    // returns the data without spaces
-    private String[] getData(String line) {
+    private String[] getDataWithoutSpaces(String line) {
         String[] splits = line.split(" ");
         List<String> ret = new ArrayList<>();
         for (String split : splits) {
