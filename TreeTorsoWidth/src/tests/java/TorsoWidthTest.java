@@ -1,10 +1,8 @@
 package tests.java;
 
-import main.java.Configuration;
 import main.java.graph.Graph;
 import main.java.libtw.LPInputData;
 import main.java.libtw.TorsoWidth;
-import main.java.libtw.TreeWidthWrapper;
 import nl.uu.cs.treewidth.algorithm.GreedyDegree;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.ListVertex;

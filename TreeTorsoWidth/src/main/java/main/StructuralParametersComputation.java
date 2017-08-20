@@ -1,4 +1,4 @@
-package main.java;
+package main.java.main;
 
 import main.java.graph.Graph;
 import main.java.libtw.TorsoWidth;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
 
 /**
@@ -49,30 +48,39 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         LinearProgram lp = parseLinearProgram(fileName);
-
-        Graph primalGraph;
-        Graph incidenceGraph;
-
         NGraph<GraphInput.InputData> gPrimal = null, gIncidence = null;
         if (Configuration.PRIMAL) {
-            primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
-            checkInterrupted();
-            lp.getStatistics().computePrimalGraphData(primalGraph);
-            gPrimal = GraphTransformator.graphToNGraph(primalGraph);
+            gPrimal = computePrimalGraph(lp);
         }
         if (Configuration.INCIDENCE) {
-            incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
-            checkInterrupted();
-            lp.getStatistics().computeIncidenceGraphData(incidenceGraph);
-            gIncidence = GraphTransformator.graphToNGraph(incidenceGraph);
+            gIncidence = computeIncidenceGraph(lp);
         }
         checkInterrupted();
-
         computeTWLowerBounds(lp, gPrimal, gIncidence);
         computeTWUpperBounds(lp, gPrimal, gIncidence);
         computeTorsoWidthOnPrimalGraph(lp, gPrimal);
         computeTreeDepthOnPrimalGraph(lp, gPrimal);
         computeStatistics(lp);
+    }
+
+    private NGraph<GraphInput.InputData> computePrimalGraph(LinearProgram lp) throws InterruptedException {
+        Graph primalGraph;
+        NGraph<GraphInput.InputData> gPrimal;
+        primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
+        checkInterrupted();
+        lp.getStatistics().computePrimalGraphData(primalGraph);
+        gPrimal = GraphTransformator.graphToNGraph(primalGraph);
+        return gPrimal;
+    }
+
+    private NGraph<GraphInput.InputData> computeIncidenceGraph(LinearProgram lp) throws InterruptedException {
+        Graph incidenceGraph;
+        NGraph<GraphInput.InputData> gIncidence;
+        incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
+        checkInterrupted();
+        lp.getStatistics().computeIncidenceGraphData(incidenceGraph);
+        gIncidence = GraphTransformator.graphToNGraph(incidenceGraph);
+        return gIncidence;
     }
 
     private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
@@ -115,7 +123,8 @@ public class StructuralParametersComputation implements Callable<String> {
             if (Configuration.PRIMAL) {
                 int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
                 lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
-            }
+            }            
+            checkInterrupted();
             if (Configuration.INCIDENCE) {
                 int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
                 lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);

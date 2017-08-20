@@ -1,4 +1,4 @@
-package main.java;
+package main.java.main;
 
 import main.java.lp.LPStatistics;
 
@@ -46,35 +46,20 @@ public class Main {
 
     private static StringBuilder computeStructuralParametersForFiles(List<String> filePaths) {
         StringBuilder sb = appendHeader();
-        ExecutorService executor = createSingleThreadExecutor();
-        List<Future<String>> result;
+        ExecutorService executor = null;
         for (String fileName : filePaths) {
-            LOGGER.debug("Structural Parameters: " + fileName);
-            // Keeps EXACTLY one thread
-            executor = Executors.newSingleThreadExecutor();
-            String resultString = null;
-            try {
-                // invoke all waits until all tasks are finished (= terminated or had an error)
-                result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName)), Configuration.TIMEOUT, TimeUnit.SECONDS);
-
-                if (result.get(0).isCancelled()) {
-                    // task finished by cancellation (seconds exceeded)
-                    LOGGER.warn(fileName + " was cancelled");
-                    resultString = fileName + ";no result;" + System.lineSeparator();
-                } else {
-                    resultString = result.get(0).get();
-                }
-
-            } catch (InterruptedException | ExecutionException e) {
-                LOGGER.error("", e);
-            }
-
+            executor = createSingleThreadExecutor();
+            String resultString = invokeTask(executor, fileName);
             if (resultString != null) {
                 sb.append(resultString);
             }
         }
         LOGGER.debug("Finished with structural parameters computation");
+        shutdownExecutor(executor);
+        return sb;
+    }
 
+    private static void shutdownExecutor(ExecutorService executor) {
         // disable new tasks from being submitted
         executor.shutdown();
         try {
@@ -90,11 +75,31 @@ public class Main {
         } catch (InterruptedException e) {
             LOGGER.error("Interrupted Exception", e);
         }
-        return sb;
+    }
+
+    private static String invokeTask(ExecutorService executor, String fileName) {
+        List<Future<String>> result;
+        String resultString = null;
+        LOGGER.debug("Structural Parameters: " + fileName);
+        try {
+            // invoke all waits until all tasks are finished (= terminated or had an error)
+            result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName)), Configuration.TIMEOUT, TimeUnit.SECONDS);
+
+            if (result.get(0).isCancelled()) {
+                // task finished by cancellation (seconds exceeded)
+                LOGGER.warn(fileName + " was cancelled");
+                resultString = fileName + ";no result;" + System.lineSeparator();
+            } else {
+                resultString = result.get(0).get();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error("", e);
+        }
+        return resultString;
     }
 
     private static ExecutorService createSingleThreadExecutor() {
-        return Executors.newFixedThreadPool(1);
+        return Executors.newSingleThreadExecutor();
     }
 
     private static StringBuilder appendHeader() {

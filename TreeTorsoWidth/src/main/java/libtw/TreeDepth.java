@@ -1,6 +1,6 @@
 package main.java.libtw;
 
-import main.java.Configuration;
+import main.java.main.Configuration;
 import nl.uu.cs.treewidth.algorithm.UpperBound;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.ListGraph;

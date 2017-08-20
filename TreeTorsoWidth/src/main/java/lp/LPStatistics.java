@@ -2,6 +2,7 @@ package main.java.lp;
 
 import main.java.graph.Graph;
 import main.java.graph.Node;
+import main.java.main.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class LPStatistics {
         double minCoefficient = Double.MAX_VALUE;
         double maxCoefficient = Double.MIN_VALUE;
         Collection<Row> rows;
-        if (main.java.Configuration.OBJ_FUNCTION) {
+        if (Configuration.OBJ_FUNCTION) {
             // objective function is considered like a row in the matrix
             rows = linearProgram.getRows().values();
         } else {

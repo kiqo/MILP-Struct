@@ -1,6 +1,6 @@
 package main.java.parser;
 
-import main.java.Configuration;
+import main.java.main.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
