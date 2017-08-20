@@ -11,6 +11,7 @@ public class Configuration {
     private static final String NL = System.getProperty("line.separator");
     private static final String TAB = "\t";
 
+    public static String PROGRAM_NAME = "TreeTorsoWidth";
     public static long TERMINATION_TIMEOUT = 30;
     public static long TIMEOUT = 120;
     public static Class<?> UPPER_BOUND_ALG = null;

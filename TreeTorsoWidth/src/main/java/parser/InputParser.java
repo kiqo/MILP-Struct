@@ -5,6 +5,8 @@ import main.java.main.HelpPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wagu.Board;
+
 /**
  * Created by Verena on 19.08.2017.
  */
@@ -24,7 +26,7 @@ public class InputParser {
     }
 
     private static void checkAtLeastOneArgument(String[] args) {
-        boolean error = args.length <= 1;
+        boolean error = args.length == 0;
         handleError(error);
     }
 
@@ -34,7 +36,7 @@ public class InputParser {
     }
 
     private static boolean helpArgumentSet(String[] args) {
-        return args[0].equals("--help");
+        return args[0].equals("--help") || args[1].equals("--help");
     }
 
     private static void handleError(boolean error) {
