@@ -1,6 +1,7 @@
 package main.java.parser;
 
 import main.java.main.Configuration;
+import main.java.main.HelpPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,24 +12,41 @@ public class InputParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(InputParser.class);
 
     public static void parseArguments(String[] args) {
-        boolean error = args.length <= 1 ||  args[0].equals("--help");
-        handleError(error);
-
-        setInputFilePath(args);
-        error = setConfigurationsForArguments(args, error);
+        checkAtLeastOneArgument(args);
+        if (helpArgumentSet(args)) {
+            printLongHelpMessage();
+            exitProgram();
+        }
+        boolean error = setConfigurationsForArguments(args);
         error = checkForConfigurationErrors(error);
-
         handleError(error);
-
-        setOutputFilePathIfNotSet();
         Configuration.print();
+    }
+
+    private static void checkAtLeastOneArgument(String[] args) {
+        boolean error = args.length <= 1;
+        handleError(error);
+    }
+
+    private static void printLongHelpMessage() {
+        String longHelpMessage = HelpPage.getLongHelpMessage();
+        LOGGER.error(longHelpMessage);
+    }
+
+    private static boolean helpArgumentSet(String[] args) {
+        return args[0].equals("--help");
     }
 
     private static void handleError(boolean error) {
         if (error) {
-            printHelpMessage();
+            printShortHelpMessage();
             exitProgram();
         }
+    }
+
+    private static void printShortHelpMessage() {
+        String shortHelpMessage = HelpPage.getShortHelpMessage();
+        LOGGER.error(shortHelpMessage);
     }
 
     private static void setInputFilePath(String[] args) {
@@ -57,7 +75,15 @@ public class InputParser {
         System.exit(1);
     }
 
-    private static boolean setConfigurationsForArguments(String[] args, boolean error) {
+    private static boolean setConfigurationsForArguments(String[] args) {
+        setInputFilePath(args);
+        boolean error = parseStructuralParameterArguments(args);
+        setOutputFilePathIfNotSet();
+        return error;
+    }
+
+    private static boolean parseStructuralParameterArguments(String[] args) {
+        boolean error = false;
         boolean expectOutputFile = false , expectGraphType = false;
         for (int i = 1; i < args.length; i++) {
             switch (args[i]) {
@@ -157,12 +183,5 @@ public class InputParser {
             outputFile += ".csv";
             Configuration.OUTPUT_FILE = outputFile;
         }
-    }
-
-    private static void printHelpMessage() {
-        String usageMessage = "Usage: TreeTorsoWidth [--help] <inputFile(.mps|.txt)> [-o <outputFile(.txt|.csv)>] " +
-                "(--lb|--ub|--to|--td) -g (<primal>|<incidence>|<dual>) [--obj]" + System.getProperty("line.separator" +
-                "See TreeTorsoWidth --help for more information");
-        LOGGER.error(usageMessage);
     }
 }
