@@ -1,17 +1,22 @@
 package tests.java;
 
+import main.java.lp.Row;
 import main.java.main.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
+import main.java.parser.DualGraphGenerator;
 import main.java.parser.IncidenceGraphGenerator;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.*;
@@ -45,6 +50,73 @@ public class GraphGeneratorTest extends GraphTest {
         }
 
         correctGraph(primalGraph);
+    }
+
+    @Test
+    public void testLinearProgramToDualGraph() throws TimeoutException, InterruptedException {
+        lp = createLinearProgram("./../input/benchmarks/bienst2.mps");
+
+        Graph dualGraph = new DualGraphGenerator().linearProgramToGraph(lp);
+
+        assertNotNull(dualGraph.getEdges());
+        assertNotNull(dualGraph.getNodes());
+        assertNotNull(dualGraph.getNeighbourNodes());
+        assertEquals(lp.getConstraints().size(), dualGraph.getNodes().size());
+        List<Row> rows = new ArrayList<>(lp.getRows().values());
+        if (Configuration.OBJ_FUNCTION) {
+            assertTrue(rows.contains(lp.getObjectiveFunction()));
+        } else {
+            rows.remove(lp.getObjectiveFunction());
+        }
+        boolean nodeFound, objectiveFunctionNodeFound = false;
+        for (Row constraint : rows) {
+            nodeFound = false;
+            for (Node node : dualGraph.getNodes()) {
+                if (node.getName().equals(constraint.getName())) {
+                    nodeFound = true;
+                    break;
+                }
+                if (node.getName().equals(lp.getObjectiveFunction().getName())) {
+                    objectiveFunctionNodeFound = true;
+                    break;
+                }
+            }
+            assertTrue("There does not exist a node for the constraint " + constraint.getName(), nodeFound);
+        }
+        assertEquals(Configuration.OBJ_FUNCTION, objectiveFunctionNodeFound);
+
+        for (Row constraint1 : rows) {
+            for (Row constraint2 : rows) {
+                if (!constraint1.equals(constraint2)) {
+                    if (haveSameVariable(constraint1, constraint2)) {
+                        boolean edgeFound = false;
+                        for (Edge edge : dualGraph.getEdges()) {
+                            if (edge.getNode1().getName().equals(constraint1.getName())
+                                    && edge.getNode2().getName().equals(constraint2.getName()) ||
+                                    edge.getNode1().getName().equals(constraint2.getName())
+                                            && edge.getNode2().getName().equals(constraint1.getName())) {
+                                edgeFound = true;
+                            }
+                        }
+                        assertTrue("There does not exist an edge for the two constraint nodes: " + constraint1.getName()
+                                + constraint2.getName(), edgeFound);
+                    }
+                }
+            }
+        }
+
+        correctGraph(dualGraph);
+    }
+
+    private boolean haveSameVariable(Row constraint1, Row constraint2) {
+        for (MatrixEntry entry1 : constraint1.getEntries()) {
+            for (MatrixEntry entry2 : constraint2.getEntries()) {
+                if (entry1.getVariable().equals(entry2.getVariable())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Test

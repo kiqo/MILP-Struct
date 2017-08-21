@@ -35,11 +35,11 @@ public abstract class GraphGenerator {
         return incidenceGraph;
     }
 
-    Collection<Row> getRows(LinearProgram lp) {
-        Collection<Row> rows;
+    List<Row> getRows(LinearProgram lp) {
+        ArrayList rows;
         if (Configuration.OBJ_FUNCTION) {
             // objective function is considered like a row in the matrix
-            rows = lp.getRows().values();
+            rows = new ArrayList(lp.getRows().values());
         } else {
             // objective function just ignored
             rows = new ArrayList<>(lp.getConstraints());

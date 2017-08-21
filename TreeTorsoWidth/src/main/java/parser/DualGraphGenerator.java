@@ -4,6 +4,9 @@ import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.*;
 
+import java.util.Collection;
+import java.util.List;
+
 
 /**
  * Created by Verena on 21.08.2017.
@@ -20,9 +23,13 @@ public class DualGraphGenerator extends GraphGenerator {
      */
     @Override
     public Graph linearProgramToGraph(LinearProgram lp) throws InterruptedException {
-        for (Row constraint1 : getRows(lp)) {
+        List<Row> constraints = getRows(lp);
+        int numConstraints = constraints.size();
+        for (int i = 0; i < numConstraints; i++) {
+            Row constraint1 = constraints.get(i);
             Node constraintNode1 = generateNodeIfNotExists(constraint1.getName());
-            for (Row constraint2 : getRows(lp)) {
+            for (int j = i+1; j < numConstraints; j++) {
+                Row constraint2 = constraints.get(j);
                 Node constraintNode2 = generateNodeIfNotExists(constraint2.getName());
                 if (haveCommonVariable(constraint1, constraint2)) {
                     generateEdge(constraintNode1, constraintNode2);
@@ -30,6 +37,7 @@ public class DualGraphGenerator extends GraphGenerator {
                 }
             }
         }
+
         Graph dualGraph = createGraph(nodes, edges, neighbourNodes);
         return dualGraph;
     }
@@ -37,7 +45,7 @@ public class DualGraphGenerator extends GraphGenerator {
     private boolean haveCommonVariable(Row constraint1, Row constraint2) {
         for (MatrixEntry entryConstraint1 : constraint1.getEntries()) {
             for (MatrixEntry entryConstraint2 : constraint2.getEntries()) {
-                if (entryConstraint1.getVariable().equals(entryConstraint2.getVariable())) {
+                if (entryConstraint1.getVariable().getName().equals(entryConstraint2.getVariable().getName())) {
                     return true;
                 }
             }
