@@ -31,8 +31,7 @@ public class InputParser {
     }
 
     private static void printLongHelpMessage() {
-        String longHelpMessage = HelpPage.getLongHelpMessage();
-        LOGGER.error(longHelpMessage);
+        LOGGER.error(HelpPage.getLongHelpMessage());
     }
 
     private static boolean helpArgumentSet(String[] args) {

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class HelpPage {
     private static final String NL = System.getProperty("line.separator");
-    private static final String SINGLE_TAB = "\t";
+    private static final int TABLE_WIDTH = 120;
     private static final String DOUBLE_TAB = "\t\t";
 
     private static final String shortHelpMessage = "Usage: TreeTorsoWidth [--help] <inputFile(.mps|.txt)> [-o <outputFile(.txt|.csv)>] " +
@@ -28,31 +28,76 @@ public class HelpPage {
     }
 
     private static String constructLongHelpMessage() {
-        StringBuilder sb = new StringBuilder();
-        appendNameOfProgram(sb);
-        appendDescription(sb);
-        return sb.toString();
-    }
-
-    private static void appendDescription(StringBuilder sb) {
-        List<String> headersList = Arrays.asList("NAME", "GENDER", "MARRIED", "AGE", "SALARY($)");
-        List<List<String>> rowsList = Arrays.asList(
-                Arrays.asList("Eddy", "Male", "No", "23", "1200.27"),
-                Arrays.asList("Libby", "Male", "No", "17", "800.50"),
-                Arrays.asList("Rea", "Female", "No", "30", "10000.00"),
-                Arrays.asList("Deandre", "Female", "No", "19", "18000.50"),
-                Arrays.asList("Alice", "Male", "Yes", "29", "580.40"),
-                Arrays.asList("Alyse", "Female", "No", "26", "7000.89"),
-                Arrays.asList("Venessa", "Female", "No", "22", "100700.50")
-        );
-//bookmark 1
-        Board board = new Board(75);
-        Table table = new Table(board, 75, headersList, rowsList);
+        List<String> headersList = Arrays.asList(Configuration.PROGRAM_NAME, "", "");
+        List<List<String>> rowsList = createRowsList();
+        Board board = new Board(TABLE_WIDTH);
+        Table table = new Table(board, TABLE_WIDTH, headersList, rowsList);
+        table.setGridMode(Table.GRID_NON);
+        List<Integer> colWidthsListEdited = Arrays.asList(Configuration.PROGRAM_NAME.length(), 12, 120 - 12 - Configuration.PROGRAM_NAME.length());
+        table.setColWidthsList(colWidthsListEdited);
         Block tableBlock = table.tableToBlocks();
         board.setInitialBlock(tableBlock);
         board.build();
         String tableString = board.getPreview();
-        System.out.println(tableString);
+        return NL + tableString;
+    }
+
+    private static List<List<String>> createRowsList() {
+        return Arrays.asList(
+                    Arrays.asList("", "Description", ""),
+                    Arrays.asList("", "", "A framework for computing structural parameters of "),
+                    Arrays.asList("", "", "Integer Linear Programs (ILP) and Mixed Integer Linear "),
+                    Arrays.asList("", "", "Programs (MILP). It is possible to compute lower and "),
+                    Arrays.asList("", "", "upper bounds for treewidth, tree-depth and torso-width "),
+                    Arrays.asList("", "", "of the primal, incidence or dual representation of the "),
+                    Arrays.asList("", "", "(M)ILP. "),
+                    Arrays.asList("", "", ""),
+                    Arrays.asList("", "Arguments", ""),
+                    Arrays.asList("", "", "TreeTorsoWidth [--help] <inputFile(.mps|.txt)> "),
+                    Arrays.asList("", "", "[-o <outputFile(.txt|.csv)>] (--lb|--ub|--to|--td)"),
+                    Arrays.asList("", "", "-g (<primal>|<incidence>|<dual>) [--obj]"),
+                    Arrays.asList("", "", ""),
+                    Arrays.asList("", "", "--help"),
+                    Arrays.asList("", "", DOUBLE_TAB + "Display this help and exit (optional)"),
+                    Arrays.asList("", "", "<inputFile(.mps|.txt)>"),
+                    Arrays.asList("", "", DOUBLE_TAB + "Path to input file (mandatory)"),
+                    Arrays.asList("", "", DOUBLE_TAB + "If the file is a .mps file, the the program"),
+                    Arrays.asList("", "", DOUBLE_TAB + "in the file is handled. If it is a .txt file "),
+                    Arrays.asList("", "", DOUBLE_TAB + "then every line corresponds to the file path of"),
+                    Arrays.asList("", "", DOUBLE_TAB + "a .mps file that is handled. "),
+                    Arrays.asList("", "", "-o, --output <outputFile(.txt|.csv)>"),
+                    Arrays.asList("", "", DOUBLE_TAB + "Path to output file (optional)"),
+                    Arrays.asList("", "", DOUBLE_TAB + "If nothing is specified, then a .csv file is "),
+                    Arrays.asList("", "", DOUBLE_TAB + "generated. If the file ends on .txt, a String "),
+                    Arrays.asList("", "", DOUBLE_TAB + "output is created, if it ends on .csv, a .csv "),
+                    Arrays.asList("", "", DOUBLE_TAB + "file is generated."),
+                    Arrays.asList("", "", "-lb, --lowerbound"),
+                    Arrays.asList("", "", DOUBLE_TAB + "Compute the treewidth lower bound (optional)"),
+                    Arrays.asList("", "", "-ub, --upperbound"),
+                    Arrays.asList("", "", DOUBLE_TAB + "Compute the treewidth upper bound (optional)"),
+                    Arrays.asList("", "", "-to, --torsowidth"),
+                    Arrays.asList("", "", DOUBLE_TAB + "Compute the torso-width lower and upper bound "),
+                    Arrays.asList("", "", DOUBLE_TAB + "(optional), only possible for the primal graph "),
+                    Arrays.asList("", "", "-td, --treedepth"),
+                    Arrays.asList("", "", DOUBLE_TAB + "Compute the tree-depth upper bound "),
+                    Arrays.asList("", "", DOUBLE_TAB + "(optional), only possible for the primal graph "),
+                    Arrays.asList("", "", DOUBLE_TAB + "is computed"),
+                    Arrays.asList("", "", "-g, --graph (<primal>|<incidence>|<dual>|<p>|<i>|<d>)"),
+                    Arrays.asList("", "", DOUBLE_TAB + "The graph representation of the (M)ILP computed"),
+                    Arrays.asList("", "", DOUBLE_TAB + "(mandatory), possible to specify multiple graph "),
+                    Arrays.asList("", "", DOUBLE_TAB + "representations"),
+                    Arrays.asList("", "", "--obj"),
+                    Arrays.asList("", "", DOUBLE_TAB + "Consider objective function (optional), i.e. in "),
+                    Arrays.asList("", "", DOUBLE_TAB + "the graph representation computed it is handled "),
+                    Arrays.asList("", "", DOUBLE_TAB + "as if it were part of the constraint matrix"),
+                    Arrays.asList("", "", "One of --lb, --ub, --to, --td must be specified. "),
+                    Arrays.asList("", "", ""),
+                    Arrays.asList("", "Examples", ""),
+                    Arrays.asList("", "", Configuration.PROGRAM_NAME + " ./path/inputFile.mps -g primal --lb --ub"),
+                    Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -o outputFile.csv -g p --ub"),
+                    Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal --to --obj"),
+                    Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal incidence --td --to")
+            );
     }
 
     private static void appendNameOfProgram(StringBuilder sb) {
