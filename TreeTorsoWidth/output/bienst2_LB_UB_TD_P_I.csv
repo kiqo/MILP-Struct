@@ -1,2 +1,2 @@
 name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;
-bienst2;505;576;35;0,0693;false;0.0;7.0;0.0;3.0;56;-81.0;1.0;1;505;35;0,0693;6552;0,0515;8;56;25,9485;53;0;399;0;0;1081;35;0,0324;2184;0,0075;2;56;4,0407;26;0;
+bienst2;505;576;35;0,0693;false;0.0;7.0;0.0;3.0;56;-81.0;1.0;1;505;35;0,0693;6552;0,0515;8;56;25,9485;54;0;399;0;0;1081;35;0,0324;2184;0,0075;2;56;4,0407;26;0;

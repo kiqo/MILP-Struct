@@ -30,6 +30,13 @@ public class MILPParser {
         return lp;
     }
 
+    private void checkCorrectFileFormat(String filename) throws IOException {
+        String[] splits = filename.split("\\.");
+        if (!splits[splits.length - 1].equals("mps") && !splits[splits.length - 1].equals("mps\"") && !splits[splits.length - 1].equals("MPS")) {
+            throw new IOException("parseMPS may only handle files with .mps as ending!");
+        }
+    }
+
     private LinearProgram constructLP(String filename) {
         LinearProgram lp = new LinearProgram();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
@@ -42,6 +49,53 @@ public class MILPParser {
             LOGGER.error("", e);
         }
         return lp;
+    }
+
+    private void parseName(LinearProgram lp, BufferedReader br) throws IOException {
+        String line = br.readLine();
+        if (line.startsWith("NAME")) {
+            lp.setName(line.substring(COL_1_START).trim());
+        }
+    }
+
+    private void parseRows(LinearProgram lp, BufferedReader br) throws IOException {
+        List<MatrixRow> constraints = new ArrayList<>();
+
+        String line = br.readLine();
+        assert (line.startsWith("ROWS"));
+        line = br.readLine();
+
+        while (!line.startsWith("COLUMNS")) {
+            if (line.substring(COL_0_START).startsWith("N")) {
+                // objective function
+                Row row = new Row();
+                row.setName(line.substring(COL_1_START).trim());
+                row.setEntries(new ArrayList<>());
+                lp.setObjectiveFunction(row);
+            } else {
+                // matrix row
+                MatrixRow row = new MatrixRow();
+                row.setEquality(parseEquality(line.substring(COL_0_START, COL_0_START + 1)));
+                row.setName(line.substring(COL_1_START).trim());
+                row.setEntries(new ArrayList<>());
+                constraints.add(row);
+            }
+
+            line = br.readLine();
+        }
+        lp.setConstraints(constraints);
+    }
+
+    private LinearProgram.Equality parseEquality(String substring) {
+        switch (substring) {
+            case "G":
+                return LinearProgram.Equality.GREATER_THAN;
+            case "L":
+                return LinearProgram.Equality.LESS_THAN;
+            case "E":
+                return LinearProgram.Equality.EQUAL;
+        }
+        return LinearProgram.Equality.EQUAL;
     }
 
     private void parseColumns(LinearProgram lp, BufferedReader br) throws IOException {
@@ -97,39 +151,37 @@ public class MILPParser {
         }
     }
 
-    private void parseName(LinearProgram lp, BufferedReader br) throws IOException {
-        String line = br.readLine();
-        if (line.startsWith("NAME")) {
-            lp.setName(line.substring(COL_1_START).trim());
+    private void addRowEntry(Row row, Variable variable, double coefficient) {
+
+        if (row.getEntries() == null || row.getEntries().isEmpty()) {
+            List<MatrixEntry> entries = new ArrayList<>();
+            row.setEntries(entries);
         }
+        row.getEntries().add(new MatrixEntry(variable, coefficient));
     }
 
-    private void parseRows(LinearProgram lp, BufferedReader br) throws IOException {
-        List<MatrixRow> constraints = new ArrayList<>();
-
+    private void parseRHS(LinearProgram lp, BufferedReader br) throws IOException {
+        Map<String, Row> rows = lp.getRows();
         String line = br.readLine();
-        assert (line.startsWith("ROWS"));
-        line = br.readLine();
+        String[] lineContents;
+        while (!line.startsWith("BOUNDS") && !line.startsWith("ENDATA")) {
+            lineContents = getDataWithoutSpaces(line);
 
-        while (!line.startsWith("COLUMNS")) {
-            if (line.substring(COL_0_START).startsWith("N")) {
-                // objective function
-                Row row = new Row();
-                row.setName(line.substring(COL_1_START).trim());
-                row.setEntries(new ArrayList<>());
-                lp.setObjectiveFunction(row);
-            } else {
-                // matrix row
-                MatrixRow row = new MatrixRow();
-                row.setEquality(parseEquality(line.substring(COL_0_START, COL_0_START + 1)));
-                row.setName(line.substring(COL_1_START).trim());
-                row.setEntries(new ArrayList<>());
-                constraints.add(row);
+            String rowName = lineContents[1];
+            double rightHandSideValue = Double.valueOf(lineContents[2]);
+            Row currentRow = rows.get(rowName);
+            ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
+
+            if (lineContents.length >= 5) {
+                // parse for another constraint the rhs
+                rowName = lineContents[3];
+                rightHandSideValue = Double.valueOf(lineContents[2]);
+                currentRow = rows.get(rowName);
+                ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
             }
 
             line = br.readLine();
         }
-        lp.setConstraints(constraints);
     }
 
     private void parseOptionalBounds(LinearProgram lp, BufferedReader br) throws IOException {
@@ -185,49 +237,9 @@ public class MILPParser {
         return boundValue;
     }
 
-    private void parseRHS(LinearProgram lp, BufferedReader br) throws IOException {
-        Map<String, Row> rows = lp.getRows();
-        String line = br.readLine();
-        String[] lineContents;
-        while (!line.startsWith("BOUNDS") && !line.startsWith("ENDATA")) {
-            lineContents = getDataWithoutSpaces(line);
-
-            String rowName = lineContents[1];
-            double rightHandSideValue = Double.valueOf(lineContents[2]);
-            Row currentRow = rows.get(rowName);
-            ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
-
-            if (lineContents.length >= 5) {
-                // parse for another constraint the rhs
-                rowName = lineContents[3];
-                rightHandSideValue = Double.valueOf(lineContents[2]);
-                currentRow = rows.get(rowName);
-                ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
-            }
-
-            line = br.readLine();
-        }
-    }
-
     private void computeLPStatistics(LinearProgram lp) {
         LPStatistics statistics = new LPStatistics(lp);
         lp.setStatistics(statistics);
-    }
-
-    private void checkCorrectFileFormat(String filename) throws IOException {
-        String[] splits = filename.split("\\.");
-        if (!splits[splits.length - 1].equals("mps") && !splits[splits.length - 1].equals("mps\"") && !splits[splits.length - 1].equals("MPS")) {
-            throw new IOException("parseMPS may only handle files with .mps as ending!");
-        }
-    }
-
-    private void addRowEntry(Row row, Variable variable, double coefficient) {
-
-        if (row.getEntries() == null || row.getEntries().isEmpty()) {
-            List<MatrixEntry> entries = new ArrayList<>();
-            row.setEntries(entries);
-        }
-        row.getEntries().add(new MatrixEntry(variable, coefficient));
     }
 
     private String[] getDataWithoutSpaces(String line) {
@@ -242,17 +254,5 @@ public class MILPParser {
         String[] retArr = new String[ret.size()];
         ret.toArray(retArr);
         return retArr;
-    }
-
-    private LinearProgram.Equality parseEquality(String substring) {
-        switch (substring) {
-            case "G":
-                return LinearProgram.Equality.GREATER_THAN;
-            case "L":
-                return LinearProgram.Equality.LESS_THAN;
-            case "E":
-                return LinearProgram.Equality.EQUAL;
-        }
-        return LinearProgram.Equality.EQUAL;
     }
 }
