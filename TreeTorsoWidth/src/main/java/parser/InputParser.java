@@ -5,8 +5,6 @@ import main.java.main.HelpPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wagu.Board;
-
 /**
  * Created by Verena on 19.08.2017.
  */
@@ -31,7 +29,7 @@ public class InputParser {
     }
 
     private static void printLongHelpMessage() {
-        LOGGER.error(HelpPage.getLongHelpMessage());
+        LOGGER.debug(HelpPage.getLongHelpMessage());
     }
 
     private static boolean helpArgumentSet(String[] args) {

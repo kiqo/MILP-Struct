@@ -36,7 +36,7 @@ public class StructuralParametersTest {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = null;
         try {
-            lp = milpParser.parseMPS(filePath, false);
+            lp = milpParser.parseMPS(filePath);
         } catch (IOException e) {
             LOGGER.error("", e);
         }

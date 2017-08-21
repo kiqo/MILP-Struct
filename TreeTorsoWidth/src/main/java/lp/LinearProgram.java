@@ -41,7 +41,7 @@ public class LinearProgram {
     private String name;
     private Row objectiveFunction;
     private List<MatrixRow> constraints;
-    private Map<String, Variable> variables = new HashMap<>();
+    private Map<String, Variable> variables;
     private boolean integerLP = false;
     private LPStatistics statistics;
     private static final String NL = System.getProperty("line.separator");
@@ -96,6 +96,10 @@ public class LinearProgram {
             rows.put(constraint.getName(), constraint);
         }
         return rows;
+    }
+
+    public void setVariables(Map<String, Variable> variables) {
+        this.variables = variables;
     }
 
     public Map<String, Variable> getVariables() {

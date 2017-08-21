@@ -85,7 +85,7 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
         MILPParser milpParser = new MILPParser();
-        LinearProgram lp = milpParser.parseMPS(fileName, false);
+        LinearProgram lp = milpParser.parseMPS(fileName);
         checkInterrupted();
         return lp;
     }
