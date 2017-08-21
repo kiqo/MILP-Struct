@@ -22,10 +22,9 @@ public class LPStatistics {
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private LinearProgram linearProgram;
     private LPData linearProgramData;
-    private Graph primalGraph;
-    private Graph incidenceGraph;
     private GraphData primalGraphData;
     private GraphData incidenceGraphData;
+    private GraphData dualGraphData;
 
     public GraphData getPrimalGraphData() {
         return primalGraphData;
@@ -33,6 +32,10 @@ public class LPStatistics {
 
     public GraphData getIncidenceGraphData() {
         return incidenceGraphData;
+    }
+
+    public GraphData getDualGraphData() {
+        return dualGraphData;
     }
 
     public LPStatistics(LinearProgram linearProgram) {
@@ -133,9 +136,16 @@ public class LPStatistics {
         linearProgramData.numBoundVariables = numBoundVariables;
     }
 
+    public void computeDualGraphData(Graph primalGraph) {
+        this.dualGraphData = computeGraphData(primalGraph);
+        if (dualGraphData.numNodes <= 1) {
+            dualGraphData.density = 0;
+        } else {
+            dualGraphData.density = (double) (2 * dualGraphData.numEdges) / (double) (dualGraphData.numNodes * (primalGraphData.numNodes - 1));
+        }
+    }
 
     public void computePrimalGraphData(Graph primalGraph) {
-        this.primalGraph = primalGraph;
         this.primalGraphData = computeGraphData(primalGraph);
         if (primalGraphData.numNodes <= 1) {
             primalGraphData.density = 0;
@@ -145,16 +155,12 @@ public class LPStatistics {
     }
 
     public void computeIncidenceGraphData(Graph incidenceGraph) {
-        this.incidenceGraph = incidenceGraph;
         this.incidenceGraphData = computeGraphData(incidenceGraph);
         // define the density for the incidence graph to be num edges / left side * right side of the bipartite graph
         // i.e. the number of edges divided by the maximum possible number of edges
         incidenceGraphData.density = (double) (incidenceGraphData.numEdges) / (double) (linearProgramData.numConstraints * linearProgramData.numVariables);
     }
 
-    /*
-    Sets general statistics about a graph (not tree- or torsowidth)
-     */
     private GraphData computeGraphData(Graph graph) {
         GraphData graphData = new GraphData();
 
@@ -189,7 +195,6 @@ public class LPStatistics {
 
         return graphData;
     }
-
 
     public static String shortDescriptionHeader() {
         StringBuilder sb = new StringBuilder();
@@ -257,11 +262,14 @@ public class LPStatistics {
         if (formatIncidenceGraph) {
             sb.append(graphDataHeader);
         }
+        if (formatIncidenceGraph) {
+            sb.append(graphDataHeader);
+        }
         sb.append(LINE_SEPARATOR);
         return sb.toString();
     }
 
-    public String csvFormat(boolean formatPrimalGraph, boolean formatIncidenceGraph) {
+    public String csvFormat(boolean formatPrimalGraph, boolean formatIncidenceGraph, boolean formatDualGraph) {
         StringBuilder sb = new StringBuilder();
         sb.append(linearProgram.getName()).append(";");
         sb.append(linearProgramData.numVariables).append(";");
@@ -296,6 +304,10 @@ public class LPStatistics {
 
         if (formatIncidenceGraph) {
             formatGraphData(sb, incidenceGraphData);
+        }
+
+        if (formatDualGraph) {
+            formatGraphData(sb, dualGraphData);
         }
 
         sb.append(LINE_SEPARATOR);

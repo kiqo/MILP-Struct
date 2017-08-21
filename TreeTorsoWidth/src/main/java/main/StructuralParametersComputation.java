@@ -5,6 +5,7 @@ import main.java.libtw.TorsoWidth;
 import main.java.libtw.TreeDepth;
 import main.java.libtw.TreeWidthWrapper;
 import main.java.lp.GraphData;
+import main.java.lp.LPStatistics;
 import main.java.lp.LinearProgram;
 import main.java.parser.*;
 import nl.uu.cs.treewidth.algorithm.*;
@@ -27,10 +28,9 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private static String fileName;
     private StringBuilder sb = new StringBuilder();
-    protected static final Stopwatch t = new Stopwatch();
-    protected LinearProgram lp;
-    protected Graph graph;
-    protected NGraph nGraph;
+    private static final Stopwatch t = new Stopwatch();
+    private NGraph<GraphInput.InputData> gPrimal = null, gIncidence = null, gDual = null;
+    private LPStatistics lpStatistics;
 
     public StructuralParametersComputation (String fileName) {
         this.fileName = fileName;
@@ -48,19 +48,32 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         LinearProgram lp = parseLinearProgram(fileName);
-        NGraph<GraphInput.InputData> gPrimal = null, gIncidence = null;
         if (Configuration.PRIMAL) {
             gPrimal = computePrimalGraph(lp);
         }
         if (Configuration.INCIDENCE) {
             gIncidence = computeIncidenceGraph(lp);
         }
+        if (Configuration.DUAL) {
+            gDual = computeDualGraph(lp);
+        }
         checkInterrupted();
-        computeTWLowerBounds(lp, gPrimal, gIncidence);
-        computeTWUpperBounds(lp, gPrimal, gIncidence);
-        computeTorsoWidthOnPrimalGraph(lp, gPrimal);
-        computeTreeDepthOnPrimalGraph(lp, gPrimal);
-        computeStatistics(lp);
+        lpStatistics = lp.getStatistics();
+        computeTWLowerBounds();
+        computeTWUpperBounds();
+        computeTorsoWidthOnPrimalGraph();
+        computeTreeDepthOnPrimalGraph();
+        computeStatistics();
+    }
+
+    private NGraph<GraphInput.InputData> computeDualGraph(LinearProgram lp) throws InterruptedException {
+        Graph dualGraph;
+        NGraph<GraphInput.InputData> gDual;
+        dualGraph = new DualGraphGenerator().linearProgramToGraph(lp);
+        checkInterrupted();
+        lp.getStatistics().computeDualGraphData(dualGraph);
+        gDual = GraphTransformator.graphToNGraph(dualGraph);
+        return gDual;
     }
 
     private NGraph<GraphInput.InputData> computePrimalGraph(LinearProgram lp) throws InterruptedException {
@@ -90,27 +103,32 @@ public class StructuralParametersComputation implements Callable<String> {
         return lp;
     }
 
-    protected static void checkInterrupted() throws InterruptedException {
+    private static void checkInterrupted() throws InterruptedException {
         if (Thread.currentThread().isInterrupted()) {
             throw new InterruptedException();
         }
     }
 
-    private void computeTWLowerBounds(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal, NGraph<GraphInput.InputData> gIncidence) throws InterruptedException {
+    private void computeTWLowerBounds() throws InterruptedException {
         if (Configuration.LOWER_BOUND) {
             if (Configuration.PRIMAL) {
                 int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
-                lp.getStatistics().getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
+                lpStatistics.getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
             }
             checkInterrupted();
             if (Configuration.INCIDENCE) {
                 int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
-                lp.getStatistics().getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
+                lpStatistics.getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
+            }
+            checkInterrupted();
+            if (Configuration.DUAL) {
+                int treewidthLowerBoundDual = computeTWLowerBound(gDual);
+                lpStatistics.getDualGraphData().setTreewidthLB(treewidthLowerBoundDual);
             }
         }
     }
 
-    protected int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    private int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
         startTimer();
         int lowerbound = TreeWidthWrapper.computeLowerBoundWithComponents(g);
         stopTimer();
@@ -118,21 +136,26 @@ public class StructuralParametersComputation implements Callable<String> {
         return lowerbound;
     }
 
-    private void computeTWUpperBounds(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal, NGraph<GraphInput.InputData> gIncidence) throws InterruptedException {
+    private void computeTWUpperBounds() throws InterruptedException {
         if (Configuration.UPPER_BOUND) {
             if (Configuration.PRIMAL) {
                 int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
-                lp.getStatistics().getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
+                lpStatistics.getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
             }            
             checkInterrupted();
             if (Configuration.INCIDENCE) {
                 int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
-                lp.getStatistics().getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
+                lpStatistics.getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
+            }
+            checkInterrupted();
+            if (Configuration.DUAL) {
+                int treewidthUpperBoundDual = computeTWUpperBound(gDual);
+                lpStatistics.getDualGraphData().setTreewidthUB(treewidthUpperBoundDual);
             }
         }
     }
 
-    protected int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
+    private int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
         startTimer();
         int upperbound = TreeWidthWrapper.computeUpperBoundWithComponents(g);
         stopTimer();
@@ -140,25 +163,25 @@ public class StructuralParametersComputation implements Callable<String> {
         return upperbound;
     }
 
-    private void computeTorsoWidthOnPrimalGraph(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal) throws InterruptedException {
+    private void computeTorsoWidthOnPrimalGraph() throws InterruptedException {
         if (Configuration.TORSO_WIDTH && Configuration.PRIMAL) {
-            computeTorsoWidthOnPrimalGraph(gPrimal, lp);
+            computeTorsoWidthOnPrimalGraph(gPrimal);
         }
     }
 
-    private static void computeTorsoWidthOnPrimalGraph(NGraph<GraphInput.InputData> g, LinearProgram linearProgram) throws InterruptedException {
+    private void computeTorsoWidthOnPrimalGraph(NGraph<GraphInput.InputData> g) throws InterruptedException {
         TorsoWidth torsoWidthAlgo = new TorsoWidth();
         runAlgo(g, torsoWidthAlgo);
         int torsoWidthLowerBound = torsoWidthAlgo.getLowerBound();
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
         printTimingInfo("LB TorsoWidth", torsoWidthLowerBound, g.getNumberOfVertices(), torsoWidthAlgo.getName());
         printTimingInfo("UB TorsoWidth", torsoWidthUpperBound, g.getNumberOfVertices(), torsoWidthAlgo.getName());
-        GraphData primalGraphData = linearProgram.getStatistics().getPrimalGraphData();
+        GraphData primalGraphData = lpStatistics.getPrimalGraphData();
         primalGraphData.setTorsoWidthUB(torsoWidthUpperBound);
         primalGraphData.setTorsoWidthLB(torsoWidthLowerBound);
     }
 
-    protected static void runAlgo(NGraph<GraphInput.InputData> g, Algorithm algorithm) throws InterruptedException {
+    private static void runAlgo(NGraph<GraphInput.InputData> g, Algorithm algorithm) throws InterruptedException {
         startTimer();
         algorithm.setInput(g);
         algorithm.run();
@@ -174,11 +197,11 @@ public class StructuralParametersComputation implements Callable<String> {
         t.stop();
     }
 
-    private void computeTreeDepthOnPrimalGraph(LinearProgram lp, NGraph<GraphInput.InputData> gPrimal) throws InterruptedException {
+    private void computeTreeDepthOnPrimalGraph() throws InterruptedException {
         if (Configuration.TREE_DEPTH) {
             checkInterrupted();
             if (Configuration.PRIMAL) {
-                computeTreeDepth(gPrimal, lp.getStatistics().getPrimalGraphData());
+                computeTreeDepth(gPrimal, lpStatistics.getPrimalGraphData());
             }
         }
     }
@@ -191,15 +214,15 @@ public class StructuralParametersComputation implements Callable<String> {
         graphData.setTreeDepthUB(treeDepthUpperBound);
     }
 
-    private void computeStatistics(LinearProgram lp) {
+    private void computeStatistics() {
         if (Configuration.OUTPUT_FILE.endsWith(".csv")) {
-            sb.append(lp.getStatistics().csvFormat(Configuration.PRIMAL, Configuration.INCIDENCE));
+            sb.append(lpStatistics.csvFormat(Configuration.PRIMAL, Configuration.INCIDENCE, Configuration.DUAL));
         } else {
-            sb.append(lp.getStatistics().shortDescription());
+            sb.append(lpStatistics.shortDescription());
         }
     }
 
-    protected static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {
+    private static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {
         LOGGER.debug(fileName + " " + algorithm + ": " + result + " of  " + graphSize + " nodes with " + algoName
                 + ", time: " + t.getTime() / 1000 + "s");
     }

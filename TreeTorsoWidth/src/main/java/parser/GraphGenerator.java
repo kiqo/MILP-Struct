@@ -1,5 +1,6 @@
 package main.java.parser;
 
+import main.java.lp.GraphData;
 import main.java.main.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
