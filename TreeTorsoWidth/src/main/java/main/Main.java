@@ -106,8 +106,6 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         if (Configuration.OUTPUT_FILE.endsWith(".csv")) {
             sb.append(LPStatistics.csvFormatHeader(Configuration.PRIMAL, Configuration.INCIDENCE));
-        } else {
-            sb.append(LPStatistics.shortDescriptionHeader());
         }
         return sb;
     }

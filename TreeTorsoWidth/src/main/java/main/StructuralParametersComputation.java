@@ -215,11 +215,7 @@ public class StructuralParametersComputation implements Callable<String> {
     }
 
     private void computeStatistics() {
-        if (Configuration.OUTPUT_FILE.endsWith(".csv")) {
-            sb.append(lpStatistics.csvFormat(Configuration.PRIMAL, Configuration.INCIDENCE, Configuration.DUAL));
-        } else {
-            sb.append(lpStatistics.shortDescription());
-        }
+        sb.append(lpStatistics.csvFormat(Configuration.PRIMAL, Configuration.INCIDENCE, Configuration.DUAL));
     }
 
     private static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {

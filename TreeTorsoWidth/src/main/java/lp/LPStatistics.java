@@ -18,8 +18,8 @@ import java.util.Map;
 public class LPStatistics {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LPStatistics.class);
-
     private static final String LINE_SEPARATOR = System.lineSeparator();
+
     private LinearProgram linearProgram;
     private LPData linearProgramData;
     private GraphData primalGraphData;
@@ -36,6 +36,14 @@ public class LPStatistics {
 
     public GraphData getDualGraphData() {
         return dualGraphData;
+    }
+
+    public LinearProgram getLinearProgram() {
+        return linearProgram;
+    }
+
+    public LPData getLinearProgramData() {
+        return linearProgramData;
     }
 
     public LPStatistics(LinearProgram linearProgram) {
@@ -194,60 +202,6 @@ public class LPStatistics {
         graphData.avgDegree = (double) sumDegree / (double) graphData.numNodes;
 
         return graphData;
-    }
-
-    public static String shortDescriptionHeader() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("name\t\tnumVars\t\tnumIntVars\tintegerLP\tnumConstr\tsizeObjFun\tnumNodes\tnumIntNodes\tnumEdges\tdensity\t\ttw_lb\ttw_ub\ttorso_lb\ttorso_ub\t");
-        sb.append(LINE_SEPARATOR);
-        return sb.toString();
-    }
-
-    public String shortDescription() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(linearProgram.getName()).append(getNumTabs(String.valueOf(linearProgram.getName()), 3));
-        sb.append(linearProgramData.numVariables).append(getNumTabs(String.valueOf(linearProgramData.numVariables), 3));
-        sb.append(linearProgramData.numIntegerVariables).append(getNumTabs(String.valueOf(linearProgramData.numIntegerVariables), 3));
-        sb.append(linearProgramData.isIntegerLP).append(getNumTabs(String.valueOf(linearProgramData.isIntegerLP), 3));
-        sb.append(linearProgramData.numConstraints).append(getNumTabs(String.valueOf(linearProgramData.numConstraints), 3));
-        sb.append(linearProgramData.sizeObjectiveFunction).append(getNumTabs(String.valueOf(linearProgramData.sizeObjectiveFunction), 3));
-        sb.append(primalGraphData.numNodes).append(getNumTabs(String.valueOf(primalGraphData.numNodes), 3));
-        sb.append(primalGraphData.numIntegerNodes).append(getNumTabs(String.valueOf(primalGraphData.numIntegerNodes), 3));
-        sb.append(primalGraphData.numEdges).append(getNumTabs(String.valueOf(primalGraphData.numEdges), 3));
-        sb.append(new DecimalFormat("0.00").format(primalGraphData.density)).append(getNumTabs(String.valueOf(new DecimalFormat("0.00").format(primalGraphData.density)), 3));
-        if (primalGraphData.getTreewidthLB() != Integer.MIN_VALUE) {
-            sb.append(primalGraphData.getTreewidthLB()).append(getNumTabs(String.valueOf(primalGraphData.getTreewidthLB()), 2));
-        } else {
-            sb.append("\t\t\t");
-        }
-        if (primalGraphData.getTreewidthUB() != Integer.MAX_VALUE) {
-            sb.append(primalGraphData.getTreewidthUB()).append(getNumTabs(String.valueOf(primalGraphData.getTreewidthUB()), 2));
-        } else {
-            sb.append("\t\t\t");
-        }
-        if (primalGraphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
-            sb.append(primalGraphData.getTorsoWidthLB()).append(getNumTabs(String.valueOf(primalGraphData.getTorsoWidthLB()), 3));
-        } else {
-            sb.append("\t\t\t");
-        }
-        if (primalGraphData.getTorsoWidthUB() != Integer.MAX_VALUE) {
-            sb.append(primalGraphData.getTorsoWidthUB()).append(getNumTabs(String.valueOf(primalGraphData.getTorsoWidthUB()), 3));
-        } else {
-            sb.append("\t\t\t");
-        }
-        sb.append(LINE_SEPARATOR);
-
-        return sb.toString();
-    }
-
-    private String getNumTabs(String stringToFill, int tabsNeeded) {
-        int numVisualTabs = (int) Math.floor((double) stringToFill.length() / 4.0);
-        String tabs = "";
-        while (numVisualTabs < tabsNeeded) {
-            tabs += "\t";
-            numVisualTabs++;
-        }
-        return tabs;
     }
 
     public static String csvFormatHeader(boolean formatPrimalGraph, boolean formatIncidenceGraph) {

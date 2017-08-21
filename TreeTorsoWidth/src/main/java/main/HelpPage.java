@@ -15,7 +15,7 @@ public class HelpPage {
     private static final int TABLE_WIDTH = 120;
     private static final String DOUBLE_TAB = "\t\t";
 
-    private static final String shortHelpMessage = "Usage: TreeTorsoWidth [--help] <inputFile(.mps|.txt)> [-o <outputFile(.txt|.csv)>] " +
+    private static final String shortHelpMessage = "Usage: TreeTorsoWidth [--help] <inputFile(.mps|.txt)> [-o <outputFile.csv>] " +
             "(--lb|--ub|--to|--td) -g (<primal>|<incidence>|<dual>) [--obj]" + NL +
             "See TreeTorsoWidth --help for more information";
 
@@ -54,7 +54,7 @@ public class HelpPage {
                     Arrays.asList("", "", ""),
                     Arrays.asList("", "Arguments", ""),
                     Arrays.asList("", "", "TreeTorsoWidth [--help] <inputFile(.mps|.txt)> "),
-                    Arrays.asList("", "", "[-o <outputFile(.txt|.csv)>] (--lb|--ub|--to|--td)"),
+                    Arrays.asList("", "", "[-o <outputFile.csv>] (--lb|--ub|--to|--td)"),
                     Arrays.asList("", "", "-g (<primal>|<incidence>|<dual>) [--obj]"),
                     Arrays.asList("", "", ""),
                     Arrays.asList("", "", "--help"),
@@ -65,12 +65,10 @@ public class HelpPage {
                     Arrays.asList("", "", DOUBLE_TAB + "in the file is handled. If it is a .txt file "),
                     Arrays.asList("", "", DOUBLE_TAB + "then every line corresponds to the file path of"),
                     Arrays.asList("", "", DOUBLE_TAB + "a .mps file that is handled. "),
-                    Arrays.asList("", "", "-o, --output <outputFile(.txt|.csv)>"),
+                    Arrays.asList("", "", "-o, --output <outputFile.csv>"),
                     Arrays.asList("", "", DOUBLE_TAB + "Path to output file (optional)"),
-                    Arrays.asList("", "", DOUBLE_TAB + "If nothing is specified, then a .csv file is "),
-                    Arrays.asList("", "", DOUBLE_TAB + "generated. If the file ends on .txt, a String "),
-                    Arrays.asList("", "", DOUBLE_TAB + "output is created, if it ends on .csv, a .csv "),
-                    Arrays.asList("", "", DOUBLE_TAB + "file is generated."),
+                    Arrays.asList("", "", DOUBLE_TAB + "Output file must end on .csv as a .csv file is "),
+                    Arrays.asList("", "", DOUBLE_TAB + "generated."),
                     Arrays.asList("", "", "-lb, --lowerbound"),
                     Arrays.asList("", "", DOUBLE_TAB + "Compute the treewidth lower bound (optional)"),
                     Arrays.asList("", "", "-ub, --upperbound"),

@@ -53,6 +53,14 @@ public class InputParser {
     }
 
     private static boolean checkForConfigurationErrors(boolean error) {
+        if (Configuration.OUTPUT_FILE != null) {
+            int outputFileLength = Configuration.OUTPUT_FILE.length();
+            if (!Configuration.OUTPUT_FILE.substring(outputFileLength - 4, outputFileLength).equals(".csv")){
+                LOGGER.error("Output file must end on .csv!");
+                error = true;
+            }
+        }
+
         if (!Configuration.LOWER_BOUND & !Configuration.UPPER_BOUND & !Configuration.TORSO_WIDTH && !Configuration.TREE_DEPTH) {
             LOGGER.error("Either --ub --lb --to or --td must be set!");
             error = true;
