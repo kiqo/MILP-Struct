@@ -50,6 +50,23 @@ public class StructuralParametersComputation implements Callable<String> {
     private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         LinearProgram lp = parseLinearProgram(fileName);
         lpStatistics = lp.getStatistics();
+        computeGraphRepresentations(lp);
+        checkInterrupted();
+        computeTWLowerBounds();
+        computeTWUpperBounds();
+        computeTorsoWidthOnPrimalGraph();
+        computeTreeDepthOnPrimalGraph();
+        formatLPStatistics();
+    }
+
+    private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
+        MILPParser milpParser = new MILPParser();
+        LinearProgram lp = milpParser.parseMPS(fileName);
+        checkInterrupted();
+        return lp;
+    }
+
+    private void computeGraphRepresentations(LinearProgram lp) throws InterruptedException {
         if (Configuration.PRIMAL) {
             gPrimal = computePrimalGraph(lp);
         }
@@ -59,12 +76,6 @@ public class StructuralParametersComputation implements Callable<String> {
         if (Configuration.DUAL) {
             gDual = computeDualGraph(lp);
         }
-        checkInterrupted();
-        computeTWLowerBounds();
-        computeTWUpperBounds();
-        computeTorsoWidthOnPrimalGraph();
-        computeTreeDepthOnPrimalGraph();
-        formatLPStatistics();
     }
 
     private NGraph<GraphInput.InputData> computeDualGraph(LinearProgram lp) throws InterruptedException {
@@ -95,13 +106,6 @@ public class StructuralParametersComputation implements Callable<String> {
         lpStatistics.computeIncidenceGraphData(incidenceGraph);
         gIncidence = GraphTransformator.graphToNGraph(incidenceGraph);
         return gIncidence;
-    }
-
-    private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
-        MILPParser milpParser = new MILPParser();
-        LinearProgram lp = milpParser.parseMPS(fileName);
-        checkInterrupted();
-        return lp;
     }
 
     private static void checkInterrupted() throws InterruptedException {
