@@ -8,9 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import main.java.parser.MILPParser;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;

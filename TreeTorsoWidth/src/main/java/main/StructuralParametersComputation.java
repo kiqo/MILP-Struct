@@ -1,10 +1,9 @@
 package main.java.main;
 
-import main.java.graph.Graph;
+import main.java.graph.*;
 import main.java.libtw.TorsoWidth;
 import main.java.libtw.TreeDepth;
 import main.java.libtw.TreeWidthWrapper;
-import main.java.lp.GraphData;
 import main.java.lp.LPStatistics;
 import main.java.lp.LinearProgram;
 import main.java.lp.LPStatisticsFormatter;
@@ -32,6 +31,9 @@ public class StructuralParametersComputation implements Callable<String> {
     private static final Stopwatch t = new Stopwatch();
     private NGraph<GraphInput.InputData> gPrimal = null, gIncidence = null, gDual = null;
     private LPStatistics lpStatistics;
+    private GraphStatistics primalGraphStatistics = new PrimalGraphStatistics();
+    private GraphStatistics incidenceGraphStatistics = new IncidenceGraphStatistics();
+    private GraphStatistics dualGraphStatistics = new DualGraphStatistics();
 
     public StructuralParametersComputation (String fileName) {
         this.fileName = fileName;
@@ -49,63 +51,45 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         LinearProgram lp = parseLinearProgram(fileName);
-        lpStatistics = lp.getStatistics();
         computeGraphRepresentations(lp);
-        checkInterrupted();
         computeTWLowerBounds();
         computeTWUpperBounds();
         computeTorsoWidthOnPrimalGraph();
         computeTreeDepthOnPrimalGraph();
         formatLPStatistics();
+        formatGraphStatistics();
     }
 
     private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = milpParser.parseMPS(fileName);
         checkInterrupted();
+        lpStatistics = lp.getStatistics();
         return lp;
     }
 
     private void computeGraphRepresentations(LinearProgram lp) throws InterruptedException {
         if (Configuration.PRIMAL) {
-            gPrimal = computePrimalGraph(lp);
+            gPrimal = computeGraph(lp, new PrimalGraphGenerator(), primalGraphStatistics);
         }
         if (Configuration.INCIDENCE) {
-            gIncidence = computeIncidenceGraph(lp);
+            gIncidence = computeGraph(lp, new IncidenceGraphGenerator(), incidenceGraphStatistics);
         }
         if (Configuration.DUAL) {
-            gDual = computeDualGraph(lp);
+            gDual = computeGraph(lp, new DualGraphGenerator(), dualGraphStatistics);
         }
+        checkInterrupted();
     }
 
-    private NGraph<GraphInput.InputData> computeDualGraph(LinearProgram lp) throws InterruptedException {
-        Graph dualGraph;
-        NGraph<GraphInput.InputData> gDual;
-        dualGraph = new DualGraphGenerator().linearProgramToGraph(lp);
+    public NGraph<GraphInput.InputData> computeGraph(LinearProgram lp, GraphGenerator graphGenerator, GraphStatistics graphStatistics) throws InterruptedException {
+        Graph graph;
+        NGraph<GraphInput.InputData> nGraph;
+        graph = graphGenerator.linearProgramToGraph(lp);
         checkInterrupted();
-        lpStatistics.computeDualGraphData(dualGraph);
-        gDual = GraphTransformator.graphToNGraph(dualGraph);
-        return gDual;
-    }
-
-    private NGraph<GraphInput.InputData> computePrimalGraph(LinearProgram lp) throws InterruptedException {
-        Graph primalGraph;
-        NGraph<GraphInput.InputData> gPrimal;
-        primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
-        checkInterrupted();
-        lpStatistics.computePrimalGraphData(primalGraph);
-        gPrimal = GraphTransformator.graphToNGraph(primalGraph);
-        return gPrimal;
-    }
-
-    private NGraph<GraphInput.InputData> computeIncidenceGraph(LinearProgram lp) throws InterruptedException {
-        Graph incidenceGraph;
-        NGraph<GraphInput.InputData> gIncidence;
-        incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
-        checkInterrupted();
-        lpStatistics.computeIncidenceGraphData(incidenceGraph);
-        gIncidence = GraphTransformator.graphToNGraph(incidenceGraph);
-        return gIncidence;
+        graphStatistics.setLpStatistics(lpStatistics);
+        graphStatistics.computeGraphData(graph);
+        nGraph = GraphTransformator.graphToNGraph(graph);
+        return nGraph;
     }
 
     private static void checkInterrupted() throws InterruptedException {
@@ -118,17 +102,17 @@ public class StructuralParametersComputation implements Callable<String> {
         if (Configuration.LOWER_BOUND) {
             if (Configuration.PRIMAL) {
                 int treewidthLowerBoundPrimal = computeTWLowerBound(gPrimal);
-                lpStatistics.getPrimalGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
+                primalGraphStatistics.getGraphData().setTreewidthLB(treewidthLowerBoundPrimal);
             }
             checkInterrupted();
             if (Configuration.INCIDENCE) {
                 int treewidthLowerBoundIncidence = computeTWLowerBound(gIncidence);
-                lpStatistics.getIncidenceGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
+                incidenceGraphStatistics.getGraphData().setTreewidthLB(treewidthLowerBoundIncidence);
             }
             checkInterrupted();
             if (Configuration.DUAL) {
                 int treewidthLowerBoundDual = computeTWLowerBound(gDual);
-                lpStatistics.getDualGraphData().setTreewidthLB(treewidthLowerBoundDual);
+                dualGraphStatistics.getGraphData().setTreewidthLB(treewidthLowerBoundDual);
             }
         }
     }
@@ -145,17 +129,17 @@ public class StructuralParametersComputation implements Callable<String> {
         if (Configuration.UPPER_BOUND) {
             if (Configuration.PRIMAL) {
                 int treewidthUpperBoundPrimal = computeTWUpperBound(gPrimal);
-                lpStatistics.getPrimalGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
+                primalGraphStatistics.getGraphData().setTreewidthUB(treewidthUpperBoundPrimal);
             }            
             checkInterrupted();
             if (Configuration.INCIDENCE) {
                 int treewidthUpperBoundIncidence = computeTWUpperBound(gIncidence);
-                lpStatistics.getIncidenceGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
+                incidenceGraphStatistics.getGraphData().setTreewidthUB(treewidthUpperBoundIncidence);
             }
             checkInterrupted();
             if (Configuration.DUAL) {
                 int treewidthUpperBoundDual = computeTWUpperBound(gDual);
-                lpStatistics.getDualGraphData().setTreewidthUB(treewidthUpperBoundDual);
+                dualGraphStatistics.getGraphData().setTreewidthUB(treewidthUpperBoundDual);
             }
         }
     }
@@ -181,7 +165,7 @@ public class StructuralParametersComputation implements Callable<String> {
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
         printTimingInfo("LB TorsoWidth", torsoWidthLowerBound, g.getNumberOfVertices(), torsoWidthAlgo.getName());
         printTimingInfo("UB TorsoWidth", torsoWidthUpperBound, g.getNumberOfVertices(), torsoWidthAlgo.getName());
-        GraphData primalGraphData = lpStatistics.getPrimalGraphData();
+        GraphData primalGraphData = primalGraphStatistics.getGraphData();
         primalGraphData.setTorsoWidthUB(torsoWidthUpperBound);
         primalGraphData.setTorsoWidthLB(torsoWidthLowerBound);
     }
@@ -206,7 +190,7 @@ public class StructuralParametersComputation implements Callable<String> {
         if (Configuration.TREE_DEPTH) {
             checkInterrupted();
             if (Configuration.PRIMAL) {
-                computeTreeDepth(gPrimal, lpStatistics.getPrimalGraphData());
+                computeTreeDepth(gPrimal, primalGraphStatistics.getGraphData());
             }
         }
     }
@@ -221,6 +205,10 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private void formatLPStatistics() {
         sb.append(new LPStatisticsFormatter(lpStatistics).csvFormat());
+    }
+
+    private void formatGraphStatistics() {
+        sb.append(new GraphStatisticsFormatter(primalGraphStatistics, incidenceGraphStatistics, dualGraphStatistics).csvFormat());
     }
 
     private static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {

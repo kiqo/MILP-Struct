@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 

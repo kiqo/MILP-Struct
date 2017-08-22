@@ -1,4 +1,4 @@
-package main.java.lp;
+package main.java.graph;
 
 
 

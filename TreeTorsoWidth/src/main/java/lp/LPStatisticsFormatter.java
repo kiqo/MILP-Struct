@@ -1,9 +1,6 @@
 package main.java.lp;
 
-import main.java.lp.GraphData;
-import main.java.lp.LPData;
-import main.java.lp.LPStatistics;
-import main.java.lp.LinearProgram;
+import main.java.graph.GraphData;
 import main.java.main.Configuration;
 
 import java.text.DecimalFormat;
@@ -46,44 +43,7 @@ public class LPStatisticsFormatter {
     public String csvFormat() {
         StringBuilder sb = new StringBuilder();
         formatLinearProgramData(sb);
-        if (Configuration.PRIMAL) {
-            formatPrimalGraphData(sb);
-        }
-        if (Configuration.INCIDENCE) {
-            formatIncidenceGraphData(sb);
-        }
-        if (Configuration.DUAL) {
-            formatDualGraphData(sb);
-        }
-        sb.append(LINE_SEPARATOR);
         return sb.toString();
-    }
-
-    private void formatDualGraphData(StringBuilder sb) {
-        GraphData dualGraphData = lpStatistics.getDualGraphData();
-        formatGraphData(sb, dualGraphData);
-    }
-
-    private void formatIncidenceGraphData(StringBuilder sb) {
-        GraphData incidenceGraphData = lpStatistics.getIncidenceGraphData();
-        formatGraphData(sb, incidenceGraphData);
-    }
-
-    private void formatPrimalGraphData(StringBuilder sb) {
-        GraphData primalGraphData = lpStatistics.getPrimalGraphData();
-        formatGraphData(sb, primalGraphData);
-        if(primalGraphData.getTreeDepthUB()!=Integer.MAX_VALUE) {
-            sb.append(primalGraphData.getTreeDepthUB());
-        }
-        sb.append(";");
-        if (primalGraphData.getTorsoWidthLB() != Integer.MIN_VALUE) {
-            sb.append(primalGraphData.getTorsoWidthLB());
-        }
-        sb.append(";");
-        if (primalGraphData.getTorsoWidthUB() != Integer.MAX_VALUE) {
-            sb.append(primalGraphData.getTorsoWidthUB());
-        }
-        sb.append(";");
     }
 
     private void formatLinearProgramData(StringBuilder sb) {
@@ -101,26 +61,5 @@ public class LPStatisticsFormatter {
         sb.append(linearProgramData.minCoefficient).append(";");
         sb.append(linearProgramData.maxCoefficient).append(";");
         sb.append(linearProgramData.sizeObjectiveFunction).append(";");
-    }
-
-    private void formatGraphData(StringBuilder sb, GraphData graphData) {
-        sb.append(graphData.numNodes).append(";");
-        sb.append(graphData.numIntegerNodes).append(";");
-        sb.append(new DecimalFormat("0.0000").format(graphData.proportionIntegerNodes)).append(";");
-        sb.append(graphData.numEdges).append(";");
-        sb.append(new DecimalFormat("0.0000").format(graphData.density)).append(";");
-        sb.append(graphData.minDegree).append(";");
-        sb.append(graphData.maxDegree).append(";");
-        sb.append(new DecimalFormat("0.0000").format(graphData.avgDegree)).append(";");
-        if (graphData.getTreewidthLB() != Integer.MIN_VALUE) {
-            sb.append(graphData.getTreewidthLB()).append(";");
-        } else {
-            sb.append(";");
-        }
-        if (graphData.getTreewidthUB() != Integer.MAX_VALUE) {
-            sb.append(graphData.getTreewidthUB()).append(";");
-        } else {
-            sb.append(";");
-        }
     }
 }
