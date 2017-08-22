@@ -1,7 +1,6 @@
 package main.java.main;
 
-import main.java.lp.LPStatistics;
-
+import main.java.lp.LPStatisticsFormatter;
 import main.java.parser.InputParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,9 +103,7 @@ public class Main {
 
     private static StringBuilder appendHeader() {
         StringBuilder sb = new StringBuilder();
-        if (Configuration.OUTPUT_FILE.endsWith(".csv")) {
-            sb.append(LPStatistics.csvFormatHeader(Configuration.PRIMAL, Configuration.INCIDENCE));
-        }
+        sb.append(LPStatisticsFormatter.csvFormatHeader());
         return sb;
     }
 

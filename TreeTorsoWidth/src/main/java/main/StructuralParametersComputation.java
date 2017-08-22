@@ -7,6 +7,7 @@ import main.java.libtw.TreeWidthWrapper;
 import main.java.lp.GraphData;
 import main.java.lp.LPStatistics;
 import main.java.lp.LinearProgram;
+import main.java.lp.LPStatisticsFormatter;
 import main.java.parser.*;
 import nl.uu.cs.treewidth.algorithm.*;
 import nl.uu.cs.treewidth.input.GraphInput;
@@ -48,6 +49,7 @@ public class StructuralParametersComputation implements Callable<String> {
 
     private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
         LinearProgram lp = parseLinearProgram(fileName);
+        lpStatistics = lp.getStatistics();
         if (Configuration.PRIMAL) {
             gPrimal = computePrimalGraph(lp);
         }
@@ -58,12 +60,11 @@ public class StructuralParametersComputation implements Callable<String> {
             gDual = computeDualGraph(lp);
         }
         checkInterrupted();
-        lpStatistics = lp.getStatistics();
         computeTWLowerBounds();
         computeTWUpperBounds();
         computeTorsoWidthOnPrimalGraph();
         computeTreeDepthOnPrimalGraph();
-        computeStatistics();
+        formatLPStatistics();
     }
 
     private NGraph<GraphInput.InputData> computeDualGraph(LinearProgram lp) throws InterruptedException {
@@ -71,7 +72,7 @@ public class StructuralParametersComputation implements Callable<String> {
         NGraph<GraphInput.InputData> gDual;
         dualGraph = new DualGraphGenerator().linearProgramToGraph(lp);
         checkInterrupted();
-        lp.getStatistics().computeDualGraphData(dualGraph);
+        lpStatistics.computeDualGraphData(dualGraph);
         gDual = GraphTransformator.graphToNGraph(dualGraph);
         return gDual;
     }
@@ -81,7 +82,7 @@ public class StructuralParametersComputation implements Callable<String> {
         NGraph<GraphInput.InputData> gPrimal;
         primalGraph = new PrimalGraphGenerator().linearProgramToGraph(lp);
         checkInterrupted();
-        lp.getStatistics().computePrimalGraphData(primalGraph);
+        lpStatistics.computePrimalGraphData(primalGraph);
         gPrimal = GraphTransformator.graphToNGraph(primalGraph);
         return gPrimal;
     }
@@ -91,7 +92,7 @@ public class StructuralParametersComputation implements Callable<String> {
         NGraph<GraphInput.InputData> gIncidence;
         incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
         checkInterrupted();
-        lp.getStatistics().computeIncidenceGraphData(incidenceGraph);
+        lpStatistics.computeIncidenceGraphData(incidenceGraph);
         gIncidence = GraphTransformator.graphToNGraph(incidenceGraph);
         return gIncidence;
     }
@@ -214,8 +215,8 @@ public class StructuralParametersComputation implements Callable<String> {
         graphData.setTreeDepthUB(treeDepthUpperBound);
     }
 
-    private void computeStatistics() {
-        sb.append(lpStatistics.csvFormat(Configuration.PRIMAL, Configuration.INCIDENCE, Configuration.DUAL));
+    private void formatLPStatistics() {
+        sb.append(new LPStatisticsFormatter(lpStatistics).csvFormat());
     }
 
     private static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {

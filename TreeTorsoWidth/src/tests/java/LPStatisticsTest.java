@@ -2,6 +2,8 @@ package tests.java;
 
 import main.java.graph.Graph;
 import main.java.lp.LPStatistics;
+import main.java.lp.LPStatisticsFormatter;
+import main.java.main.Configuration;
 import main.java.parser.DualGraphGenerator;
 import main.java.parser.IncidenceGraphGenerator;
 import main.java.parser.PrimalGraphGenerator;
@@ -26,9 +28,18 @@ public class LPStatisticsTest extends StructuralParametersTest {
     }
 
     private void checkResult(LPStatistics statistics) {
-        Assert.assertEquals("bienst2;7;8;2;0,2857;false;0.0;2.0;1.0;3.0;" +
-                "2;-74.0;1.0;1;7;2;0,2857;13;0,6190;1;6;3,7143;0;0;0;0;0;" +
-                "15;2;0,1333;25;0,4464;2;8;3,3333;0;0;"  + System.lineSeparator(), statistics.csvFormat(true, true, true));
+        Configuration.PRIMAL = true;
+        Configuration.INCIDENCE = true;
+        Configuration.DUAL = true;
+        // lpDataHeader: "name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
+        // "numBoundVars;minCoeff;maxCoeff;sizeObjFun;"
+        // graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;";
+        Assert.assertEquals("bienst2;7;8;2;0,2857;false;0.0;2.0;1.0;2.0;" + //lpData
+                "2;-74.0;1.0;1;" +
+                "7;2;0,2857;12;0,5714;1;5;3,4286;0;0;0;0;0;" + // primalGraphData + td_ub;torso_lb;torso_ub;
+                "15;2;0,1333;23;0,4107;2;6;3,0667;0;0;" + // incidenceGraphData
+                "8;0;0,0000;22;0,7857;4;7;5,5000;0;0;" + // dualGraphData
+                System.lineSeparator(), new LPStatisticsFormatter(statistics).csvFormat());
     }
 
     private LPStatistics computeStatistics() throws InterruptedException {

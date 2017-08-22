@@ -32,8 +32,6 @@ COLUMNS
     xfd       OUTh                -1
     z         OUTa                 1
     z         OUTb                 1
-    z         OUTc                 1
-    z         OUTd                 1
     z         OUTe                 1
     z         OUTf                 1
     z         OUTg                 1
