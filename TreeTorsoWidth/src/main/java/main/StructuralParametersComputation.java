@@ -77,12 +77,15 @@ public class StructuralParametersComputation implements Callable<String> {
     private void computeGraphRepresentations(LinearProgram lp) throws InterruptedException {
         if (Configuration.PRIMAL) {
             gPrimal = computeNGraph(lp, new PrimalGraphGenerator(), primalGraphStatistics);
+            gPrimal.addComment("Primal-");
         }
         if (Configuration.INCIDENCE) {
             gIncidence = computeNGraph(lp, new IncidenceGraphGenerator(), incidenceGraphStatistics);
+            gPrimal.addComment("Incidence-");
         }
         if (Configuration.DUAL) {
             gDual = computeNGraph(lp, new DualGraphGenerator(), dualGraphStatistics);
+            gPrimal.addComment("Dual-");
         }
         checkInterrupted();
     }
@@ -121,7 +124,7 @@ public class StructuralParametersComputation implements Callable<String> {
         startTimer();
         int lowerbound = TreeWidthWrapper.computeLowerBoundWithComponents(g);
         stopTimer();
-        printTimingInfo("LB TreeWidth", lowerbound, g.getNumberOfVertices(), Configuration.LOWER_BOUND_ALG.getName());
+        printTimingInfo(g, "LB TreeWidth", lowerbound, Configuration.LOWER_BOUND_ALG.getSimpleName());
         return lowerbound;
     }
 
@@ -148,7 +151,7 @@ public class StructuralParametersComputation implements Callable<String> {
         startTimer();
         int upperbound = TreeWidthWrapper.computeUpperBoundWithComponents(g);
         stopTimer();
-        printTimingInfo("UB TreeWidth", upperbound, g.getNumberOfVertices(), Configuration.UPPER_BOUND_ALG.getName());
+        printTimingInfo(g, "UB TreeWidth", upperbound, Configuration.UPPER_BOUND_ALG.getSimpleName());
         return upperbound;
     }
 
@@ -163,8 +166,8 @@ public class StructuralParametersComputation implements Callable<String> {
         runAlgo(g, torsoWidthAlgo);
         int torsoWidthLowerBound = torsoWidthAlgo.getLowerBound();
         int torsoWidthUpperBound = torsoWidthAlgo.getUpperBound();
-        printTimingInfo("LB TorsoWidth", torsoWidthLowerBound, g.getNumberOfVertices(), torsoWidthAlgo.getName());
-        printTimingInfo("UB TorsoWidth", torsoWidthUpperBound, g.getNumberOfVertices(), torsoWidthAlgo.getName());
+        printTimingInfo(g, "LB TorsoWidth", torsoWidthLowerBound, torsoWidthAlgo.getName());
+        printTimingInfo(g, "UB TorsoWidth", torsoWidthUpperBound, torsoWidthAlgo.getName());
         GraphData primalGraphData = primalGraphStatistics.getGraphData();
         primalGraphData.setTorsoWidthUB(torsoWidthUpperBound);
         primalGraphData.setTorsoWidthLB(torsoWidthLowerBound);
@@ -199,7 +202,7 @@ public class StructuralParametersComputation implements Callable<String> {
         TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
         runAlgo(g, treeDepthAlgo);
         int treeDepthUpperBound = treeDepthAlgo.getUpperBound();
-        printTimingInfo("UB TreeDepth", treeDepthUpperBound, g.getNumberOfVertices(), treeDepthAlgo.getName());
+        printTimingInfo(g, "UB TreeDepth", treeDepthUpperBound, treeDepthAlgo.getName());
         graphData.setTreeDepthUB(treeDepthUpperBound);
     }
 
@@ -211,8 +214,8 @@ public class StructuralParametersComputation implements Callable<String> {
         sb.append(new GraphStatisticsFormatter(primalGraphStatistics, incidenceGraphStatistics, dualGraphStatistics).csvFormat());
     }
 
-    private static void printTimingInfo(String algorithm, int result, int graphSize, String algoName) {
-        LOGGER.debug(fileName + " " + algorithm + ": " + result + " of  " + graphSize + " nodes with " + algoName
+    private static void printTimingInfo(NGraph<GraphInput.InputData> graph, String algorithm, int result, String algoName) {
+        LOGGER.info(fileName + " " + graph.getComments() + algorithm + ": " + result + " of  " + graph.getNumberOfVertices() + " nodes with " + algoName
                 + ", time: " + t.getTime() / 1000 + "s");
     }
 }

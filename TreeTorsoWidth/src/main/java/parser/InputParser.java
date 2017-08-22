@@ -29,7 +29,7 @@ public class InputParser {
     }
 
     private static void printLongHelpMessage() {
-        LOGGER.debug(HelpPage.getLongHelpMessage());
+        LOGGER.info(HelpPage.getLongHelpMessage());
     }
 
     private static boolean helpArgumentSet(String[] args) {

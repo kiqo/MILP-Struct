@@ -18,6 +18,8 @@ public class Configuration {
     public static Class<?> LOWER_BOUND_ALG = null;
     public static final String DEFAULT_LOWER_BOUND_ALG = "nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC";
     public static final String DEFAULT_UPPER_BOUND_ALG = "nl.uu.cs.treewidth.algorithm.GreedyDegree";
+    public static final String LOWER_BOUND_ALG_NAME = "MaximumMinimumDegreePlusLeastC";
+    public static final String UPPER_BOUND_ALG_NAME = "GreedyDegree";
     public static String INPUT_FILE = null;
     public static String OUTPUT_FILE = null;
     public static boolean PRIMAL = false;
@@ -36,7 +38,7 @@ public class Configuration {
         addIncidenceInformation(sb);
         addDualInformation(sb);
         addObjectiveFunctionInformation(sb);
-        LOGGER.debug(sb.toString());
+        LOGGER.info(sb.toString());
     }
 
     private static void addObjectiveFunctionInformation(StringBuilder sb) {

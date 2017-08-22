@@ -202,22 +202,24 @@ public class MILPParser {
     }
 
     private void setBoundValue(String boundType, Variable variable, Number boundValue) {
-        switch (boundType) {
-            // a fixed variable has the boundvalue as upper and lower bound
-            case "FX":
-                variable.setUpperBound(boundValue);
-                variable.setLowerBound(boundValue);
-                break;
-            case "UP":
-                variable.setUpperBound(boundValue);
-                break;
-            case "LO":
-                variable.setLowerBound(boundValue);
-                break;
-            case "FR":
-                break; // free variable
-            default:
-                LOGGER.warn("Unknown boundType " + boundType + "!");
+        if (boundValue != null) {
+            switch (boundType) {
+                // a fixed variable has the boundvalue as upper and lower bound
+                case "FX":
+                    variable.setUpperBound(boundValue);
+                    variable.setLowerBound(boundValue);
+                    break;
+                case "UP":
+                    variable.setUpperBound(boundValue);
+                    break;
+                case "LO":
+                    variable.setLowerBound(boundValue);
+                    break;
+                case "FR":
+                    break; // free variable
+                default:
+                    LOGGER.debug("Unknown boundType " + boundType + "!");
+            }
         }
     }
 
@@ -232,7 +234,7 @@ public class MILPParser {
                 boundValue = Double.valueOf(lineContents[3]);
             }
         } else {
-            LOGGER.warn("No upper or lower bound value for variable " + variableName);
+            LOGGER.debug("No upper or lower bound value for variable " + variableName);
         }
         return boundValue;
     }
