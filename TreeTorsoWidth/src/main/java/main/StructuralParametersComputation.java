@@ -77,15 +77,15 @@ public class StructuralParametersComputation implements Callable<String> {
     private void computeGraphRepresentations(LinearProgram lp) throws InterruptedException {
         if (Configuration.PRIMAL) {
             gPrimal = computeNGraph(lp, new PrimalGraphGenerator(), primalGraphStatistics);
-            gPrimal.addComment("Primal-");
+            gPrimal.addComment("Primal");
         }
         if (Configuration.INCIDENCE) {
             gIncidence = computeNGraph(lp, new IncidenceGraphGenerator(), incidenceGraphStatistics);
-            gPrimal.addComment("Incidence-");
+            gIncidence.addComment("Incidence");
         }
         if (Configuration.DUAL) {
             gDual = computeNGraph(lp, new DualGraphGenerator(), dualGraphStatistics);
-            gPrimal.addComment("Dual-");
+            gDual.addComment("Dual");
         }
         checkInterrupted();
     }
@@ -215,7 +215,7 @@ public class StructuralParametersComputation implements Callable<String> {
     }
 
     private static void printTimingInfo(NGraph<GraphInput.InputData> graph, String algorithm, int result, String algoName) {
-        LOGGER.info(fileName + " " + graph.getComments() + algorithm + ": " + result + " of  " + graph.getNumberOfVertices() + " nodes with " + algoName
+        LOGGER.info(fileName + " " + graph.getComments() + " " + algorithm + ": " + result + " of  " + graph.getNumberOfVertices() + " nodes with " + algoName
                 + ", time: " + t.getTime() / 1000 + "s");
     }
 }

@@ -15,7 +15,7 @@ public class InputParser {
         checkAtLeastOneArgument(args);
         if (helpArgumentSet(args)) {
             printLongHelpMessage();
-            exitProgram();
+            exitProgram(0);
         }
         boolean error = setConfigurationsForArguments(args);
         error = checkForConfigurationErrors(error);
@@ -39,7 +39,7 @@ public class InputParser {
     private static void handleError(boolean error) {
         if (error) {
             printShortHelpMessage();
-            exitProgram();
+            exitProgram(1);
         }
     }
 
@@ -78,8 +78,8 @@ public class InputParser {
         return error;
     }
 
-    private static void exitProgram() {
-        System.exit(1);
+    private static void exitProgram(int exitStatus) {
+        System.exit(exitStatus);
     }
 
     private static boolean setConfigurationsForArguments(String[] args) {

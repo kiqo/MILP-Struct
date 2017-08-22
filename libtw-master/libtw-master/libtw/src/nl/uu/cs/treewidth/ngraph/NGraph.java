@@ -39,7 +39,7 @@ public abstract class NGraph< D > implements Iterable<NVertex<D>> {
 	private List<NGraph<D>> components;
 	
 	public void addComment( String c ) {
-		comments = comments.concat( "\n" + c );
+		comments = comments.concat( c );
 	}
 
 	public String getComments(){
