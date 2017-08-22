@@ -103,7 +103,7 @@ public class LPGraphInput implements GraphInput {
     }
 
     private Set<NVertex<InputData>> getVerticesOfNewComponent(NVertex<InputData> vertex) {
-        Set<NVertex<GraphInput.InputData>> handledVertices = new HashSet<>();
+        Set<NVertex<GraphInput.InputData>> handledVertices = new LinkedHashSet<>();
         DepthFirstSearch.DFSTree(vertex, handledVertices);
         return handledVertices;
     }
