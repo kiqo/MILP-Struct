@@ -1,4 +1,4 @@
-package main.java.libtw;
+package main.java.algo;
 
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.ListVertex;

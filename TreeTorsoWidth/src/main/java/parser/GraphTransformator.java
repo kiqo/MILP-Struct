@@ -1,11 +1,10 @@
 package main.java.parser;
 
 import main.java.graph.Graph;
-import main.java.libtw.LPGraphInput;
+import main.java.algo.LPGraphInput;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.input.InputException;
 import nl.uu.cs.treewidth.ngraph.NGraph;
-import nl.uu.cs.treewidth.ngraph.NVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

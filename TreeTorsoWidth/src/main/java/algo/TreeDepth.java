@@ -1,4 +1,4 @@
-package main.java.libtw;
+package main.java.algo;
 
 import main.java.main.Configuration;
 import nl.uu.cs.treewidth.algorithm.UpperBound;

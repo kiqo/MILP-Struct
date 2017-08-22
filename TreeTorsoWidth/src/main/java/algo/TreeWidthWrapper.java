@@ -1,4 +1,4 @@
-package main.java.libtw;
+package main.java.algo;
 
 import main.java.main.Configuration;
 import nl.uu.cs.treewidth.algorithm.LowerBound;
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Wrapper class to use the lower- and upper bound algorithms of libtw, but with the possiblity
+ * Wrapper class to use the lower- and upper bound algorithms of algo, but with the possiblity
  * to obtain better lower- and upper bounds by considering that the graph may be disconnected
  *
  * Created by Verena on 23.07.2017.

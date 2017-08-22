@@ -1,14 +1,12 @@
 package tests.java;
 
-import main.java.libtw.TreeWidthWrapper;
+import main.java.algo.TreeWidthWrapper;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * Created by Verena on 19.08.2017.

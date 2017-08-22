@@ -3,7 +3,7 @@ package tests.java;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
-import main.java.libtw.LPInputData;
+import main.java.algo.LPInputData;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;

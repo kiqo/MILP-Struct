@@ -1,4 +1,4 @@
-package main.java.libtw;
+package main.java.algo;
 
 import main.java.graph.Graph;
 import main.java.graph.Node;

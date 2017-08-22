@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="main.java.libtw/main.java.libtw.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/main.java.libtw/main.java.libtw-src.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <jar path="main.java.algo/main.java.algo.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/main.java.algo/main.java.algo-src.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
@@ -11,9 +11,9 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <file path="/main.java.libtw/main.java.libtw.jardesc"/>
-        <file path="/main.java.libtw/.project"/>
-        <file path="/main.java.libtw/.classpath"/>
-        <javaElement handleIdentifier="=main.java.libtw/src"/>
+        <file path="/main.java.algo/main.java.algo.jardesc"/>
+        <file path="/main.java.algo/.project"/>
+        <file path="/main.java.algo/.classpath"/>
+        <javaElement handleIdentifier="=main.java.algo/src"/>
     </selectedElements>
 </jardesc>

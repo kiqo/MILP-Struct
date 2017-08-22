@@ -1,7 +1,7 @@
 package tests.java;
 
 import main.java.graph.Graph;
-import main.java.libtw.TreeDepth;
+import main.java.algo.TreeDepth;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;

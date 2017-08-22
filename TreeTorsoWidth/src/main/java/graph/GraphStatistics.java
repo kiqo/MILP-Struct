@@ -26,9 +26,7 @@ public abstract class GraphStatistics {
 
     protected GraphData computeGeneralGraphData(Graph graph) {
         GraphData graphData = new GraphData();
-
         graphData.numNodes = graph.getNodes().size();
-
         int numIntegerNodes = 0;
         for (Node node : graph.getNodes()) {
             if (node.isInteger()) {

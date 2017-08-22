@@ -1,9 +1,9 @@
 package main.java.main;
 
 import main.java.graph.*;
-import main.java.libtw.TorsoWidth;
-import main.java.libtw.TreeDepth;
-import main.java.libtw.TreeWidthWrapper;
+import main.java.algo.TorsoWidth;
+import main.java.algo.TreeDepth;
+import main.java.algo.TreeWidthWrapper;
 import main.java.lp.LPStatistics;
 import main.java.lp.LinearProgram;
 import main.java.lp.LPStatisticsFormatter;
@@ -68,20 +68,26 @@ public class StructuralParametersComputation implements Callable<String> {
         return lp;
     }
 
+    private static void checkInterrupted() throws InterruptedException {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedException();
+        }
+    }
+
     private void computeGraphRepresentations(LinearProgram lp) throws InterruptedException {
         if (Configuration.PRIMAL) {
-            gPrimal = computeGraph(lp, new PrimalGraphGenerator(), primalGraphStatistics);
+            gPrimal = computeNGraph(lp, new PrimalGraphGenerator(), primalGraphStatistics);
         }
         if (Configuration.INCIDENCE) {
-            gIncidence = computeGraph(lp, new IncidenceGraphGenerator(), incidenceGraphStatistics);
+            gIncidence = computeNGraph(lp, new IncidenceGraphGenerator(), incidenceGraphStatistics);
         }
         if (Configuration.DUAL) {
-            gDual = computeGraph(lp, new DualGraphGenerator(), dualGraphStatistics);
+            gDual = computeNGraph(lp, new DualGraphGenerator(), dualGraphStatistics);
         }
         checkInterrupted();
     }
 
-    public NGraph<GraphInput.InputData> computeGraph(LinearProgram lp, GraphGenerator graphGenerator, GraphStatistics graphStatistics) throws InterruptedException {
+    public NGraph<GraphInput.InputData> computeNGraph(LinearProgram lp, GraphGenerator graphGenerator, GraphStatistics graphStatistics) throws InterruptedException {
         Graph graph;
         NGraph<GraphInput.InputData> nGraph;
         graph = graphGenerator.linearProgramToGraph(lp);
@@ -90,12 +96,6 @@ public class StructuralParametersComputation implements Callable<String> {
         graphStatistics.computeGraphData(graph);
         nGraph = GraphTransformator.graphToNGraph(graph);
         return nGraph;
-    }
-
-    private static void checkInterrupted() throws InterruptedException {
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException();
-        }
     }
 
     private void computeTWLowerBounds() throws InterruptedException {

@@ -97,8 +97,4 @@ public class HelpPage {
                     Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal incidence --td --to")
             );
     }
-
-    private static void appendNameOfProgram(StringBuilder sb) {
-        sb.append(Configuration.PROGRAM_NAME).append(NL);
-    }
 }
