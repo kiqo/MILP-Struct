@@ -215,7 +215,7 @@ public class StructuralParametersComputation implements Callable<String> {
     }
 
     private static void printTimingInfo(NGraph<GraphInput.InputData> graph, String algorithm, int result, String algoName) {
-        LOGGER.info(fileName + " " + graph.getComments() + " " + algorithm + ": " + result + " of  " + graph.getNumberOfVertices() + " nodes with " + algoName
+        LOGGER.info(fileName + " " + graph.getComments() + " " + algorithm + ": " + result + " of " + graph.getNumberOfVertices() + " nodes with " + algoName
                 + ", time: " + t.getTime() / 1000 + "s");
     }
 }

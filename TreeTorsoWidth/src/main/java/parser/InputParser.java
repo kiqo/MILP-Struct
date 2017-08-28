@@ -187,6 +187,9 @@ public class InputParser {
             if (Configuration.INCIDENCE) {
                 outputFile += "_I";
             }
+            if (Configuration.DUAL) {
+                outputFile += "_D";
+            }
             outputFile += ".csv";
             Configuration.OUTPUT_FILE = outputFile;
         }
