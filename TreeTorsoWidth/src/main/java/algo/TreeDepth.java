@@ -28,8 +28,8 @@ import java.util.*;
  * */
 public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> {
 
-    class MyConverter<D extends GraphInput.InputData> implements NGraph.Convertor<D,LPInputData> {
-        public LPInputData convert(NVertex<D> old ) {
+    class MyConverter<D extends GraphInput.InputData> implements NGraph.Convertor<D,GraphInput.InputData> {
+        public GraphInput.InputData convert(NVertex<D> old ) {
             LPInputData d = new LPInputData(old.data.id, old.data.name, ((LPInputData) old.data).isInteger());
             d.setNodeHandled(false);
             return d;
