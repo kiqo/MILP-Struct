@@ -80,6 +80,7 @@ public class Main {
         List<Future<String>> result;
         String resultString = null;
         LOGGER.debug("Structural Parameters: " + fileName);
+        // ThreadLocal
         try {
             // invoke all waits until all tasks are finished (= terminated or had an error)
             result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName)), Configuration.TIMEOUT, TimeUnit.SECONDS);
