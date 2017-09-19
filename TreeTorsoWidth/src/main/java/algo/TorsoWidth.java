@@ -1,5 +1,6 @@
 package main.java.algo;
 
+import main.java.main.ThreadExecutor;
 import nl.uu.cs.treewidth.algorithm.LowerBound;
 import nl.uu.cs.treewidth.algorithm.UpperBound;
 import nl.uu.cs.treewidth.input.GraphInput;
@@ -21,7 +22,7 @@ import java.util.*;
  * @author Verena Dittmer
  *
  */
-public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>, LowerBound<D> {
+public class TorsoWidth<D extends GraphInput.InputData> extends ThreadExecutor implements UpperBound<D>, LowerBound<D> {
 
     class MyConverter<D extends GraphInput.InputData> implements NGraph.Convertor<D,LPInputData> {
         public LPInputData convert(NVertex<D> old ) {
@@ -75,7 +76,9 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
 
         int iteration = 0;
         while (vertexIterator.hasNext()) {
-            checkInterruped(iteration++);
+            if (iteration++ % 10 == 0) {
+                checkInterrupted();
+            }
 
             NVertex<D> vertex = vertexIterator.next();
 
@@ -171,12 +174,6 @@ public class TorsoWidth<D extends GraphInput.InputData> implements UpperBound<D>
             }
         }
         return notYetHandled;
-    }
-
-    private void checkInterruped(int i) throws InterruptedException {
-        if ((i % 10 == 0) && Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException();
-        }
     }
 
     private void computeLowerBoundOnComponents() throws InterruptedException {

@@ -19,7 +19,7 @@ public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    static{
+    static {
         // system property current.date used for the name of the log file
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
         System.setProperty("current.date", dateFormat.format(new Date()));
@@ -45,45 +45,27 @@ public class Main {
 
     private static StringBuilder computeStructuralParametersForFiles(List<String> filePaths) {
         StringBuilder sb = appendHeader();
-        ExecutorService executor = null;
+        ThreadExecutor threadExecutor = new ThreadExecutor();
+
         for (String fileName : filePaths) {
-            executor = createSingleThreadExecutor();
-            String resultString = invokeTask(executor, fileName);
+            String resultString = invokeTask(threadExecutor, fileName);
             if (resultString != null) {
                 sb.append(resultString);
             }
         }
         LOGGER.debug("Finished with structural parameters computation");
-        shutdownExecutor(executor);
+        threadExecutor.shutdown();
         return sb;
     }
 
-    private static void shutdownExecutor(ExecutorService executor) {
-        // disable new tasks from being submitted
-        executor.shutdown();
-        try {
-            // Wait a while for existing tasks to terminate
-            if (!executor.awaitTermination(Configuration.TERMINATION_TIMEOUT, TimeUnit.SECONDS)) {
-                // Cancel currently executing tasks
-                executor.shutdownNow();
-                // Wait a while for tasks to respond to being cancelled
-                if (!executor.awaitTermination(Configuration.TERMINATION_TIMEOUT, TimeUnit.SECONDS)) {
-                    LOGGER.error("Error: Executor did not terminate");
-                }
-            }
-        } catch (InterruptedException e) {
-            LOGGER.error("Interrupted Exception", e);
-        }
-    }
-
-    private static String invokeTask(ExecutorService executor, String fileName) {
+    private static String invokeTask(ThreadExecutor executor, String fileName) {
         List<Future<String>> result;
         String resultString = null;
         LOGGER.debug("Structural Parameters: " + fileName);
         // ThreadLocal
         try {
             // invoke all waits until all tasks are finished (= terminated or had an error)
-            result = executor.invokeAll(Arrays.asList(new StructuralParametersComputation(fileName)), Configuration.TIMEOUT, TimeUnit.SECONDS);
+            result = executor.startStructuralParameterComputation(fileName);
 
             if (result.get(0).isCancelled()) {
                 // task finished by cancellation (seconds exceeded)
@@ -96,10 +78,6 @@ public class Main {
             LOGGER.error("", e);
         }
         return resultString;
-    }
-
-    private static ExecutorService createSingleThreadExecutor() {
-        return Executors.newSingleThreadExecutor();
     }
 
     private static StringBuilder appendHeader() {

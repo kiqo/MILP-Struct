@@ -6,6 +6,7 @@ import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.LinearProgram;
 import main.java.lp.Row;
+import main.java.main.ThreadExecutor;
 
 import java.util.*;
 
@@ -13,19 +14,13 @@ import java.util.*;
 /**
  * Created by Verena on 09.03.2017.
  */
-public abstract class GraphGenerator {
+public abstract class GraphGenerator extends ThreadExecutor {
     protected static int vertexId = 0;
     protected List<Node> nodes = new ArrayList<>();
     protected List<Edge> edges = new ArrayList<>();
     protected Map<String, List<Node>> neighbourNodes = new HashMap<>();
 
     public abstract Graph linearProgramToGraph(LinearProgram lp) throws InterruptedException;
-
-    void checkInterrupted() throws InterruptedException {
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException();
-        }
-    }
 
     Graph createGraph(List<Node> nodes, List<Edge> edges, Map<String, List<Node>> neighbourNodes) {
         Graph incidenceGraph = new Graph();

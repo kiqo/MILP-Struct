@@ -22,7 +22,7 @@ import java.util.concurrent.*;
 /**
  * Created by Verena on 22.05.2017.
  */
-public class StructuralParametersComputation implements Callable<String> {
+public class StructuralParametersComputation extends ThreadExecutor implements Callable<String> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StructuralParametersComputation.class);
 
@@ -66,12 +66,6 @@ public class StructuralParametersComputation implements Callable<String> {
         checkInterrupted();
         lpStatistics = lp.getStatistics();
         return lp;
-    }
-
-    private static void checkInterrupted() throws InterruptedException {
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException();
-        }
     }
 
     private void computeGraphRepresentations(LinearProgram lp) throws InterruptedException {
