@@ -218,7 +218,7 @@ public class MILPParser {
                 case "FR":
                     break; // free variable
                 default:
-                    LOGGER.debug("Unknown boundType " + boundType + "!");
+                    LOGGER.trace("Unknown boundType " + boundType + "!");
             }
         }
     }
@@ -234,7 +234,7 @@ public class MILPParser {
                 boundValue = Double.valueOf(lineContents[3]);
             }
         } else {
-            LOGGER.debug("No upper or lower bound value for variable " + variableName);
+            LOGGER.trace("No upper or lower bound value for variable " + variableName);
         }
         return boundValue;
     }

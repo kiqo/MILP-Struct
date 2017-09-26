@@ -26,6 +26,7 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StructuralParametersComputation.class);
 
+    private static String filePath;
     private static String fileName;
     private StringBuilder sb = new StringBuilder();
     private static final Stopwatch t = new Stopwatch();
@@ -35,14 +36,15 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
     private GraphStatistics incidenceGraphStatistics = new IncidenceGraphStatistics();
     private GraphStatistics dualGraphStatistics = new DualGraphStatistics();
 
-    public StructuralParametersComputation (String fileName) {
-        this.fileName = fileName;
+    public StructuralParametersComputation (String filePath) {
+        this.filePath = filePath;
+        this.fileName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length());
     }
 
     @Override
     public String call() throws IOException {
         try {
-            computeStructuralParameters(fileName);
+            computeStructuralParameters(filePath);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
