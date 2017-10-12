@@ -59,10 +59,6 @@ public class Configuration {
             if (UPPER_BOUND) {
                 sb.append(TAB + "- upper bound of tree width" + NL);
             }
-            if (TORSO_WIDTH) {
-                sb.append(TAB + "- lower bound of torso width" + NL);
-                sb.append(TAB + "- upper bound of torso width" + NL);
-            }
         }
     }
 
@@ -74,10 +70,6 @@ public class Configuration {
             }
             if (UPPER_BOUND) {
                 sb.append(TAB + "- upper bound of tree width" + NL);
-            }
-            if (TORSO_WIDTH) {
-                sb.append(TAB + "- lower bound of torso width" + NL);
-                sb.append(TAB + "- upper bound of torso width" + NL);
             }
         }
     }
