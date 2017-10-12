@@ -24,7 +24,6 @@ package nl.uu.cs.treewidth;
 import java.util.HashSet;
 
 import nl.uu.cs.treewidth.algorithm.CliqueFinder;
-import nl.uu.cs.treewidth.input.CliqueGraphGenerator;
 import nl.uu.cs.treewidth.input.InputException;
 import nl.uu.cs.treewidth.input.RandomGraphGenerator;
 import nl.uu.cs.treewidth.input.GraphInput.InputData;
