@@ -7,11 +7,10 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../WAGU">
-      <sourceFolder url="file://$MODULE_DIR$/../libtw-master/WAGU/wagu" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../WAGU" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../libtw-master">
-      <sourceFolder url="file://$MODULE_DIR$/../libtw-master/libtw-master/libtw/src" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../libtw">
+      <sourceFolder url="file://$MODULE_DIR$/../libtw/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -23,17 +22,6 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../libtw-master/libtw-master/libtw/libtw.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../libtw-master/libtw-master/libtw/libtw.jar!/" />
-        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">

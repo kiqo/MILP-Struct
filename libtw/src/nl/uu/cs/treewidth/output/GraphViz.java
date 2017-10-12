@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
- 
+
 package nl.uu.cs.treewidth.output;
 
 import java.awt.image.BufferedImage;
@@ -30,34 +30,32 @@ import java.io.PrintWriter;
 import javax.imageio.ImageIO;
 
 public class GraphViz {
-	
+
 	public static BufferedImage render( String dotSource ) {
-		
-//		System.out.print(".");
-		
+
+		System.out.print(".");
+
 		BufferedImage image = null;
-		
+
 		// run the graphviz commandline
 		Runtime sys = Runtime.getRuntime();
 		Process neato;
 		try {
 			neato = sys.exec( "dot -Tpng" );
-		
+
 			InputStream fromNeato = neato.getInputStream();
 			OutputStream toNeato = neato.getOutputStream();
-				
-		    PrintWriter writer = new PrintWriter(toNeato);
+
+			PrintWriter writer = new PrintWriter(toNeato);
 			writer.write( dotSource );
 			writer.close();
-	
+
 			image = ImageIO.read( fromNeato );
-	
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+
+		} catch (IOException e) {}
+
 		return image;
-		
+
 	}
 
 }

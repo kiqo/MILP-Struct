@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
- 
+
 package nl.uu.cs.treewidth.algorithm;
 
 import java.util.LinkedList;
@@ -32,9 +32,9 @@ import nl.uu.cs.treewidth.ngraph.NVertexOrder;
  * The GreedyFillIn algorithm computes a permutation and at the same time derives an upperbound.<br/>
  * It does this by eliminating the vertex for which we have to add the lowest number of edges
  * when we would eliminate the vertex. This is done until the graph is empty.<br/>
- * 
+ *
  * Reference paper: Treewidth Computations I. Upper Bounds, Hans L. Bodlaender and Arie M.C.A. Koster (to appear).
- * 
+ *
  * @author tw team
  *
  */
@@ -44,7 +44,7 @@ public class GreedyFillIn<D extends InputData> implements Permutation<D>, UpperB
 	private NGraph<GreedyData> graph;
 	private int upperBound;
 	private boolean checkDegreeZero;
-	
+
 	public class GreedyData {
 		public NVertex<D> original;
 		public int edgesToAdd;
@@ -56,28 +56,28 @@ public class GreedyFillIn<D extends InputData> implements Permutation<D>, UpperB
 			return original.data.name;
 		}
 	}
-	
+
 	class MyConvertor implements NGraph.Convertor<D,GreedyData> {
 		public GreedyData convert( NVertex<D> old ) {
 			GreedyData d = new GreedyData( old );
 			return d;
 		}
 	}
-	
+
 	public GreedyFillIn(){
 		permutation = new NVertexOrder<D>();
 		upperBound = Integer.MAX_VALUE;
 		checkDegreeZero = true;
 	}
-	
+
 	public GreedyFillIn(boolean checkDegreeZero){
 		permutation = new NVertexOrder<D>();
 		upperBound = Integer.MAX_VALUE;
 		this.checkDegreeZero = checkDegreeZero;
 	}
-	
+
 	public NVertexOrder<D> getPermutation() {
-		return new NVertexOrder<D>(permutation);
+		return permutation;
 	}
 
 	public String getName() {
@@ -92,7 +92,7 @@ public class GreedyFillIn<D extends InputData> implements Permutation<D>, UpperB
 		//TODO: make more efficient implementation
 		// This can be done by calculating the overlap
 		// of neighbors between each pair of vertices.
-		
+
 		upperBound = Integer.MIN_VALUE;
 		if (checkDegreeZero){
 			// Check if there are vertices with degree 0. We can remove them immediately.
@@ -109,7 +109,7 @@ public class GreedyFillIn<D extends InputData> implements Permutation<D>, UpperB
 		}
 		while (graph.getNumberOfVertices() > 0){
 			NVertex<GreedyData> selectedVertex = null;
-			int minNonAdjNeighbors = Integer.MAX_VALUE; 
+			int minNonAdjNeighbors = Integer.MAX_VALUE;
 			// Find the vertex for which we have to add the lowest number of edges
 			// when we would eliminate this vertex in the graph.
 			for(NVertex<GreedyData> v: graph){
@@ -123,20 +123,20 @@ public class GreedyFillIn<D extends InputData> implements Permutation<D>, UpperB
 					minNonAdjNeighbors = nonAdjNeighbors;
 				}
 			}
-						
+
 			permutation.order.add(selectedVertex.data.original);
-			upperBound = Math.max(upperBound,selectedVertex.getNumberOfNeighbors());		
+			upperBound = Math.max(upperBound,selectedVertex.getNumberOfNeighbors());
 			// Eliminate the vertex in the graph.
 			graph.eliminate(selectedVertex);
 			//System.out.println("Deleted vertex "+selectedVertex.data+" of degree " + selectedVertex.getNumberOfNeighbors());
 		}
 	}
-	
+
 	/**
 	 * This function computes the number of edges added when you would
 	 * eliminate this vertex. It does not eliminate the vertex; that's why
 	 * it is 'virtual' :).
-	 * 
+	 *
 	 * @param v The vertex to eliminate.
 	 * @return The number of edges added when you would eliminate this vertex.
 	 */
@@ -155,9 +155,9 @@ public class GreedyFillIn<D extends InputData> implements Permutation<D>, UpperB
 		return edgesAdded;
 	}
 
-	
+
 	public int getUpperBound() {
 		return upperBound;
 	}
-	
+
 }
