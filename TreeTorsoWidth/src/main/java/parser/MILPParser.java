@@ -201,6 +201,9 @@ public class MILPParser {
         }
     }
 
+    /*
+    Parses the boundType according to the definitions in  http://miplib.zib.de/miplib3/mps_format.txt, section E.
+    */
     private void setBoundValue(String boundType, Variable variable, Number boundValue) {
         if (boundValue != null) {
             switch (boundType) {
@@ -217,8 +220,16 @@ public class MILPParser {
                     break;
                 case "FR":
                     break; // free variable
+                case "MI":
+                    variable.setLowerBound(variable.isInteger() ? Integer.MIN_VALUE : Double.MIN_VALUE);
+                    break;
+                case "BV":
+                    // binary variable, should be integer variable
+                    variable.setLowerBound(0);
+                    variable.setUpperBound(1);
+                    break;
                 default:
-                    LOGGER.trace("Unknown boundType " + boundType + "!");
+                    LOGGER.debug("Unknown boundType " + boundType + "!");
             }
         }
     }

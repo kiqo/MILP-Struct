@@ -34,7 +34,7 @@ public abstract class GraphGenerator extends ThreadExecutor {
         ArrayList rows;
         if (Configuration.OBJ_FUNCTION) {
             // objective function is considered like a row in the matrix
-            rows = new ArrayList(lp.getRows().values());
+            rows = new ArrayList<>(lp.getRows().values());
         } else {
             // objective function just ignored
             rows = new ArrayList<>(lp.getConstraints());
