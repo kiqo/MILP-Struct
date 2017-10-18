@@ -108,17 +108,17 @@ public class LinearProgram {
 
      public void printLP() {
          StringBuilder sb = new StringBuilder();
-         sb.append("LinearProgram " + this.name + " (" + (integerLP ? "ILP" : "MILP") + ")" + NL);
+         sb.append("LinearProgram " + this.name + " (" + (integerLP ? "ILP" : "MILP") + ")" + " - Coefficients not printed" + NL);
          sb.append("Objective function " + this.getObjectiveFunction().getName() + " : ");
-         for (MatrixEntry matrixEntry : this.getObjectiveFunction().getEntries()) {
-             sb.append(matrixEntry.getCoefficient() + " " + matrixEntry.getVariable().getName() + " + ");
+         for (Variable variable : this.getObjectiveFunction().getVariableEntries()) {
+             sb.append(variable.getName() + " + ");
          }
 
          sb.append(NL + "s.t." + NL);
          for (MatrixRow row : this.getConstraints()) {
              sb.append(row.getName() + " : ");
-             for (MatrixEntry matrixEntry : row.getEntries()) {
-                 sb.append(matrixEntry.getCoefficient() + " " + matrixEntry.getVariable().getName() + " + ");
+             for (Variable variable : row.getVariableEntries()) {
+                 sb.append(variable.getName() + " + ");
              }
              sb.append(" " + row.getEquality().toString() + " ");
              sb.append(row.getRightHandSide());

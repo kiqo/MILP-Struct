@@ -3,8 +3,8 @@ package main.java.parser;
 import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.LinearProgram;
-import main.java.lp.MatrixEntry;
 import main.java.lp.Row;
+import main.java.lp.Variable;
 
 import java.util.*;
 
@@ -32,13 +32,13 @@ public class PrimalGraphGenerator extends GraphGenerator {
     }
 
     private void convertRow(Row row, LinearProgram lp) throws InterruptedException {
-        List<MatrixEntry> variablesInRow = row.getEntries();
+        List<Variable> variablesInRow = row.getVariableEntries();
         for (int i = 0; i < variablesInRow.size(); i++) {
             convertVariable(lp, variablesInRow, i);
         }
     }
 
-    private void convertVariable(LinearProgram lp, List<MatrixEntry> variablesInRow, int i) throws InterruptedException {
+    private void convertVariable(LinearProgram lp, List<Variable> variablesInRow, int i) throws InterruptedException {
         String variableName;
         Node curNode;
         String neighbourNodeName;
@@ -46,12 +46,12 @@ public class PrimalGraphGenerator extends GraphGenerator {
         if (i % 10 == 0) {
             checkInterrupted();
         }
-        variableName = variablesInRow.get(i).getVariable().getName();
+        variableName = variablesInRow.get(i).getName();
         curNode = generateNodeIfNotExists(variableName);
         curNode.setInteger(lp.getVariables().get(variableName).isInteger());
 
         for (int j = i+1; j < variablesInRow.size(); j++) {
-            neighbourNodeName = variablesInRow.get(j).getVariable().getName();
+            neighbourNodeName = variablesInRow.get(j).getName();
             neighbourNode = generateNodeIfNotExists(neighbourNodeName);
             neighbourNode.setInteger(lp.getVariables().get(neighbourNodeName).isInteger());
 

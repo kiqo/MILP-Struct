@@ -1,7 +1,6 @@
 package tests.java;
 
 import main.java.lp.LinearProgram;
-import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
 import main.java.lp.Variable;
 import org.junit.Assert;
@@ -43,18 +42,6 @@ public class MILPParserTest extends StructuralParametersTest {
             } else {
                 Assert.assertTrue(!var.isInteger());
             }
-
-            // test bounds
-            if (var.getName().equals("floab")) {
-                Assert.assertEquals(-3, (Double) var.getLowerBound(), 0);
-            }
-            if (var.getName().equals("floac")) {
-                Assert.assertEquals(5, (Double) var.getLowerBound(), 0);
-                Assert.assertEquals(5, (Double) var.getUpperBound(), 0);
-            }
-            if (var.getName().equals("fload")) {
-                Assert.assertNull(var.getLowerBound());
-            }
         }
 
         for (String variableName : lp.getVariables().keySet()) {
@@ -80,22 +67,6 @@ public class MILPParserTest extends StructuralParametersTest {
                 if (row.getName().startsWith("IN") || row.getName().startsWith("OUT") || row.getName().startsWith("BAL")) {
                     Assert.assertNotEquals(0.0, row.getRightHandSide(), 0.0);
                 }
-            }
-        }
-
-        // test coefficients
-        for (MatrixEntry entry : lp.getRows().get("r_0").getEntries()) {
-            if (entry.getVariable().getName().equals("z")) {
-                Assert.assertEquals(1, entry.getCoefficient(), 0.0);
-            }
-        }
-
-        for (MatrixEntry entry : lp.getRows().get("VUBbha").getEntries()) {
-            if (entry.getVariable().getName().equals("xha")) {
-                Assert.assertEquals(-72, entry.getCoefficient(), 0.0);
-            }
-            if (entry.getVariable().getName().equals("fbha")) {
-                Assert.assertEquals(1, entry.getCoefficient(), 0.0);
             }
         }
 
@@ -128,22 +99,18 @@ public class MILPParserTest extends StructuralParametersTest {
         Assert.assertEquals(lp.getConstraints().get(0).getEquality(), LinearProgram.Equality.GREATER_THAN);
 
         // test objective function
-        for (MatrixEntry entry : lp.getRows().get("obj").getEntries()) {
+        for (Variable entry : lp.getRows().get("obj").getVariableEntries()) {
             // only one entry
-            Assert.assertEquals(entry.getVariable().getName(), "x1");
-            assertEquals(1, entry.getCoefficient());
+            Assert.assertEquals(entry.getName(), "x1");
         }
 
-        // test coefficients
-        assertEquals(17, lp.getRows().get("c617").getEntries().size());
-        List<MatrixEntry> entries = lp.getRows().get("c617").getEntries();
+        // test MatrixEntries
+        assertEquals(17, lp.getRows().get("c617").getVariableEntries().size());
+        List<Variable> entries = lp.getRows().get("c617").getVariableEntries();
 
-        assertEquals(1, entries.get(0).getCoefficient());
-        Assert.assertEquals("x6", entries.get(0).getVariable().getName());
-        assertEquals(47, entries.get(1).getCoefficient());
-        Assert.assertEquals("x244", entries.get(1).getVariable().getName());
-        assertEquals(47, entries.get(3).getCoefficient());
-        Assert.assertEquals("x246", entries.get(3).getVariable().getName());
+        Assert.assertEquals("x6", entries.get(0).getName());
+        Assert.assertEquals("x244", entries.get(1).getName());
+        Assert.assertEquals("x246", entries.get(3).getName());
 
         // test integer variables
         for (Variable var : lp.getVariables().values()) {
@@ -156,15 +123,6 @@ public class MILPParserTest extends StructuralParametersTest {
                 Assert.assertTrue(!var.isInteger());
             }
         }
-
-        // test bounds
-        // x1 free variable
-        Assert.assertNull(lp.getVariables().get("x1").getUpperBound());
-        Assert.assertNull(lp.getVariables().get("x1").getLowerBound());
-
-        Assert.assertNotNull(lp.getVariables().get("x2").getUpperBound());
-        assertEquals(1000000000.0, (double) lp.getVariables().get("x2").getUpperBound());
-        Assert.assertNull(lp.getVariables().get("x2").getLowerBound());
     }
 
     private void assertEquals(double expected, double actual) {

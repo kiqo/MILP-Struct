@@ -7,10 +7,7 @@ import java.util.List;
  */
 public class Row {
     private String name;
-    private List<MatrixEntry> entries;
-
-    public Row() {
-    }
+    private List<Variable> variableEntries;
 
     public String getName() {
         return name;
@@ -20,11 +17,11 @@ public class Row {
         this.name = name;
     }
 
-    public List<MatrixEntry> getEntries() {
-        return entries;
+    public List<Variable> getVariableEntries() {
+        return variableEntries;
     }
 
-    public void setEntries(List<MatrixEntry> entries) {
-        this.entries = entries;
+    public void setVariableEntries(List<Variable> variableEntries) {
+        this.variableEntries = variableEntries;
     }
 }

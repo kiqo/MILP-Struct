@@ -23,8 +23,7 @@ public class LPStatisticsFormatter {
 
     public static String csvFormatHeader() {
         StringBuilder sb = new StringBuilder();
-        sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
-                "numBoundVars;minCoeff;maxCoeff;sizeObjFun;");
+        sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;sizeObjFun;");
 
         String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;";
         if (Configuration.PRIMAL) {
@@ -57,9 +56,6 @@ public class LPStatisticsFormatter {
         sb.append(linearProgramData.maxIntegerVariables).append(";");
         sb.append(linearProgramData.avgIntegerVariables).append(";");
         sb.append(linearProgramData.avgVariables).append(";");
-        sb.append(linearProgramData.numBoundVariables).append(";");
-        sb.append(linearProgramData.minCoefficient).append(";");
-        sb.append(linearProgramData.maxCoefficient).append(";");
         sb.append(linearProgramData.sizeObjectiveFunction).append(";");
     }
 }

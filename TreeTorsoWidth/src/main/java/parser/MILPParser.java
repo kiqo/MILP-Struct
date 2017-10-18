@@ -3,15 +3,10 @@ package main.java.parser;
 import main.java.lp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.Log;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Verena on 07.03.2017.
@@ -40,53 +35,55 @@ public class MILPParser {
 
     private LinearProgram constructLP(String filename) throws IOException {
         LinearProgram lp = new LinearProgram();
-        BufferedReader br = null;
+        FileInputStream inputStream;
+        Scanner sc = null;
         try  {
-            br = new BufferedReader(new FileReader(filename));
-            parseName(lp, br);
-            parseRows(lp, br);
-            parseColumns(lp, br);
-            parseRHS(lp, br);
-            parseOptionalBounds(lp, br);
-            br.close();
+            inputStream = new FileInputStream(filename);
+            sc = new Scanner(inputStream, "UTF-8");
+            parseName(lp, sc);
+            parseRows(lp, sc);
+            parseColumns(lp, sc);
+            parseRHS(lp, sc);
+            parseOptionalBounds(lp, sc);
+            sc.close();
         } catch (IOException e) {
             LOGGER.error("", e);
-            br.close();
+            sc.close();
         }
         return lp;
     }
 
-    private void parseName(LinearProgram lp, BufferedReader br) throws IOException {
-        String line = br.readLine();
+    private void parseName(LinearProgram lp, Scanner sc) throws IOException {
+        String line = sc.nextLine();
         if (line.startsWith("NAME")) {
             lp.setName(line.substring(COL_1_START).trim());
         }
     }
 
-    private void parseRows(LinearProgram lp, BufferedReader br) throws IOException {
+    private void parseRows(LinearProgram lp, Scanner sc) throws IOException {
         List<MatrixRow> constraints = new ArrayList<>();
 
-        String line = br.readLine();
+        String line = sc.nextLine();
         assert (line.startsWith("ROWS"));
-        line = br.readLine();
+        line = sc.nextLine();
 
         while (!line.startsWith("COLUMNS")) {
             if (line.substring(COL_0_START).startsWith("N")) {
                 // objective function
                 Row row = new Row();
                 row.setName(line.substring(COL_1_START).trim());
-                row.setEntries(new ArrayList<>());
+                row.setVariableEntries(new ArrayList<>());
                 lp.setObjectiveFunction(row);
             } else {
                 // matrix row
                 MatrixRow row = new MatrixRow();
                 row.setEquality(parseEquality(line.substring(COL_0_START, COL_0_START + 1)));
                 row.setName(line.substring(COL_1_START).trim());
-                row.setEntries(new ArrayList<>());
+                row.setVariableEntries(new ArrayList<>());
                 constraints.add(row);
             }
 
-            line = br.readLine();
+            line = sc.nextLine();
         }
         lp.setConstraints(constraints);
     }
@@ -103,12 +100,12 @@ public class MILPParser {
         return LinearProgram.Equality.EQUAL;
     }
 
-    private void parseColumns(LinearProgram lp, BufferedReader br) throws IOException {
+    private void parseColumns(LinearProgram lp, Scanner sc) throws IOException {
         Map<String, Variable> variables = new HashMap<>();
         lp.setVariables(variables);
         String[] lineContents;
         Variable variable;
-        String line = br.readLine();
+        String line = sc.nextLine();
         Map<String, Row> rows = lp.getRows();
         boolean integerVariable = false;
         boolean integerLP = true;
@@ -132,7 +129,7 @@ public class MILPParser {
                 variables.put(variable.getName(), variable);
                 createRowEntries(lineContents, rows, variable);
             }
-            line = br.readLine();
+            line = sc.nextLine();
         }
         lp.setIntegerLP(integerLP);
     }
@@ -144,30 +141,30 @@ public class MILPParser {
     private void createRowEntries(String[] lineContents, Map<String, Row> rows, Variable variable) {
         String rowName = lineContents[1];
         Row currentRow = rows.get(rowName);
-        double coefficient = Double.valueOf(lineContents[2]);
-        addRowEntry(currentRow, variable, coefficient);
+        // double coefficient = Double.valueOf(lineContents[2]);
+        addRowEntry(currentRow, variable);
 
         if (lineContents.length >= 5) {
             // create for another row a matrix entry for this variable
             rowName = lineContents[3];
             currentRow = rows.get(rowName);
-            coefficient = Double.valueOf(lineContents[4]);
-            addRowEntry(currentRow, variable, coefficient);
+            // coefficient = Double.valueOf(lineContents[4]);
+            addRowEntry(currentRow, variable);
         }
     }
 
-    private void addRowEntry(Row row, Variable variable, double coefficient) {
+    private void addRowEntry(Row row, Variable variable) {
 
-        if (row.getEntries() == null || row.getEntries().isEmpty()) {
-            List<MatrixEntry> entries = new ArrayList<>();
-            row.setEntries(entries);
+        if (row.getVariableEntries() == null || row.getVariableEntries().isEmpty()) {
+            List<Variable> entries = new ArrayList<>();
+            row.setVariableEntries(entries);
         }
-        row.getEntries().add(new MatrixEntry(variable, coefficient));
+        row.getVariableEntries().add(variable);
     }
 
-    private void parseRHS(LinearProgram lp, BufferedReader br) throws IOException {
+    private void parseRHS(LinearProgram lp, Scanner sc) throws IOException {
         Map<String, Row> rows = lp.getRows();
-        String line = br.readLine();
+        String line = sc.nextLine();
         String[] lineContents;
         while (!line.startsWith("BOUNDS") && !line.startsWith("ENDATA")) {
             lineContents = getDataWithoutSpaces(line);
@@ -185,66 +182,20 @@ public class MILPParser {
                 ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
             }
 
-            line = br.readLine();
+            line = sc.nextLine();
         }
         // only occurring in netdiversion.mps
         if (line.startsWith("RANGES")) {
             LOGGER.debug("RANGES section detected");
-            br.readLine();
+            sc.nextLine();
         }
     }
 
-    private void parseOptionalBounds(LinearProgram lp, BufferedReader br) throws IOException {
-        Map<String, Variable> variables = lp.getVariables();
-        String line = br.readLine();
-        String[] lineContents;
-
+    private void parseOptionalBounds(LinearProgram lp, Scanner sc) throws IOException {
+        String line = sc.nextLine();
         while (line != null && !line.startsWith("ENDATA")) {
-            lineContents = getDataWithoutSpaces(line);
-
-            String boundType = lineContents[0];
-            String variableName = lineContents[2];
-            Variable variable = variables.get(variableName);
-            Number boundValue = getBoundValue(lineContents, variableName, variable);
-            setBoundValue(boundType, variable, boundValue);
-            line = br.readLine();
-        }
-    }
-
-    /*
-    Parses the boundType according to the definitions in  http://miplib.zib.de/miplib3/mps_format.txt, section E.
-    */
-    private void setBoundValue(String boundType, Variable variable, Number boundValue) {
-        if (boundValue != null) {
-            switch (boundType) {
-                // a fixed variable has the boundvalue as upper and lower bound
-                case "FX":
-                    variable.setUpperBound(boundValue);
-                    variable.setLowerBound(boundValue);
-                    break;
-                case "UP":
-                    variable.setUpperBound(boundValue);
-                    break;
-                case "LO":
-                    variable.setLowerBound(boundValue);
-                    break;
-                case "FR":
-                    break; // free variable
-                case "MI":
-                    variable.setLowerBound(variable.isInteger() ? Integer.MIN_VALUE : Double.MIN_VALUE);
-                    break;
-                case "BV":
-                    // binary variable, should be integer variable
-                    variable.setLowerBound(0);
-                    variable.setUpperBound(1);
-                    break;
-                case "LI":
-                    // lower bound as integer variable
-                    variable.setLowerBound(boundValue);
-                    break;
-                default:
-                    LOGGER.debug("Unknown boundType " + boundType + "!");
-            }
+            // Currently do nothing with the bounds
+            line = sc.nextLine();
         }
     }
 
@@ -270,6 +221,9 @@ public class MILPParser {
     }
 
     private String[] getDataWithoutSpaces(String line) {
-        return line.replaceFirst("\\s+", "").split("\\s+");
+        if (line.startsWith(" ") || line.startsWith("\t")) {
+            line = line.replaceFirst("\\s+", "");
+        }
+        return line.split("\\s+");
     }
 }

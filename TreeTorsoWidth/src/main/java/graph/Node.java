@@ -1,10 +1,5 @@
 package main.java.graph;
 
-import main.java.lp.MatrixEntry;
-import main.java.lp.MatrixRow;
-
-import java.util.List;
-
 /**
  * Created by Verena on 09.03.2017.
  */

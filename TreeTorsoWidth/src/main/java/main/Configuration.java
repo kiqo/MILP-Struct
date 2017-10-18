@@ -13,7 +13,7 @@ public class Configuration {
 
     public static String PROGRAM_NAME = "TreeTorsoWidth";
     public static long TERMINATION_TIMEOUT = 30;
-    public static long TIMEOUT = 900;
+    public static long TIMEOUT = 60 * 10; // 10 min
     public static Class<?> UPPER_BOUND_ALG = null;
     public static Class<?> LOWER_BOUND_ALG = null;
     public static final String DEFAULT_LOWER_BOUND_ALG = "nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC";
@@ -36,7 +36,12 @@ public class Configuration {
         addIncidenceInformation(sb);
         addDualInformation(sb);
         addObjectiveFunctionInformation(sb);
+        addTimeoutInformation(sb);
         LOGGER.info(sb.toString());
+    }
+
+    private static void addTimeoutInformation(StringBuilder sb) {
+        sb.append("Timeout for one MILP instance: " + Configuration.TIMEOUT + " seconds" + NL);
     }
 
     private static void addObjectiveFunctionInformation(StringBuilder sb) {

@@ -1,13 +1,10 @@
 package main.java.parser;
 
-import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.LinearProgram;
-import main.java.lp.MatrixEntry;
 import main.java.lp.Row;
-
-import java.util.*;
+import main.java.lp.Variable;
 
 /**
  * Created by Verena on 18.08.2017.
@@ -27,8 +24,8 @@ public class IncidenceGraphGenerator extends GraphGenerator {
             checkInterrupted();
 
             Node constraintNode = generateNodeIfNotExists(matrixRow.getName());
-            for (MatrixEntry matrixEntry : matrixRow.getEntries()) {
-                Node variableNode = generateNodeIfNotExists(matrixEntry.getVariable().getName());
+            for (Variable variableEntry : matrixRow.getVariableEntries()) {
+                Node variableNode = generateNodeIfNotExists(variableEntry.getName());
                 variableNode.setInteger(lp.getVariables().get(variableNode.getName()).isInteger());
                 generateEdge(constraintNode, variableNode);
                 createNeighbours(constraintNode, variableNode);

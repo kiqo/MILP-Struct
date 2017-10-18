@@ -4,7 +4,6 @@ import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.*;
 
-import java.util.Collection;
 import java.util.List;
 
 
@@ -43,9 +42,9 @@ public class DualGraphGenerator extends GraphGenerator {
     }
 
     private boolean haveCommonVariable(Row constraint1, Row constraint2) {
-        for (MatrixEntry entryConstraint1 : constraint1.getEntries()) {
-            for (MatrixEntry entryConstraint2 : constraint2.getEntries()) {
-                if (entryConstraint1.getVariable().getName().equals(entryConstraint2.getVariable().getName())) {
+        for (Variable entryVariable1 : constraint1.getVariableEntries()) {
+            for (Variable entryVariable2 : constraint2.getVariableEntries()) {
+                if (entryVariable1.getName().equals(entryVariable2.getName())) {
                     return true;
                 }
             }

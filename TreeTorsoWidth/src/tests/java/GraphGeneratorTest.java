@@ -1,11 +1,11 @@
 package tests.java;
 
 import main.java.lp.Row;
+import main.java.lp.Variable;
 import main.java.main.Configuration;
 import main.java.graph.Edge;
 import main.java.graph.Graph;
 import main.java.graph.Node;
-import main.java.lp.MatrixEntry;
 import main.java.lp.MatrixRow;
 import main.java.parser.DualGraphGenerator;
 import main.java.parser.IncidenceGraphGenerator;
@@ -108,9 +108,9 @@ public class GraphGeneratorTest extends GraphTest {
     }
 
     private boolean haveSameVariable(Row constraint1, Row constraint2) {
-        for (MatrixEntry entry1 : constraint1.getEntries()) {
-            for (MatrixEntry entry2 : constraint2.getEntries()) {
-                if (entry1.getVariable().equals(entry2.getVariable())) {
+        for (Variable variable1 : constraint1.getVariableEntries()) {
+            for (Variable variable2 : constraint2.getVariableEntries()) {
+                if (variable1.equals(variable2)) {
                     return true;
                 }
             }
@@ -145,8 +145,8 @@ public class GraphGeneratorTest extends GraphTest {
             Assert.assertTrue(incidenceGraph.getNodes().contains(constraintNode));
             Assert.assertEquals(constraintNode.getName(), matrixRow.getName());
 
-            for (MatrixEntry matrixEntry : matrixRow.getEntries()) {
-                Node variableNode = new Node(matrixEntry.getVariable().getName());
+            for (Variable variableEntry : matrixRow.getVariableEntries()) {
+                Node variableNode = new Node(variableEntry.getName());
                 Assert.assertTrue(incidenceGraph.getNodes().contains(variableNode));
                 Assert.assertTrue(incidenceGraph.getNeighbourNodes().get(constraintNode.getName()).contains(variableNode));
                 Assert.assertTrue(incidenceGraph.getNeighbourNodes().get(variableNode.getName()).contains(constraintNode));

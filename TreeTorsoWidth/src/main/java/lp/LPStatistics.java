@@ -1,17 +1,11 @@
 package main.java.lp;
 
-import main.java.graph.Graph;
-import main.java.graph.GraphData;
-import main.java.graph.GraphStatistics;
-import main.java.graph.Node;
 import main.java.main.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Verena on 19.04.2017.
@@ -49,8 +43,6 @@ public class LPStatistics {
         int numIntegerVariablesTotal = 0;
         int minNumInteger = Integer.MAX_VALUE;
         int maxNumInteger = Integer.MIN_VALUE;
-        double minCoefficient = Double.MAX_VALUE;
-        double maxCoefficient = Double.MIN_VALUE;
         Collection<Row> rows;
         if (Configuration.OBJ_FUNCTION) {
             // objective function is considered like a row in the matrix
@@ -62,18 +54,11 @@ public class LPStatistics {
         for (Row matrixRow : rows) {
 
             int numIntegerInRow = 0;
-            for (MatrixEntry matrixEntry : matrixRow.getEntries()) {
+            for (Variable matrixEntry : matrixRow.getVariableEntries()) {
                 numVariablesTotal++;
-                if (matrixEntry.getVariable().isInteger()) {
+                if (matrixEntry.isInteger()) {
                     numIntegerInRow++;
                     numIntegerVariablesTotal++;
-                }
-
-                if (matrixEntry.getCoefficient() < minCoefficient) {
-                    minCoefficient = matrixEntry.getCoefficient();
-                }
-                if (matrixEntry.getCoefficient() > maxCoefficient) {
-                    maxCoefficient = matrixEntry.getCoefficient();
                 }
             }
 
@@ -88,9 +73,7 @@ public class LPStatistics {
         linearProgramData.maxIntegerVariables = maxNumInteger;
         linearProgramData.avgIntegerVariables = numIntegerVariablesTotal / linearProgramData.numConstraints;
         linearProgramData.avgVariables = numVariablesTotal / linearProgramData.numConstraints;
-        linearProgramData.minCoefficient = minCoefficient;
-        linearProgramData.maxCoefficient = maxCoefficient;
-        linearProgramData.sizeObjectiveFunction = linearProgram.getObjectiveFunction().getEntries().size();
+        linearProgramData.sizeObjectiveFunction = linearProgram.getObjectiveFunction().getVariableEntries().size();
     }
 
     private void computeVariableInformation() {
@@ -98,34 +81,13 @@ public class LPStatistics {
 
         // variable information
         int numInteger = 0;
-        int numBoundVariables = 0;
-        double minBoundValue = Double.MAX_VALUE;
-        double maxBoundValue = Double.MIN_VALUE;
         for (Variable var : linearProgram.getVariables().values()) {
             if (var.isInteger()) {
                 numInteger++;
-            }
-            if (var.getLowerBound() != null || var.getUpperBound() != null) {
-                numBoundVariables++;
-            }
-            if (var.getLowerBound() != null) {
-                if (var.isInteger() && (int) var.getLowerBound() < minBoundValue) {
-                    minBoundValue = (int) var.getLowerBound();
-                } else if (!var.isInteger() && (double) var.getLowerBound() < minBoundValue) {
-                    minBoundValue = (double) var.getLowerBound();
-                }
-            }
-            if (var.getUpperBound() != null) {
-                if (var.isInteger() && (int) var.getUpperBound() > maxBoundValue) {
-                    maxBoundValue = (int) var.getUpperBound();
-                } else if (!var.isInteger() && (double) var.getUpperBound() > maxBoundValue) {
-                    maxBoundValue = (double) var.getUpperBound();
-                }
             }
         }
         linearProgramData.numIntegerVariables = numInteger;
         linearProgramData.isIntegerLP = (numInteger == linearProgramData.numVariables);
         linearProgramData.proportionIntegerVariables = (double) numInteger / (double) linearProgramData.numVariables;
-        linearProgramData.numBoundVariables = numBoundVariables;
     }
 }
