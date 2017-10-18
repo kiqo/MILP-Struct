@@ -73,17 +73,19 @@ public class TorsoWidth<D extends GraphInput.InputData> extends ThreadExecutor i
     private void constructTorsoForComponent(NGraph<D> component) throws InterruptedException {
         Set<NVertex<D>> verticesToRemove = new HashSet<>();
         Iterator<NVertex<D>> vertexIterator = component.iterator();
-
+        NVertex<D> vertex;
         int iteration = 0;
+
         while (vertexIterator.hasNext()) {
             if (iteration++ % 10 == 0) {
                 checkInterrupted();
             }
 
-            NVertex<D> vertex = vertexIterator.next();
+            vertex = vertexIterator.next();
 
             // a non-integer node not yet handled
-            if (!((LPInputData) vertex.data).isInteger() && !verticesToRemove.contains(vertex)) {
+            LPInputData vertexData = (LPInputData) vertex.data;
+            if (!vertexData.isInteger() && !vertexData.isNodeHandled()) {
                 handleVertexInComponent(verticesToRemove, vertex);
             }
         }

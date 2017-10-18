@@ -3,6 +3,7 @@ package main.java.parser;
 import main.java.lp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.rmi.runtime.Log;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -37,16 +38,20 @@ public class MILPParser {
         }
     }
 
-    private LinearProgram constructLP(String filename) {
+    private LinearProgram constructLP(String filename) throws IOException {
         LinearProgram lp = new LinearProgram();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        BufferedReader br = null;
+        try  {
+            br = new BufferedReader(new FileReader(filename));
             parseName(lp, br);
             parseRows(lp, br);
             parseColumns(lp, br);
             parseRHS(lp, br);
             parseOptionalBounds(lp, br);
+            br.close();
         } catch (IOException e) {
             LOGGER.error("", e);
+            br.close();
         }
         return lp;
     }
@@ -102,6 +107,7 @@ public class MILPParser {
         Map<String, Variable> variables = new HashMap<>();
         lp.setVariables(variables);
         String[] lineContents;
+        Variable variable;
         String line = br.readLine();
         Map<String, Row> rows = lp.getRows();
         boolean integerVariable = false;
@@ -117,7 +123,6 @@ public class MILPParser {
                 }
             } else {
                 lineContents = getDataWithoutSpaces(line);
-                Variable variable;
                 if (integerVariable) {
                     variable = new IntegerVariable(lineContents[0]);
                 } else {
@@ -182,6 +187,11 @@ public class MILPParser {
 
             line = br.readLine();
         }
+        // only occurring in netdiversion.mps
+        if (line.startsWith("RANGES")) {
+            LOGGER.debug("RANGES section detected");
+            br.readLine();
+        }
     }
 
     private void parseOptionalBounds(LinearProgram lp, BufferedReader br) throws IOException {
@@ -228,6 +238,10 @@ public class MILPParser {
                     variable.setLowerBound(0);
                     variable.setUpperBound(1);
                     break;
+                case "LI":
+                    // lower bound as integer variable
+                    variable.setLowerBound(boundValue);
+                    break;
                 default:
                     LOGGER.debug("Unknown boundType " + boundType + "!");
             }
@@ -256,16 +270,6 @@ public class MILPParser {
     }
 
     private String[] getDataWithoutSpaces(String line) {
-        String[] splits = line.split(" ");
-        List<String> ret = new ArrayList<>();
-        for (String split : splits) {
-            if (split.equals("") || split.equals(" ")) {
-                continue;
-            }
-            ret.add(split.trim());
-        }
-        String[] retArr = new String[ret.size()];
-        ret.toArray(retArr);
-        return retArr;
+        return line.replaceFirst("\\s+", "").split("\\s+");
     }
 }

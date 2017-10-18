@@ -118,5 +118,6 @@ public class Main {
         while ((line = br.readLine()) != null) {
             files.add(line);
         }
+        br.close();
     }
 }
