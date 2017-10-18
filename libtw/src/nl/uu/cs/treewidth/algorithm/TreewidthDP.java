@@ -195,7 +195,7 @@ public class TreewidthDP<D extends InputData> implements Exact<D> {
 			//put the vertex back in the set
 			set.set(i);
 		}
-		//System.out.printToFile(" Computed value: "+minValue+"\n");
+		//System.out.println(" Computed value: "+minValue+"\n");
 		return minValue;
 	}
 	

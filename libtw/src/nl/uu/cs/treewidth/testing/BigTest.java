@@ -56,7 +56,7 @@ public class BigTest {
 	 */
 	public static void main( String[] args ) throws InterruptedException {
 		
-		System.out.println( "main.java.libtw for the win." );
+		System.out.println( "libtw for the win." );
 		
 		String outputFile = "results.csv";
 		PrintStream out = null;

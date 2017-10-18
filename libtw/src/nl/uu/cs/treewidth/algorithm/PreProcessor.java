@@ -28,7 +28,7 @@ import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
 
 /**
- * @author main.java.libtw team
+ * @author libtw team
  *
  * Class to perform Preprocessing on the graph.
  * Currently only simplicial and almost simplicial vertices are dealt with.

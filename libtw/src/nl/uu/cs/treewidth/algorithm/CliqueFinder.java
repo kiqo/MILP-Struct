@@ -45,14 +45,14 @@ public class CliqueFinder< D extends InputData > {
 			
 			int k = (low+high)/2;
 			
-			//System.out.printToFile( "Testing k=" + k + " ... ");
+			//System.out.println( "Testing k=" + k + " ... ");
 			
 			HashSet<NVertex<D>> c = test(g,k);
 			if( c == null ) {
-				//System.out.printToFile( "failed." );
+				//System.out.println( "failed." );
 				high = k-1;
 			} else {
-				//System.out.printToFile( "found." );
+				//System.out.println( "found." );
 				low = k+1;
 				bestClique = c;
 				bestCliqueSize = k;

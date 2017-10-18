@@ -144,7 +144,7 @@ public class ElimFriendlyGraph< Data > {
 		
 		int numN = 0;
 		
-		//printToFile();
+		//print();
 		
 		if( start[v] == 0 ) {
 			// there is no edge list, so the degree had better be zero

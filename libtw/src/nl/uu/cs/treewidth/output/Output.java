@@ -82,7 +82,7 @@ public abstract class Output {
 	protected static boolean submitBugs = true;
 	public static void bugreport( String msg ) {
 		
-		// printToFile to stderr
+		// print to stderr
 		PrintStream out = System.err;
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		out.println();
