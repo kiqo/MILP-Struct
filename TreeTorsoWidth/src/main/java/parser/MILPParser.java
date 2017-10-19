@@ -1,6 +1,7 @@
 package main.java.parser;
 
 import main.java.lp.*;
+import main.java.main.ThreadExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,7 @@ import java.util.*;
 /**
  * Created by Verena on 07.03.2017.
  */
-public class MILPParser {
+public class MILPParser extends ThreadExecutor {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MILPParser.class);
 
@@ -19,7 +20,7 @@ public class MILPParser {
     private static final int COL_1_START = 4;
     private static final int COL_2_START = 14;
 
-    public LinearProgram parseMPS(String filename) throws IOException {
+    public LinearProgram parseMPS(String filename) throws IOException, InterruptedException {
         checkCorrectFileFormat(filename);
         LinearProgram lp = constructLP(filename);
         computeLPStatistics(lp);
@@ -33,7 +34,7 @@ public class MILPParser {
         }
     }
 
-    private LinearProgram constructLP(String filename) throws IOException {
+    private LinearProgram constructLP(String filename) throws IOException, InterruptedException {
         LinearProgram lp = new LinearProgram();
         FileInputStream inputStream;
         Scanner sc = null;
@@ -60,14 +61,18 @@ public class MILPParser {
         }
     }
 
-    private void parseRows(LinearProgram lp, Scanner sc) throws IOException {
+    private void parseRows(LinearProgram lp, Scanner sc) throws IOException, InterruptedException {
         List<MatrixRow> constraints = new ArrayList<>();
 
         String line = sc.nextLine();
         assert (line.startsWith("ROWS"));
         line = sc.nextLine();
 
+        int iteration = 0;
         while (!line.startsWith("COLUMNS")) {
+            if (iteration++ % 10 == 0) {
+                checkInterrupted();
+            }
             if (line.substring(COL_0_START).startsWith("N")) {
                 // objective function
                 Row row = new Row();
@@ -100,7 +105,7 @@ public class MILPParser {
         return LinearProgram.Equality.EQUAL;
     }
 
-    private void parseColumns(LinearProgram lp, Scanner sc) throws IOException {
+    private void parseColumns(LinearProgram lp, Scanner sc) throws IOException, InterruptedException {
         Map<String, Variable> variables = new HashMap<>();
         lp.setVariables(variables);
         String[] lineContents;
@@ -109,7 +114,11 @@ public class MILPParser {
         Map<String, Row> rows = lp.getRows();
         boolean integerVariable = false;
         boolean integerLP = true;
+        int iteration = 0;
         while (!line.startsWith("RHS")) {
+            if (iteration++ % 10 == 0) {
+                checkInterrupted();
+            }
             // checks if the following are integer variables
             if (swapIntegerVariable(line)) {
                 if (line.substring(39, 47).equals("'INTORG'")) {

@@ -21,7 +21,7 @@ public class MILPParserTest extends StructuralParametersTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(MILPParserTest.class);
 
     @Test
-    public void testMILPParser() {
+    public void testMILPParser() throws InterruptedException {
         lp = createLinearProgram("../input/tests/bienst2_test.mps");
 
         assertCorrectResult();
@@ -87,7 +87,7 @@ public class MILPParserTest extends StructuralParametersTest {
     Tests the MILPParser in case that the COLUMNS section contains for one variable two MatrixEntries in one line
      */
     @Test
-    public void testMoreColumns() {
+    public void testMoreColumns() throws InterruptedException {
         lp = createLinearProgram("./../input/benchmarks/roll3000.mps");
         assertLPNotNull();
         testDoubleMatrixEntryInColumns();

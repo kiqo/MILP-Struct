@@ -32,7 +32,7 @@ public class StructuralParametersTest {
         }
     }
 
-    protected LinearProgram createLinearProgram(String filePath) {
+    protected LinearProgram createLinearProgram(String filePath) throws InterruptedException {
         MILPParser milpParser = new MILPParser();
         LinearProgram lp = null;
         try {
