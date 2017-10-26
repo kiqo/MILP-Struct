@@ -29,10 +29,10 @@ COLUMNS
     xfc       OUTe               -57
     xfc       OUTf               -66
     xfd       OUTg               -70
-	xfe       OUTg               -70
-	xff       OUTg               -70
-	xfg       OUTg               -70
-	xfh       OUTg               -70
+    xfe       OUTg               -70
+    xff       OUTg               -70
+    xfg       OUTg               -70
+    xfh       OUTg               -70
     z         OUTa                 1
     z         OUTb                 1
     z         OUTc                 1

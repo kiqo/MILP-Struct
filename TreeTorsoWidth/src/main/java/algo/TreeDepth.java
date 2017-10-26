@@ -66,7 +66,7 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
 
     @Override
     public void run() throws InterruptedException {
-        // Lower bound of tree depth
+        // the logarithm of maxPathLength would be a lower bound for tree depth
         int maxPathLength = Integer.MIN_VALUE;
 
         for (int i = 0; i < NUM_DFS_TREE_GENERATION; i++) {
@@ -78,6 +78,10 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
             int height = constructDFSTreeWithRootNode(rootNode, nodesHandled);
 
             if (!allNodesOfGraphHandled(nodesHandled)) {
+                if (graph.getComponents() != null && graph.getComponents().size() <= 1) {
+                    LOGGER.error("Error computing tree depth - components are not correctly set");
+                    throw new RuntimeException();
+                }
                 // graph is not connected
                 if (!Configuration.OBJ_FUNCTION) {
                     height = computeTreeDepthOverComponents(nodesHandled, height);
@@ -138,6 +142,7 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
             newRootNode = iterator.next();
 
             if (!nodesHandled.contains(newRootNode)) {
+                // TODO could be changed that also here a maximal path is computed
                 break;
             }
         }

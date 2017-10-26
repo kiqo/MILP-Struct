@@ -100,9 +100,9 @@ public class GreedyDegree< D extends InputData > implements Permutation<D>, Uppe
 			graph.eliminate( smallestVertex );
 
 			// early termination, helpful if graph is a clique
-			if (graph.getNumberOfVertices() - 1 < upperBound) {
+			if (graph.getNumberOfVertices() <= upperBound) {
 				// upperBound cannot increase or decrease anymore
-				break;
+				return;
 			}
 		}
 	}
