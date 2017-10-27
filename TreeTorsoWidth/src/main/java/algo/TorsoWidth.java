@@ -118,18 +118,18 @@ public class TorsoWidth<D extends LPInputData> extends ThreadExecutor implements
         startingVertex.data.setNodeHandled(true);
 
         while (!nodesToHandle.isEmpty()) {
-            handleVertex(currentNonIntegerSet, currentIntegerSet, nodesToHandle);
+            handleNonIntegerVertex(currentNonIntegerSet, currentIntegerSet, nodesToHandle);
         }
         markNodesForDeletion(verticesToRemove, currentNonIntegerSet);
         addEdgesToFormClique(currentIntegerSet);
     }
 
-    private void handleVertex(Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> currentIntegerSet, Set<NVertex<D>> nodesToHandle) {
+    private void handleNonIntegerVertex(Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> currentIntegerSet, Set<NVertex<D>> nodesToHandle) {
         Iterator<NVertex<D>> iterator = nodesToHandle.iterator();
         NVertex<D> next = iterator.next();
         iterator.remove();
-        next.data.setNodeHandled(true);
-        handleNonIntegerVertex(nodesToHandle, currentNonIntegerSet, currentIntegerSet, next);
+        currentNonIntegerSet.add(next);
+        handleNeighbours(nodesToHandle, currentNonIntegerSet, currentIntegerSet, next);
     }
 
     private void markNodesForDeletion(Set<NVertex<D>> verticesToRemove, Set<NVertex<D>> currentNonIntegerSet) {
@@ -148,19 +148,17 @@ public class TorsoWidth<D extends LPInputData> extends ThreadExecutor implements
         }
     }
 
-    private void handleNonIntegerVertex(Set<NVertex<D>> nodesToHandle, Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> currentIntegerSet, NVertex<D> curVertex) {
-            currentNonIntegerSet.add(curVertex);
+    private void handleNeighbours(Set<NVertex<D>> nodesToHandle, Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> currentIntegerSet, NVertex<D> curVertex) {
+        for (NVertex<D> neighbour : ((ListVertex<D>) curVertex).neighbors) {
+            LPInputData data = neighbour.data;
 
-            for (NVertex<D> neighbour : ((ListVertex<D>) curVertex).neighbors) {
-                LPInputData data = neighbour.data;
-
-                if (data.isInteger()) {
-                    currentIntegerSet.add(neighbour);
-                } else if (!data.isNodeHandled()) {
-                    nodesToHandle.add(neighbour);
-                    data.setNodeHandled(true);
-                }
+            if (data.isInteger()) {
+                currentIntegerSet.add(neighbour);
+            } else if (!data.isNodeHandled()) {
+                nodesToHandle.add(neighbour);
+                data.setNodeHandled(true);
             }
+        }
     }
 
     private void computeLowerBoundOnComponents() throws InterruptedException {
