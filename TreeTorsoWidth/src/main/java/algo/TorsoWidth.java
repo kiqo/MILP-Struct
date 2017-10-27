@@ -16,16 +16,15 @@ import java.util.*;
 /**
  * The TorsoWidth algorithm collapses all the non-integer vertices (a ∞-torso is created)
  * and then takes (an upper or lower bound on) tree width of the resulting graph to be an upper bound for the torso width
- *
+ * <p>
  * Reference paper: Going Beyond Primal Treewidth for (M)ILP, Robert Ganian, Sebastian Ordyniak, M. S. Ramanujan.
  *
  * @author Verena Dittmer
- *
  */
 public class TorsoWidth<D extends LPInputData> extends ThreadExecutor implements UpperBound<D>, LowerBound<D> {
 
-    class MyConverter<D extends GraphInput.InputData> implements NGraph.Convertor<D,LPInputData> {
-        public LPInputData convert(NVertex<D> old ) {
+    class MyConverter<D extends GraphInput.InputData> implements NGraph.Convertor<D, LPInputData> {
+        public LPInputData convert(NVertex<D> old) {
             LPInputData d = new LPInputData(old.data.id, old.data.name, ((LPInputData) old.data).isInteger());
             d.setNodeHandled(false);
             return d;
@@ -43,7 +42,7 @@ public class TorsoWidth<D extends LPInputData> extends ThreadExecutor implements
     }
 
     @Override
-    public void setInput(NGraph<D> g)  {
+    public void setInput(NGraph<D> g) {
         MyConverter converter = new MyConverter();
         graph = g.copy(converter);
         List<NGraph<D>> components = g.getComponents();
@@ -116,6 +115,7 @@ public class TorsoWidth<D extends LPInputData> extends ThreadExecutor implements
         Set<NVertex<D>> currentIntegerSet = new HashSet<>();
         Set<NVertex<D>> nodesToHandle = new HashSet<>();
         nodesToHandle.add(startingVertex);
+        startingVertex.data.setNodeHandled(true);
 
         while (!nodesToHandle.isEmpty()) {
             handleVertex(currentNonIntegerSet, currentIntegerSet, nodesToHandle);
@@ -129,11 +129,7 @@ public class TorsoWidth<D extends LPInputData> extends ThreadExecutor implements
         NVertex<D> next = iterator.next();
         iterator.remove();
         next.data.setNodeHandled(true);
-        if (next.data.isInteger()) {
-            handleIntegerVertex(currentIntegerSet, next);
-        } else {
-            handleNonIntegerVertex(nodesToHandle, currentNonIntegerSet, next);
-        }
+        handleNonIntegerVertex(nodesToHandle, currentNonIntegerSet, currentIntegerSet, next);
     }
 
     private void markNodesForDeletion(Set<NVertex<D>> verticesToRemove, Set<NVertex<D>> currentNonIntegerSet) {
@@ -152,25 +148,19 @@ public class TorsoWidth<D extends LPInputData> extends ThreadExecutor implements
         }
     }
 
-    private void handleIntegerVertex(Set<NVertex<D>> currentIntegerSet, NVertex<D> integerVertex) {
-        currentIntegerSet.add(integerVertex);
-    }
-
-    private void handleNonIntegerVertex(Set<NVertex<D>> nodesToHandle, Set<NVertex<D>> currentNonIntegerSet, NVertex<D> curVertex) {
-        if (!currentNonIntegerSet.contains(curVertex)) {
+    private void handleNonIntegerVertex(Set<NVertex<D>> nodesToHandle, Set<NVertex<D>> currentNonIntegerSet, Set<NVertex<D>> currentIntegerSet, NVertex<D> curVertex) {
             currentNonIntegerSet.add(curVertex);
 
             for (NVertex<D> neighbour : ((ListVertex<D>) curVertex).neighbors) {
                 LPInputData data = neighbour.data;
 
-                // make sure that the integer node is handled again (if it is adjacent to a different component,
-                // then it must also be added to the current integer set and thus be handled again)
-                if (!data.isNodeHandled() || data.isInteger()) {
+                if (data.isInteger()) {
+                    currentIntegerSet.add(neighbour);
+                } else if (!data.isNodeHandled()) {
                     nodesToHandle.add(neighbour);
                     data.setNodeHandled(true);
                 }
             }
-        }
     }
 
     private void computeLowerBoundOnComponents() throws InterruptedException {
