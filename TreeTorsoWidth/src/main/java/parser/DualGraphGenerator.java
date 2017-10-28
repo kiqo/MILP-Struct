@@ -4,7 +4,9 @@ import main.java.graph.Graph;
 import main.java.graph.Node;
 import main.java.lp.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -24,14 +26,16 @@ public class DualGraphGenerator extends GraphGenerator {
     public Graph linearProgramToGraph(LinearProgram lp) throws InterruptedException {
         List<Row> constraints = getRows(lp);
         int numConstraints = constraints.size();
+        Map<String, Node> constraintNodes = new HashMap<>();
         for (int i = 0; i < numConstraints; i++) {
+            checkInterrupted();
             Row constraint1 = constraints.get(i);
-            Node constraintNode1 = generateNodeIfNotExists(constraint1.getName());
+            Node constraintNode1 = createNodeIfNotExists(constraintNodes, constraint1.getName());
             for (int j = i+1; j < numConstraints; j++) {
                 Row constraint2 = constraints.get(j);
-                Node constraintNode2 = generateNodeIfNotExists(constraint2.getName());
+                Node constraintNode2 = createNodeIfNotExists(constraintNodes, constraint2.getName());
                 if (haveCommonVariable(constraint1, constraint2)) {
-                    generateEdge(constraintNode1, constraintNode2);
+                    generateEdge(constraintNode1, constraintNode2); // TODO fix gc overhead limit exceeded
                     createNeighbours(constraintNode1, constraintNode2);
                 }
             }
@@ -39,6 +43,15 @@ public class DualGraphGenerator extends GraphGenerator {
 
         Graph dualGraph = createGraph(nodes, edges, neighbourNodes);
         return dualGraph;
+    }
+
+    private Node createNodeIfNotExists(Map<String, Node> constraintNodes, String constraintName) {
+        Node constraintNode1 = constraintNodes.get(constraintName);
+        if (constraintNode1 == null) {
+            constraintNode1 = generateNode(constraintName);
+            constraintNodes.put(constraintName, constraintNode1);
+        }
+        return constraintNode1;
     }
 
     private boolean haveCommonVariable(Row constraint1, Row constraint2) {

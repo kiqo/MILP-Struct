@@ -32,6 +32,7 @@ import java.util.concurrent.*;
 public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
     static {
         // system property current.date used for the name of the log file
@@ -73,17 +74,16 @@ public class Main {
     }
 
     private static String invokeTask(ThreadExecutor executor, String fileName) {
-        List<Future<String>> result;
         String resultString = null;
         LOGGER.debug("Structural Parameters: " + fileName);
         try {
             // invoke all waits until all tasks are finished (= terminated or had an error)
-            result = executor.startStructuralParameterComputation(fileName);
+            List<Future<String>> result = executor.startStructuralParameterComputation(fileName);
 
             if (result.get(0).isCancelled()) {
                 // task finished by cancellation (seconds exceeded)
                 LOGGER.warn(fileName + " was cancelled");
-                resultString = fileName + ";no result;" + System.lineSeparator();
+                resultString = fileName + ";no result;" + LINE_SEPARATOR;
             } else {
                 resultString = result.get(0).get();
             }
@@ -95,6 +95,7 @@ public class Main {
 
     private static StringBuilder appendHeader() {
         StringBuilder sb = new StringBuilder();
+        sb.append("Timeout for one MILP instance: " + Configuration.TIMEOUT + "s" + LINE_SEPARATOR);
         sb.append(LPStatisticsFormatter.csvFormatHeader());
         return sb;
     }

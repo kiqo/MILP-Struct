@@ -1,2 +1,2 @@
 name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;
-aflow40b;2728;1442;1364;0,5000;false;0.0;38.0;1.0;4.0;2728;-100.0;1.0;1364;2728;1364;0,5000;115680;0,0311;30;146;84,8094;171;0;1360;0;0;4170;1364;0,3271;6783;0,0017;2;74;3,2532;38;0;
+aflow40b;2728;1442;1364;0,5000;false;0.0;38.0;1.0;4.0;2728;-100.0;1.0;1364;2728;1364;0,5000;115680;0,0311;30;146;84,8094;172;0;1360;0;0;4170;1364;0,3271;6783;0,0017;2;74;3,2532;38;0;

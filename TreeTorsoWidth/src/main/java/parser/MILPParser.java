@@ -201,10 +201,12 @@ public class MILPParser extends ThreadExecutor {
     }
 
     private void parseOptionalBounds(LinearProgram lp, Scanner sc) throws IOException {
-        String line = sc.nextLine();
-        while (line != null && !line.startsWith("ENDATA")) {
-            // Currently do nothing with the bounds
-            line = sc.nextLine();
+        if (sc.hasNext()) {
+            String line = sc.nextLine();
+            while (line != null && !line.startsWith("ENDATA")) {
+                // Currently do nothing with the bounds
+                line = sc.nextLine();
+            }
         }
     }
 

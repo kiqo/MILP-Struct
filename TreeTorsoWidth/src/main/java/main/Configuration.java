@@ -12,7 +12,7 @@ public class Configuration {
     private static final String TAB = "\t";
 
     public static String PROGRAM_NAME = "TreeTorsoWidth";
-    public static long TERMINATION_TIMEOUT = 30;
+    public static long TERMINATION_TIMEOUT = 5;
     public static long TIMEOUT = 60 * 10; // 10 min
     public static Class<?> UPPER_BOUND_ALG = null;
     public static Class<?> LOWER_BOUND_ALG = null;

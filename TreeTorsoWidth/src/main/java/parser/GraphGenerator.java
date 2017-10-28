@@ -51,6 +51,13 @@ public abstract class GraphGenerator extends ThreadExecutor {
         return node;
     }
 
+    protected Node generateNode(String nodeName) {
+        Node node = new Node(nodeName, vertexId++);
+        nodes.add(node);
+        neighbourNodes.put(node.getName(), new ArrayList<>());
+        return node;
+    }
+
     protected void generateEdge(Node node1, Node node2) {
         Edge edge = new Edge(node1, node2);
         edges.add(edge);
