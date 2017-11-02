@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by Verena on 07.03.2017.
+ * Parses a (M)ILP instance in the MPS format. Note that some fields in the MPS file format,
+ * like the RANGES or BOUNDS section are not taken on in the LinearProgram.
  */
 public class MILPParser extends ThreadExecutor {
 

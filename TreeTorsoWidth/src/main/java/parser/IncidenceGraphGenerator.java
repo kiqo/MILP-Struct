@@ -13,9 +13,9 @@ public class IncidenceGraphGenerator extends GraphGenerator {
 
     /**
      *
-     * @param lp
+     * @param lp the input (M)ILP of which the dual graph is constructed
      * @return Incidence graph of the linear program
-     * @throws InterruptedException
+     * @throws InterruptedException in case the thread is set to cancelled
      *  The incidence graph is constructed by taking the variables of the lp and the constraints as nodes
      *  and a variable is connected by an edge to a constraint iff the variable occurs in the constraint
      */

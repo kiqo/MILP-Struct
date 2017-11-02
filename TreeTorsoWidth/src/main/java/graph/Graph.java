@@ -3,7 +3,7 @@ package main.java.graph;
 import java.util.*;
 
 /**
- * Created by Verena on 09.03.2017.
+ * The graph class used for constructing the primal, incidence and dual graph representation of MILP instances.
  */
 public class Graph {
     private List<Node> nodes;

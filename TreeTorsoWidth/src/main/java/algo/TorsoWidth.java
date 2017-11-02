@@ -14,9 +14,13 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * The TorsoWidth algorithm collapses all the non-integer vertices (a ∞-torso is created)
- * and then takes (an upper or lower bound on) tree width of the resulting graph to be an upper bound for the torso width
- * <p>
+ * The TorsoWidth algorithm collapses all the non-integer vertices (a ∞-torso is created).
+ * The torso is constructed by searching for adjacent sets of non-integer vertices. The integer vertices of such a
+ * set are then formed to a clique, the current set of non-integer vertices are deleted from the graph.
+ * An upper for tree width of the resulting torso is then also an upper bound for the ∞-torso width.
+ *
+ * It is possible to compute the lower and upper bound of treewidth for the computed torso.
+ *
  * Reference paper: Going Beyond Primal Treewidth for (M)ILP, Robert Ganian, Sebastian Ordyniak, M. S. Ramanujan.
  *
  * @author Verena Dittmer

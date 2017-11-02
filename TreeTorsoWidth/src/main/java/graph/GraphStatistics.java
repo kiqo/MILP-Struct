@@ -9,7 +9,8 @@ import java.util.Map;
  * Created by Verena on 22.08.2017.
  */
 public abstract class GraphStatistics {
-    protected GraphData graphData;
+    GraphData graphData;
+    LPStatistics lpStatistics;
 
     public abstract void computeGraphData(Graph graph);
     protected abstract void computeDensity();
@@ -18,13 +19,11 @@ public abstract class GraphStatistics {
         this.lpStatistics = lpStatistics;
     }
 
-    LPStatistics lpStatistics;
-
     public GraphData getGraphData() {
         return graphData;
     }
 
-    protected GraphData computeGeneralGraphData(Graph graph) {
+    GraphData computeGeneralGraphData(Graph graph) {
         GraphData graphData = new GraphData();
         graphData.numNodes = graph.getNodes().size();
         int numIntegerNodes = 0;

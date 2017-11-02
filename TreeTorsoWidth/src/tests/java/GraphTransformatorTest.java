@@ -15,15 +15,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * Created by Verena on 18.08.2017.
+ * Tests whether the transformation of a Graph to a NGraph works correctly
  */
 public class GraphTransformatorTest extends GraphTest implements AlgoTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphTransformatorTest.class);
-
-    private static final boolean SHOW_GRAPH = false;
-    private static final boolean PRINT_GRAPH = false;
-    private static final boolean PRINT_RESULTS = false;
 
     @Test
     public void testNodeBlockerGraph() throws InterruptedException {

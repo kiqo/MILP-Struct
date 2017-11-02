@@ -1,7 +1,7 @@
 package tests.java;
 
 /**
- * Created by Verena on 19.08.2017.
+ * Specifies certain graphs that need to be tested on by an algorithm
  */
 public interface AlgoTest {
 

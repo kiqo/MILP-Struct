@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Verena on 20.08.2017.
+ * Prints out the help message if wrong input parameters or --help are supplied
  */
 public class HelpPage {
     private static final String NL = System.getProperty("line.separator");

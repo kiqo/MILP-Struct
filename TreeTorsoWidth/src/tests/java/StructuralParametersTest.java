@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Created by Verena on 19.08.2017.
+ * Class for providing some methods that are used for the structural parameters test
  */
 public class StructuralParametersTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(StructuralParametersTest.class);

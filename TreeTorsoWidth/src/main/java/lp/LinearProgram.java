@@ -6,7 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Created by Verena on 07.03.2017.
+ * The format of ILP or MILP instances. It stores the objective function, constraints and the variables occuring
+ * in which constraint or objective function.
  */
 public class LinearProgram {
 

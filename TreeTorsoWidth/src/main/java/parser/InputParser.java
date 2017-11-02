@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Verena on 19.08.2017.
+ * Parses the input arguments of the program
  */
 public class InputParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(InputParser.class);

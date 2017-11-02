@@ -14,7 +14,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Created by Verena on 28.03.2017.
+ * Tests whether a MILP instance is parsed correctly
  */
 public class MILPParserTest extends StructuralParametersTest {
 

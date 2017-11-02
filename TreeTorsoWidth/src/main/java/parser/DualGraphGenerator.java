@@ -16,9 +16,9 @@ public class DualGraphGenerator extends GraphGenerator {
 
     /**
      *
-     * @param lp
+     * @param lp the input (M)ILP of which the dual graph is constructed
      * @return Dual Graph
-     * @throws InterruptedException
+     * @throws InterruptedException in case the thread is set to cancelled
      * The dual graph has as nodes the constraints of the linear program and has an edge between two constraint
      * nodes iff there is a variable that occurs in both constraints
      */

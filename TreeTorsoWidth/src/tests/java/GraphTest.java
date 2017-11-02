@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by Verena on 07.06.2017.
+ * Constructs certain graphs which are used for testing
  */
 public abstract class GraphTest extends StructuralParametersTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphTest.class);
@@ -28,8 +28,10 @@ public abstract class GraphTest extends StructuralParametersTest {
     private static final double PROB_INTEGER_NODE = 0.16;
     private static final String INTEGER_MARK = "_I";
 
-    /*
-    Creates a graph that has an integer node that separates two components, which each also contain 2 integer nodes
+    /**
+     *  Creates a graph that has an integer node that separates two components, which each also contain 2 integer nodes
+     *
+     * @return Graph
      */
     public static Graph createNodeBlockerGraph() {
         List<Node> nodes = new ArrayList<>();
@@ -72,6 +74,12 @@ public abstract class GraphTest extends StructuralParametersTest {
         return createGraph(nodes, edges);
     }
 
+    /**
+     * Creates a graph that consists of three connected components, a clique of 2 vertices, of 3 vertices and the integer
+     * node blocker graph
+     *
+     * @return
+     */
     Graph createDisconnectedGraph() {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
         Graph cliqueTwo = createClique(2, "clique1_");
@@ -118,6 +126,11 @@ public abstract class GraphTest extends StructuralParametersTest {
         return createGraph(nodes, edges);
     }
 
+    /**
+     * Creates a shar graph, that has exactly one vertex that is ocnnected to every other vertex
+     *
+     * @return Graph
+     */
     Graph createStarShapedGraph() {
 
         List<Node> nodes = new ArrayList<>();
@@ -144,6 +157,12 @@ public abstract class GraphTest extends StructuralParametersTest {
         return createGraph(nodes, edges);
     }
 
+    /**
+     * Creates a Graph out of the specified nodes and edges
+     * @param nodes
+     * @param edges
+     * @return Graph
+     */
     static Graph createGraph(List<Node> nodes, List<Edge> edges) {
         Graph graph = new Graph();
         Map<String, List<Node>> neighbourNodes = new HashMap<>();
@@ -176,6 +195,11 @@ public abstract class GraphTest extends StructuralParametersTest {
     }
 
 
+    /**
+     * Creates a random graph by using the probabilites PROB_INTEGER_NODE and DENSITY
+     *
+     * @return Graph randomly created
+     */
     Graph createRandomGraph() {
         // creates a number in between min and max (inclusive)
         int numNodes = ThreadLocalRandom.current().nextInt(MIN_NODES, MAX_NODES + 1);

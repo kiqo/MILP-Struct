@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by Verena on 22.08.2017.
+ * Tests whether the statistics about a graph representation are computed and presented correctly
  */
 public class GraphStatisticsTest extends StructuralParametersTest{
     private static final Logger LOGGER = LoggerFactory.getLogger(LPStatisticsTest.class);

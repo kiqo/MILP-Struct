@@ -1,7 +1,5 @@
 package main.java.graph;
 
-
-
 /**
  * Created by Verena on 19.04.2017.
  */

@@ -15,9 +15,9 @@ public class PrimalGraphGenerator extends GraphGenerator {
 
     /**
      *
-     * @param lp
+     * @param lp the input (M)ILP of which the dual graph is constructed
      * @return Primal graph of the linear program
-     * @throws InterruptedException
+     * @throws InterruptedException in case the thread is set to cancelled
      * The primal graph is constructed by taking the variables of the lp as nodes and a variable is connected by an edge
      * to another variable b iff they occur in the same constraint or they occur together in the objective function
      */

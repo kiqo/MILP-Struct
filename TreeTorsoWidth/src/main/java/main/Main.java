@@ -13,7 +13,18 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Created by Verena on 28.02.2017. *
+ * This program is used for analyzing structural parameters of graphical representations of (M)ILP instances.
+ * These parameters may provide a measure on the difficulty, in terms of the runtime, of an (M)ILP instance.
+ *
+ * It allows the parsing of (M)ILP instances, construction of primal, incidence and dual graph representations
+ * of (M)ILP instances and the computation of the structural parameters itself.
+ *
+ * A configurable timeout value can be set after which the program cancels the current computation of a (M)ILP instance.
+ * See also --help for more information.
+ *
+ *
+ *
+ * Created by Verena on 28.02.2017.
  * Copyright 2017, Verena Dittmer
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -68,7 +79,7 @@ public class Main {
                 sb.append(resultString);
             }
         }
-        LOGGER.debug("Finished with structural parameters computation");
+        LOGGER.info("Finished with structural parameters computation");
         threadExecutor.shutdown();
         return sb;
     }

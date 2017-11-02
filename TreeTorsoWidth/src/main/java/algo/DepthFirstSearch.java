@@ -12,9 +12,13 @@ import java.util.Set;
  */
 public class DepthFirstSearch {
 
-    /*
-     * Input is the root node, returns distance from the lowest descendant of the rootNode, i.e. the current
-     * height of the tree
+    /**
+     * Constructs a DFS tree by expanding the next neighbour vertex. It stores the vertices that are found by the
+     * tree in handledVertices
+     *
+     * @param rootNode the root node of the DFS tree that is constructed
+     * @param handledVertices the list of vertices that are in the tree
+     * @return the height of the tree
      */
     public static int DFSTree(NVertex rootNode, Set<NVertex<GraphInput.InputData>> handledVertices) {
         handledVertices.add(rootNode);
@@ -33,10 +37,13 @@ public class DepthFirstSearch {
     }
 
 
-    /*
-     * Input is the root node, returns distance from the lowest descendant of the rootNode, i.e. the current
-     * height of the tree
-     * Starts by constructing first the subtree for the neighbour of the rootNode with maximal degree in the graph
+    /**
+     * Constructs a DFS tree by expanding the largest degree neighbour vertex. It stores the vertices that are found by the
+     * tree in handledVertices
+     *
+     * @param rootNode the root node of the DFS tree that is constructed
+     * @param handledVertices the list of vertices that are in the tree
+     * @return the height of the tree
      */
     public static int DFSTreeByMaxDegreeRoot(ListVertex rootNode, Set<ListVertex> handledVertices) {
         handledVertices.add(rootNode);

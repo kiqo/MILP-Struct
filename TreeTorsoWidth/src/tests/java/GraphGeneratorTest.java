@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
 import static org.junit.Assert.*;
 
 /**
- * Created by Verena on 09.03.2017.
+ * Tests whether the parsing of a LinearProgram to a Graph works correctly
  */
 public class GraphGeneratorTest extends GraphTest {
 

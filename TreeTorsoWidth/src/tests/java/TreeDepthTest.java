@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Created by Verena on 08.04.2017.
+ * Tests whether the computation of the (upper bound of) tree-depth works correctly
  */
 public class TreeDepthTest extends GraphTest implements AlgoTest{
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeDepthTest.class);

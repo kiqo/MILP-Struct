@@ -1,7 +1,7 @@
 package main.java.lp;
 
 /**
- * Created by Verena on 19.04.2017.
+ * Used for storing parameters of the (M)ILP
  */
 public class LPData {
     public int numVariables;

@@ -9,7 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Verena on 19.08.2017.
+ * Tests whether the treewidth wrapper class, that is used for improving the bounds obtained by LibTW, provides
+ * correct lower and upper bounds for treewidth
  */
 public class TreeWidthWrapperTest extends StructuralParametersTest {
 

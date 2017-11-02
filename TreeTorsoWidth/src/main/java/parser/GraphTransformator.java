@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Verena on 09.03.2017.
+ * Transforms the graph format 'Graph' to the graph format used in LibTW 'NGraph'
  */
 public class GraphTransformator {
 

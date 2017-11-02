@@ -11,7 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Verena on 19.09.2017.
+ * Thread creation such that threads can be cancelled after the specified Configuration.TIMEOUT
  */
 public class ThreadExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadExecutor.class);

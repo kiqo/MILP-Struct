@@ -4,7 +4,6 @@ import main.java.graph.Graph;
 import main.java.algo.LPInputData;
 import main.java.algo.TorsoWidth;
 import nl.uu.cs.treewidth.algorithm.GreedyDegree;
-import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.ListVertex;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.ngraph.NVertex;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Created by Verena on 08.04.2017.
+ * Tests whether the computation of the torso and of the torso-width works correctly
  */
 public class TorsoWidthTest extends GraphTest implements AlgoTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TorsoWidthTest.class);

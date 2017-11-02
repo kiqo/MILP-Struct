@@ -11,8 +11,11 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Wrapper class to use the lower- and upper bound algorithms of algo, but with the possiblity
- * to obtain better lower- and upper bounds by considering that the graph may be disconnected
+ * Wrapper class to use the lower- and upper bound algorithms of LibTW, but with the possiblity
+ * to obtain better lower- and upper bounds by considering the connected components of the graph in the case that
+ * it is not connected
+ *
+ * The algorithms used can be changed by setting Configuration.UPPER_BOUND_ALG and Configuration.LOWER_BOUND_ALG.
  *
  * Created by Verena on 23.07.2017.
  */

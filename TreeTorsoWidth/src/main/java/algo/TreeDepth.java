@@ -15,14 +15,20 @@ import java.util.*;
 /**
  * The tree-depth td(G) is defined to be the minimum height of a rooted forest F
  * such that G is a subgraph of the closure of F, where the closure of F is obtained
- * by adding edges between ancestor and descendents in a tree.
+ * by adding edges between every ancestor and descendent in a tree.
  *
  * The treewidth is a lower bound for treedepth. Another lower bound is the logarithm
  * of the length of any path in the graph.
  *
- * For upper bound, the idea is to select some starting points and run a DFS from these.
- * These starting points can be chosen randomly or with greedy heuristic (like taking
- * the center of some greedily constructed maximal path in the graph).
+ * The height of any depth-first search tree is an upper bound for tree-depth.
+ * Therefore, the root vertex is chosen to be the vertex in the middle of a (randomly-found) longest path.
+ * Starting from this vertex, the depth-first search tree, that always chooses the largest degree vertex,
+ * as next vertex, is constructed.
+ *
+ * The tree-depth upper bound can be improved by setting the NUM_DFS_TREE_GENERATION value. It determines how
+ * often the DFS tree is constructed. The lowest value of any such DFS tree found is returned as upper bound for
+ * tree-depth
+ *
  *
  * @author Verena Dittmer
  * */
@@ -142,7 +148,6 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
             newRootNode = iterator.next();
 
             if (!nodesHandled.contains(newRootNode)) {
-                // TODO could be changed that also here a maximal path is computed
                 break;
             }
         }

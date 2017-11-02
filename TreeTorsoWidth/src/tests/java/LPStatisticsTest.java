@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by Verena on 21.05.2017.
+ * Tests whether the LPStatistics are generated correctly
  */
 public class LPStatisticsTest extends StructuralParametersTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(LPStatisticsTest.class);
@@ -29,8 +29,6 @@ public class LPStatisticsTest extends StructuralParametersTest {
         Configuration.PRIMAL = true;
         Configuration.INCIDENCE = true;
         Configuration.DUAL = true;
-        // lpDataHeader: "name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;" +
-        // "numBoundVars;sizeObjFun;"
         Assert.assertEquals("bienst2;7;8;2;0,2857;false;0.0;2.0;1.0;2.0;1;",
                             new LPStatisticsFormatter(statistics).csvFormat());
     }

@@ -3,17 +3,20 @@ package main.java.algo;
 import nl.uu.cs.treewidth.input.GraphInput;
 
 /**
- * Created by Verena on 03.04.2017.
+ * LPInputData is used as additional vertex data for vertices in graph representations of (M)ILP instances
+ *
+ * It is used for storing whether a certain vertex corresponds to an integer variable or non-integer variable in a
+ * MILP instance.
  */
 public class LPInputData extends GraphInput.InputData {
+
+    private boolean isInteger = false;
+    private boolean nodeHandled = false;
 
     public LPInputData( int id, String name, boolean isInteger) {
         super( id, name );
         this.isInteger = isInteger;
     }
-
-    private boolean isInteger = false;
-    private boolean nodeHandled = false;
 
     public boolean isNodeHandled() {
         return nodeHandled;
