@@ -36,7 +36,7 @@ public class ThreadExecutor {
                 executor.shutdownNow();
                 // Wait a while for tasks to respond to being cancelled
                 if (!executor.awaitTermination(Configuration.TERMINATION_TIMEOUT, TimeUnit.SECONDS)) {
-                    LOGGER.error("Error: Executor did not terminate");
+                    LOGGER.debug("Executor did not terminate");
                 }
             }
         } catch (InterruptedException e) {

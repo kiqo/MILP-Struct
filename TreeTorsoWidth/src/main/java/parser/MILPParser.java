@@ -176,6 +176,12 @@ public class MILPParser extends ThreadExecutor {
         String line = sc.nextLine();
         String[] lineContents;
         while (!line.startsWith("BOUNDS") && !line.startsWith("ENDATA")) {
+            // netdiversion.mps has an empty ranges section
+            if (line.startsWith("RANGES")) {
+               line = sc.nextLine();
+               continue;
+            }
+
             lineContents = getDataWithoutSpaces(line);
 
             String rowName = lineContents[1];
