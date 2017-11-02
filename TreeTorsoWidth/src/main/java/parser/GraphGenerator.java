@@ -16,18 +16,18 @@ import java.util.*;
  */
 public abstract class GraphGenerator extends ThreadExecutor {
     protected static int vertexId = 0;
-    protected List<Node> nodes = new ArrayList<>();
+    protected Map<String, Node> nodes = new HashMap<>();
     protected List<Edge> edges = new ArrayList<>();
     protected Map<String, List<Node>> neighbourNodes = new HashMap<>();
 
     public abstract Graph linearProgramToGraph(LinearProgram lp) throws InterruptedException;
 
-    Graph createGraph(List<Node> nodes, List<Edge> edges, Map<String, List<Node>> neighbourNodes) {
-        Graph incidenceGraph = new Graph();
-        incidenceGraph.setEdges(edges);
-        incidenceGraph.setNeighbourNodes(neighbourNodes);
-        incidenceGraph.setNodes(nodes);
-        return incidenceGraph;
+    Graph createGraph(Map<String, Node> nodes, List<Edge> edges, Map<String, List<Node>> neighbourNodes) {
+        Graph graph = new Graph();
+        graph.setEdges(edges);
+        graph.setNeighbourNodes(neighbourNodes);
+        graph.setNodes(new ArrayList<>(nodes.values()));
+        return graph;
     }
 
     List<Row> getRows(LinearProgram lp) {
@@ -43,17 +43,18 @@ public abstract class GraphGenerator extends ThreadExecutor {
     }
 
     protected Node generateNodeIfNotExists(String nodeName) {
-        Node node =  new Node(nodeName, vertexId++);
-        if (!nodes.contains(node)) {
-            nodes.add(node);
-            neighbourNodes.put(node.getName(), new ArrayList<>());
+        Node node =  nodes.get(nodeName);
+        if (node == null) {
+            node = new Node(nodeName, vertexId++);
+            nodes.put(nodeName, node);
+            neighbourNodes.put(nodeName, new ArrayList<>());
         }
         return node;
     }
 
     protected Node generateNode(String nodeName) {
         Node node = new Node(nodeName, vertexId++);
-        nodes.add(node);
+        nodes.put(nodeName, node);
         neighbourNodes.put(node.getName(), new ArrayList<>());
         return node;
     }

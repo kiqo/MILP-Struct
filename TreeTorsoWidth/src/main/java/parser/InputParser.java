@@ -169,7 +169,7 @@ public class InputParser {
             if (Configuration.LOWER_BOUND) {
                 outputFile += "_LB";
             }
-            if (Configuration.LOWER_BOUND) {
+            if (Configuration.UPPER_BOUND) {
                 outputFile += "_UB";
             }
             if (Configuration.TORSO_WIDTH) {

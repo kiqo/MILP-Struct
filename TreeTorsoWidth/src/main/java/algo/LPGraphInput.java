@@ -30,15 +30,15 @@ public class LPGraphInput implements GraphInput {
     public NGraph<InputData> get() throws InputException {
         ListGraph<InputData> resultGraph = new ListGraph<>();
 
-        Hashtable<String, NVertex<InputData>> vertices = createVertices(resultGraph);
+        HashMap<String, NVertex<InputData>> vertices = createVertices(resultGraph);
         createEdges(resultGraph, vertices);
         createComponents(resultGraph);
 
         return resultGraph;
     }
 
-    private Hashtable<String, NVertex<InputData>> createVertices(NGraph<InputData> resultGraph) {
-        Hashtable<String, NVertex<InputData>> vertices = new Hashtable<>();
+    private HashMap<String, NVertex<InputData>> createVertices(NGraph<InputData> resultGraph) {
+        HashMap<String, NVertex<InputData>> vertices = new HashMap<>();
         NVertex<LPInputData> vertexPrototype = new ListVertex<>();
 
         // create vertices for NGraph
@@ -53,7 +53,7 @@ public class LPGraphInput implements GraphInput {
         return vertices;
     }
 
-    private void createEdges(ListGraph<InputData> resultGraph, Hashtable<String, NVertex<InputData>> vertices) {
+    private void createEdges(ListGraph<InputData> resultGraph, HashMap<String, NVertex<InputData>> vertices) {
         for (Map.Entry<String, List<Node>> nodeNeighboursPair : graph.getNeighbourNodes().entrySet()) {
             NVertex<InputData> v1, v2;
             String curNodeName = nodeNeighboursPair.getKey();

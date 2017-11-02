@@ -24,7 +24,7 @@ public class TreeWidthWrapper {
         LowerBound<GraphInput.InputData> lowerBoundAlg = getLowerBoundAlgo();
 
 
-        int lowerbound = Integer.MIN_VALUE;
+        int lowerbound = 0;
         int lowerboundSubGraph;
         for (NGraph subGraph : g.getComponents()) {
             lowerboundSubGraph = computeLowerBoundForComponent(lowerBoundAlg, subGraph);
@@ -59,7 +59,7 @@ public class TreeWidthWrapper {
     public static int computeUpperBoundWithComponents(NGraph<GraphInput.InputData> g) throws InterruptedException {
         UpperBound<GraphInput.InputData> ubAlgo = getUpperBoundAlgo();
 
-        int upperbound = Integer.MIN_VALUE;
+        int upperbound = 0;
         int upperboundSubGraph;
         for (NGraph subGraph : g.getComponents()) {
             upperboundSubGraph = computeUpperBoundForComponent(ubAlgo, subGraph);

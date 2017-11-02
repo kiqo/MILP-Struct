@@ -23,7 +23,7 @@ public class IncidenceGraphGenerator extends GraphGenerator {
         for (Row matrixRow : getRows(lp)) {
             checkInterrupted();
 
-            Node constraintNode = generateNodeIfNotExists(matrixRow.getName());
+            Node constraintNode = generateNode(matrixRow.getName());
             for (Variable variableEntry : matrixRow.getVariableEntries()) {
                 Node variableNode = generateNodeIfNotExists(variableEntry.getName());
                 variableNode.setInteger(lp.getVariables().get(variableNode.getName()).isInteger());
