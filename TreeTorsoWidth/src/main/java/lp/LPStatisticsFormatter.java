@@ -22,21 +22,28 @@ public class LPStatisticsFormatter {
     }
 
     public static String csvFormatHeader() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;sizeObjFun;");
+        StringBuilder sbColumn = new StringBuilder();
+        StringBuilder sbDescription = new StringBuilder();
+        sbDescription.append("Linear program statistics;;;;;;;;;;;");
+        sbColumn.append("name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;sizeObjFun;");
 
-        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;";
+        String graphDataHeader = "numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;numComponents;tw_lb;tw_ub;";
         if (Configuration.PRIMAL) {
-            sb.append(graphDataHeader).append("td_ub;torso_lb;torso_ub;");
+            sbDescription.append("Primal graph statistics").append(";;;;;;;;;;;;;;");
+            sbColumn.append(graphDataHeader).append("td_ub;torso_lb;torso_ub;");
         }
         if (Configuration.INCIDENCE) {
-            sb.append(graphDataHeader);
+            sbDescription.append("Incidence graph statistics").append(";;;;;;;;;;;");
+            sbColumn.append(graphDataHeader);
         }
         if (Configuration.DUAL) {
-            sb.append(graphDataHeader);
+            sbDescription.append("Dual graph statistics").append(";;;;;;;;;;;;");
+            sbColumn.append(graphDataHeader);
         }
-        sb.append(LINE_SEPARATOR);
-        return sb.toString();
+        sbColumn.append("totalTime");
+        sbDescription.append(LINE_SEPARATOR);
+        sbColumn.append(LINE_SEPARATOR);
+        return sbDescription.append(sbColumn).toString();
     }
 
     public String csvFormat() {

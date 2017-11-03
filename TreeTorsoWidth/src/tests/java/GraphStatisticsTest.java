@@ -36,10 +36,10 @@ public class GraphStatisticsTest extends StructuralParametersTest{
 
     private void checkResult(GraphStatistics primalStatistics, GraphStatistics incidenceGraphStatistics, GraphStatistics dualGraphStatistics) {
         Assert.assertEquals(
-                "7;2;0,2857;12;0,5714;1;5;3,4286;0;0;0;0;0;" + // graphData + td_ub;torso_lb;torso_ub;
-                "15;2;0,1333;23;0,4107;2;6;3,0667;0;0;" + // incidenceGraphData
-                "8;0;0,0000;22;0,7857;4;7;5,5000;0;0;" + // dualGraphData
-                System.lineSeparator(), new GraphStatisticsFormatter(primalStatistics, incidenceGraphStatistics, dualGraphStatistics).csvFormat());
+                "7;2;0,2857;12;0,5714;1;5;3,4286;0;0;0;0;0;0;" + // graphData + td_ub;torso_lb;torso_ub;
+                "15;2;0,1333;23;0,4107;2;6;3,0667;0;0;0;" + // incidenceGraphData
+                "8;0;0,0000;22;0,7857;4;7;5,5000;0;0;0;"// dualGraphData
+                , new GraphStatisticsFormatter(primalStatistics, incidenceGraphStatistics, dualGraphStatistics).csvFormat());
     }
 
     private GraphStatistics computeStatistics(LinearProgram lp, GraphGenerator graphGenerator, GraphStatistics graphStatistics) throws InterruptedException {

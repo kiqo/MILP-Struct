@@ -1,2 +1,3 @@
-name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;
-./../input/benchmarks/tanglegram2.mps;no result;
+Timeout for one MILP instance: 3600s
+name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;
+tanglegram2;4714;8980;4714;1,0000;true;3.0;4490.0;3.0;3.0;4490;4714;4714;1,0000;10087125;0,9081;2;4491;4279,6457;4489;0;4517;0;0;13695;4714;0,3442;31430;0,0007;2;4490;4,5900;13;0;

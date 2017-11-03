@@ -17,6 +17,7 @@ public class GraphData {
     private int torsoWidthUB;
     private int torsoWidthLB;
     private int treeDepthUB;
+    int numComponents;
 
 
     public int getTreeDepthUB() {
@@ -57,5 +58,13 @@ public class GraphData {
 
     public void setTorsoWidthLB(int torsoWidthLB) {
         this.torsoWidthLB = torsoWidthLB;
+    }
+
+    public int getNumComponents() {
+        return numComponents;
+    }
+
+    public void setNumComponents(int numComponents) {
+        this.numComponents = numComponents;
     }
 }

@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.util.concurrent.*;
 
 /**
- * Created by Verena on 22.05.2017.
+ * The structural parameter computation for one (M)ILP instance. It returns a String containing the results
+ * for the current (M)ILP instance. In case a timeout occurred, i.e. the current thread was cancelled, the structural
+ * parameters computation returns without a result.
  */
 public class StructuralParametersComputation extends ThreadExecutor implements Callable<String> {
 
@@ -30,6 +32,7 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
     private static String fileName;
     private StringBuilder sb = new StringBuilder();
     private static final Stopwatch t = new Stopwatch();
+    private static final Stopwatch totalTimer = new Stopwatch();
     private NGraph<GraphInput.InputData> gPrimal = null, gIncidence = null, gDual = null;
     private LPStatistics lpStatistics;
     private GraphStatistics primalGraphStatistics = new PrimalGraphStatistics();
@@ -46,20 +49,25 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         try {
             computeStructuralParameters(filePath);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            // Thread.currentThread().interrupt();
         }
         return sb.toString();
     }
 
     private void computeStructuralParameters(String fileName) throws IOException, InterruptedException {
+        startTimer(totalTimer);
         LinearProgram lp = parseLinearProgram(fileName);
+        LOGGER.debug("Finished parsing linear program");
         computeGraphRepresentations(lp);
+        LOGGER.debug("Finished computing graph representations");
         computeTWLowerBounds();
         computeTWUpperBounds();
         computeTorsoWidthOnPrimalGraph();
         computeTreeDepthOnPrimalGraph();
         formatLPStatistics();
         formatGraphStatistics();
+        stopTimer(totalTimer);
+        addTimingInformation();
     }
 
     private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
@@ -74,14 +82,17 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         if (Configuration.PRIMAL) {
             gPrimal = computeNGraph(lp, new PrimalGraphGenerator(), primalGraphStatistics);
             gPrimal.addComment("Primal");
+            LOGGER.debug("Finished primal graph representation");
         }
         if (Configuration.INCIDENCE) {
             gIncidence = computeNGraph(lp, new IncidenceGraphGenerator(), incidenceGraphStatistics);
             gIncidence.addComment("Incidence");
+            LOGGER.debug("Finished incidence graph representation");
         }
         if (Configuration.DUAL) {
             gDual = computeNGraph(lp, new DualGraphGenerator(), dualGraphStatistics);
             gDual.addComment("Dual");
+            LOGGER.debug("Finished dual graph representation");
         }
         checkInterrupted();
     }
@@ -94,6 +105,7 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         graphStatistics.setLpStatistics(lpStatistics);
         graphStatistics.computeGraphData(graph);
         nGraph = GraphTransformator.graphToNGraph(graph);
+        graphStatistics.getGraphData().setNumComponents(nGraph.getComponents().size());
         return nGraph;
     }
 
@@ -117,9 +129,9 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
     }
 
     private int computeTWLowerBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        startTimer();
+        startTimer(t);
         int lowerbound = TreeWidthWrapper.computeLowerBoundWithComponents(g);
-        stopTimer();
+        stopTimer(t);
         printTimingInfo(g, "LB TreeWidth", lowerbound, Configuration.LOWER_BOUND_ALG.getSimpleName());
         return lowerbound;
     }
@@ -144,9 +156,9 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
     }
 
     private int computeTWUpperBound(NGraph<GraphInput.InputData> g) throws InterruptedException {
-        startTimer();
+        startTimer(t);
         int upperbound = TreeWidthWrapper.computeUpperBoundWithComponents(g);
-        stopTimer();
+        stopTimer(t);
         printTimingInfo(g, "UB TreeWidth", upperbound, Configuration.UPPER_BOUND_ALG.getSimpleName());
         return upperbound;
     }
@@ -170,18 +182,18 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
     }
 
     private static void runAlgo(NGraph<GraphInput.InputData> g, Algorithm algorithm) throws InterruptedException {
-        startTimer();
+        startTimer(t);
         algorithm.setInput(g);
         algorithm.run();
-        stopTimer();
+        stopTimer(t);
     }
 
-    private static void startTimer() {
+    private static void startTimer(Stopwatch t) {
         t.reset();
         t.start();
     }
 
-    private static void stopTimer() {
+    private static void stopTimer(Stopwatch t) {
         t.stop();
     }
 
@@ -208,6 +220,11 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
 
     private void formatGraphStatistics() {
         sb.append(new GraphStatisticsFormatter(primalGraphStatistics, incidenceGraphStatistics, dualGraphStatistics).csvFormat());
+    }
+
+    private void addTimingInformation() {
+        sb.append(totalTimer.getTime() / 1000 + "s");
+        sb.append(System.lineSeparator());
     }
 
     private static void printTimingInfo(NGraph<GraphInput.InputData> graph, String algorithm, int result, String algoName) {

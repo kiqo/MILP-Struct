@@ -30,7 +30,6 @@ public class GraphStatisticsFormatter {
         if (Configuration.DUAL) {
             formatDualGraphData(sb);
         }
-        sb.append(LINE_SEPARATOR);
         return sb.toString();
     }
 
@@ -70,6 +69,7 @@ public class GraphStatisticsFormatter {
         sb.append(graphData.minDegree).append(";");
         sb.append(graphData.maxDegree).append(";");
         sb.append(new DecimalFormat("0.0000").format(graphData.avgDegree)).append(";");
+        sb.append(graphData.numComponents).append(";");
         if (graphData.getTreewidthLB() != Integer.MIN_VALUE) {
             sb.append(graphData.getTreewidthLB()).append(";");
         } else {

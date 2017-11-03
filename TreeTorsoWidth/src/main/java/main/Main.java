@@ -1,5 +1,6 @@
 package main.java.main;
 
+import main.java.lp.LPStatistics;
 import main.java.lp.LPStatisticsFormatter;
 import main.java.parser.InputParser;
 import org.slf4j.Logger;
@@ -86,7 +87,7 @@ public class Main {
 
     private static String invokeTask(ThreadExecutor executor, String fileName) {
         String resultString = null;
-        LOGGER.debug("Structural Parameters: " + fileName);
+        LOGGER.info("Start structural parameters computation for " + fileName);
         try {
             // invoke all waits until all tasks are finished (= terminated or had an error)
             List<Future<String>> result = executor.startStructuralParameterComputation(fileName);
