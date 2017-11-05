@@ -46,7 +46,7 @@ public class GraphStatisticsFormatter {
     private void formatPrimalGraphData(StringBuilder sb) {
         GraphData primalGraphData = primalGraphStatistics.getGraphData();
         formatGraphData(sb, primalGraphData);
-        if (primalGraphData.getTreeDepthUB() != Integer.MAX_VALUE) {
+        if(primalGraphData.getTreeDepthUB()!=Integer.MAX_VALUE) {
             sb.append(primalGraphData.getTreeDepthUB());
         }
         sb.append(";");
@@ -61,28 +61,24 @@ public class GraphStatisticsFormatter {
     }
 
     private void formatGraphData(StringBuilder sb, GraphData graphData) {
-        if (graphData != null) {
-            sb.append(graphData.numNodes).append(";");
-            sb.append(graphData.numIntegerNodes).append(";");
-            sb.append(new DecimalFormat("0.0000").format(graphData.proportionIntegerNodes)).append(";");
-            sb.append(graphData.numEdges).append(";");
-            sb.append(new DecimalFormat("0.0000").format(graphData.density)).append(";");
-            sb.append(graphData.minDegree).append(";");
-            sb.append(graphData.maxDegree).append(";");
-            sb.append(new DecimalFormat("0.0000").format(graphData.avgDegree)).append(";");
-            sb.append(graphData.numComponents).append(";");
-            if (graphData.getTreewidthLB() != Integer.MIN_VALUE) {
-                sb.append(graphData.getTreewidthLB()).append(";");
-            } else {
-                sb.append(";");
-            }
-            if (graphData.getTreewidthUB() != Integer.MAX_VALUE) {
-                sb.append(graphData.getTreewidthUB()).append(";");
-            } else {
-                sb.append(";");
-            }
+        sb.append(graphData.numNodes).append(";");
+        sb.append(graphData.numIntegerNodes).append(";");
+        sb.append(new DecimalFormat("0.0000").format(graphData.proportionIntegerNodes)).append(";");
+        sb.append(graphData.numEdges).append(";");
+        sb.append(new DecimalFormat("0.0000").format(graphData.density)).append(";");
+        sb.append(graphData.minDegree).append(";");
+        sb.append(graphData.maxDegree).append(";");
+        sb.append(new DecimalFormat("0.0000").format(graphData.avgDegree)).append(";");
+        sb.append(graphData.numComponents).append(";");
+        if (graphData.getTreewidthLB() != Integer.MIN_VALUE) {
+            sb.append(graphData.getTreewidthLB()).append(";");
         } else {
-            sb.append("no result;;;;;;;;;;;");
+            sb.append(";");
+        }
+        if (graphData.getTreewidthUB() != Integer.MAX_VALUE) {
+            sb.append(graphData.getTreewidthUB()).append(";");
+        } else {
+            sb.append(";");
         }
     }
 }

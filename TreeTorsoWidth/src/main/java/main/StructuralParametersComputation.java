@@ -49,13 +49,7 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         try {
             computeStructuralParameters(filePath);
         } catch (InterruptedException e) {
-            // Thread.currentThread().interrupt();
         }
-        // print lp, graph and timing information even if thread was interrupted
-        formatLPStatistics();
-        formatGraphStatistics();
-        stopTimer(totalTimer);
-        addTimingInformation();
         return sb.toString();
     }
 
@@ -69,6 +63,10 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         computeTWUpperBounds();
         computeTorsoWidthOnPrimalGraph();
         computeTreeDepthOnPrimalGraph();
+        formatLPStatistics();
+        formatGraphStatistics();
+        stopTimer(totalTimer);
+        addTimingInformation();
     }
 
     private LinearProgram parseLinearProgram(String fileName) throws IOException, InterruptedException {
