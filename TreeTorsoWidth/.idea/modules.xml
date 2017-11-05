@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TreeTorsoWidth.iml" filepath="$PROJECT_DIR$/TreeTorsoWidth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MILP-Struct.iml" filepath="$PROJECT_DIR$/MILP-Struct.iml" />
     </modules>
   </component>
 </project>
