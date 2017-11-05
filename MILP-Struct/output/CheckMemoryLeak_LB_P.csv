@@ -1,0 +1,6 @@
+Timeout for one MILP instance: 600s
+Linear program statistics;;;;;;;;;;;Primal graph statistics;;;;;;;;;;;;;;
+name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;numComponents;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;totalTime
+./../input\benchmarks\mspp16.mps;no result;
+gmu-35-40;1205;424;1200;0,9959;false;0.0;425.0;11.0;11.0;1050;842;837;0,9941;138020;0,3898;5;625;327,8385;1;424;0;0;0;0;2s
+30n20b8;18380;576;18380;1,0000;true;2.0;640.0;190.0;190.0;2;18380;18380;1,0000;6770133;0,0401;425;4373;736,6848;1;738;0;0;0;0;254s
