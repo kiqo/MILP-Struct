@@ -4,6 +4,7 @@ import wagu.Block;
 import wagu.Board;
 import wagu.Table;
 
+import java.rmi.ConnectIOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,9 +16,9 @@ public class HelpPage {
     private static final int TABLE_WIDTH = 120;
     private static final String DOUBLE_TAB = "\t\t";
 
-    private static final String shortHelpMessage = "Usage: TreeTorsoWidth [--help] <inputFile(.mps|.txt)> [-o <outputFile.csv>] " +
+    private static final String shortHelpMessage = "Usage: " + Configuration.PROGRAM_NAME + " [--help] <inputFile(.mps|.txt)> [-o <outputFile.csv>] " +
             "(--lb|--ub|--to|--td) -g (<primal>|<incidence>|<dual>) [--obj]" + NL +
-            "See TreeTorsoWidth --help for more information";
+            "See " + Configuration.PROGRAM_NAME + " --help for more information";
 
     public static String getShortHelpMessage() {
         return shortHelpMessage;
@@ -53,7 +54,7 @@ public class HelpPage {
                     Arrays.asList("", "", "(M)ILP. "),
                     Arrays.asList("", "", ""),
                     Arrays.asList("", "Arguments", ""),
-                    Arrays.asList("", "", "TreeTorsoWidth [--help] <inputFile(.mps|.txt)> "),
+                    Arrays.asList("", "", Configuration.PROGRAM_NAME + " [--help] <inputFile(.mps|.txt)> "),
                     Arrays.asList("", "", "[-o <outputFile.csv>] (--lb|--ub|--to|--td)"),
                     Arrays.asList("", "", "-g (<primal>|<incidence>|<dual>) [--obj]"),
                     Arrays.asList("", "", ""),

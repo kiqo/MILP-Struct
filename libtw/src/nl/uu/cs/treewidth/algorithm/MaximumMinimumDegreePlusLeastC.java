@@ -61,7 +61,7 @@ public class MaximumMinimumDegreePlusLeastC<D extends InputData> implements Lowe
 		graph = g.copy( );
 	}
 
-	public void run() {
+	public void run() throws InterruptedException {
 		/* MMD(Graph G) ::
 		 * H = G
 		 * maxmin = 0
@@ -77,7 +77,11 @@ public class MaximumMinimumDegreePlusLeastC<D extends InputData> implements Lowe
 		int maxDegree = 0;		
 		int numNodes = graph.getNumberOfVertices();
 		for( int i=0; i<numNodes; ++i) {
-			
+			if (i % 100 == 0 && Thread.currentThread().isInterrupted()) {
+				throw new InterruptedException();
+			}
+
+
 			//Select a vertex from the graph that has minimum degree
 			NVertex<D> minDegreeVertex = null;
 			int min = Integer.MAX_VALUE;
