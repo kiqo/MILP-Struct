@@ -22,17 +22,9 @@ public class MILPParser extends ThreadExecutor {
     private static final int COL_2_START = 14;
 
     public LinearProgram parseMPS(String filename) throws IOException, InterruptedException {
-        checkCorrectFileFormat(filename);
         LinearProgram lp = constructLP(filename);
         computeLPStatistics(lp);
         return lp;
-    }
-
-    private void checkCorrectFileFormat(String filename) throws IOException {
-        String[] splits = filename.split("\\.");
-        if (!splits[splits.length - 1].equals("mps") && !splits[splits.length - 1].equals("mps\"") && !splits[splits.length - 1].equals("MPS")) {
-            throw new IOException("parseMPS may only handle files with .mps as ending!");
-        }
     }
 
     private LinearProgram constructLP(String filename) throws IOException, InterruptedException {

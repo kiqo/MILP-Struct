@@ -1,9 +1,12 @@
 package main.java.parser;
 
+import main.java.exception.InputArgumentsException;
 import main.java.main.Configuration;
 import main.java.main.HelpPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * Parses the input arguments of the program
@@ -12,20 +15,24 @@ public class InputParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(InputParser.class);
 
     public static void parseArguments(String[] args) {
-        checkAtLeastOneArgument(args);
-        if (helpArgumentSet(args)) {
-            printLongHelpMessage();
-            exitProgram(0);
+        try {
+            checkAtLeastOneArgument(args);
+            if (helpArgumentSet(args)) {
+                printLongHelpMessage();
+                exitProgram(0);
+            }
+            setConfigurationsForArguments(args);
+            checkForConfigurationErrors();
+        } catch (InputArgumentsException e) {
+            printErrorAndExit(e.getMessage());
         }
-        boolean error = setConfigurationsForArguments(args);
-        error = checkForConfigurationErrors(error);
-        handleError(error);
         Configuration.print();
     }
 
-    private static void checkAtLeastOneArgument(String[] args) {
-        boolean error = args.length == 0;
-        handleError(error);
+    private static void checkAtLeastOneArgument(String[] args) throws InputArgumentsException {
+        if (args.length == 0) {
+            throw new InputArgumentsException("Too few input arguments!");
+        }
     }
 
     private static void printLongHelpMessage() {
@@ -33,14 +40,18 @@ public class InputParser {
     }
 
     private static boolean helpArgumentSet(String[] args) {
-        return args[0].equals("--help") || args[1].equals("--help");
+        for (String arg : args) {
+            if (arg.equals("--help")) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private static void handleError(boolean error) {
-        if (error) {
-            printShortHelpMessage();
-            exitProgram(1);
-        }
+    private static void printErrorAndExit(String errorMessage) {
+        LOGGER.error(errorMessage);
+        printShortHelpMessage();
+        exitProgram(1);
     }
 
     private static void printShortHelpMessage() {
@@ -48,49 +59,65 @@ public class InputParser {
         LOGGER.error(shortHelpMessage);
     }
 
-    private static void setInputFilePath(String[] args) {
+    private static void setInputFilePath(String[] args) throws InputArgumentsException {
+        checkCorrectFileFormat(args[0]);
+        checkFileCanBeAccessed(args[0]);
         Configuration.INPUT_FILE = args[0];
     }
 
-    private static boolean checkForConfigurationErrors(boolean error) {
+    private static void checkFileCanBeAccessed(String filePath) throws InputArgumentsException {
+        File f = new File(filePath);
+        if (!f.isFile()) {
+            throw new InputArgumentsException(filePath + " cannot be found or is not a file");
+        }
+        if (!f.canRead()) {
+            throw new InputArgumentsException("The file " + filePath + " cannot be read");
+        }
+    }
+
+    private static void checkCorrectFileFormat(String filePath) throws InputArgumentsException {
+        String[] splits = filePath.split("\\.");
+        if (!splits[splits.length - 1].equals("mps") && !splits[splits.length - 1].equals("mps\"") && !splits[splits.length - 1].equals("MPS")) {
+            throw new InputArgumentsException("Input file must have .mps as ending!");
+        }
+    }
+
+    private static void checkForConfigurationErrors() throws InputArgumentsException {
         if (Configuration.OUTPUT_FILE != null) {
             int outputFileLength = Configuration.OUTPUT_FILE.length();
             if (!Configuration.OUTPUT_FILE.substring(outputFileLength - 4, outputFileLength).equals(".csv")){
-                LOGGER.error("Output file must end on .csv!");
-                error = true;
+                throw new InputArgumentsException("Output file must end on .csv!");
             }
         }
 
+        if (!Configuration.PRIMAL & !Configuration.INCIDENCE & !Configuration.DUAL) {
+            throw new InputArgumentsException("One of the three graph representations -g primal incidence dual must be set!");
+        }
+
         if (!Configuration.LOWER_BOUND & !Configuration.UPPER_BOUND & !Configuration.TORSO_WIDTH && !Configuration.TREE_DEPTH) {
-            LOGGER.error("Either --ub --lb --to or --td must be set!");
-            error = true;
+            throw new InputArgumentsException("Either --ub --lb --to or --td must be set!");
         }
 
         if (Configuration.TORSO_WIDTH && !Configuration.PRIMAL) {
-            LOGGER.error("Error: Option to compute torso width is only possible if graph type Configuration.PRIMAL is specified!");
-            error = true;
+            throw new InputArgumentsException("Error: Option to compute torso width is only possible if graph type Configuration.PRIMAL is specified!");
         }
 
         if (Configuration.TREE_DEPTH && !Configuration.PRIMAL) {
-            LOGGER.error("Error: Option to compute treedepth is only possible if graph type Configuration.PRIMAL is specified!");
-            error = true;
+            throw new InputArgumentsException("Error: Option to compute treedepth is only possible if graph type Configuration.PRIMAL is specified!");
         }
-        return error;
     }
 
     private static void exitProgram(int exitStatus) {
         System.exit(exitStatus);
     }
 
-    private static boolean setConfigurationsForArguments(String[] args) {
+    private static void setConfigurationsForArguments(String[] args) throws InputArgumentsException {
         setInputFilePath(args);
-        boolean error = parseStructuralParameterArguments(args);
+        parseStructuralParameterArguments(args);
         setOutputFilePathIfNotSet();
-        return error;
     }
 
-    private static boolean parseStructuralParameterArguments(String[] args) {
-        boolean error = false;
+    private static void parseStructuralParameterArguments(String[] args) throws InputArgumentsException {
         boolean expectOutputFile = false , expectGraphType = false;
         for (int i = 1; i < args.length; i++) {
             switch (args[i]) {
@@ -127,20 +154,19 @@ public class InputParser {
                         break;
                     }
                     if (expectGraphType) {
-                        error = parseGraphType(args[i], error);
+                        parseGraphType(args[i]);
                         break;
                     }
-                    error = true;
+                    throw new InputArgumentsException("Unknown argument " + args[i]);
             }
         }
-        return error;
     }
 
     private static void parseOutputFile(String outputFile) {
         Configuration.OUTPUT_FILE = outputFile;
     }
 
-    private static boolean parseGraphType(String arg, boolean error) {
+    private static void parseGraphType(String arg) throws InputArgumentsException {
         String graphType = arg;
         if (graphType.equalsIgnoreCase("p") || graphType.equalsIgnoreCase("primal")) {
             Configuration.PRIMAL = true;
@@ -149,10 +175,8 @@ public class InputParser {
         } else if (graphType.equalsIgnoreCase("d") || graphType.equalsIgnoreCase("dual")) {
             Configuration.DUAL = true;
         } else {
-            LOGGER.error("Error: Graph type that should be computed is not recognized!");
-            error = true;
+            throw new InputArgumentsException("Error: Graph type that should be computed is not recognized!");
         }
-        return error;
     }
 
     private static void setOutputFilePathIfNotSet() {
