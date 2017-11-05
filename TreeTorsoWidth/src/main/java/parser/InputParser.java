@@ -85,7 +85,7 @@ public class InputParser {
     private static void checkForConfigurationErrors() throws InputArgumentsException {
         if (Configuration.OUTPUT_FILE != null) {
             int outputFileLength = Configuration.OUTPUT_FILE.length();
-            if (!Configuration.OUTPUT_FILE.substring(outputFileLength - 4, outputFileLength).equals(".csv")){
+            if (Configuration.OUTPUT_FILE.length() < 4 || !Configuration.OUTPUT_FILE.substring(outputFileLength - 4, outputFileLength).equals(".csv")){
                 throw new InputArgumentsException("Output file must end on .csv!");
             }
         }
