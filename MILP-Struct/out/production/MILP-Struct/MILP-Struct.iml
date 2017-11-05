@@ -6,11 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../WAGU">
-      <sourceFolder url="file://$MODULE_DIR$/../WAGU" isTestSource="false" />
-    </content>
-    <content url="file://$MODULE_DIR$/../libtw">
-      <sourceFolder url="file://$MODULE_DIR$/../libtw/src" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/lib/libtw">
+      <sourceFolder url="file://$MODULE_DIR$/lib/libtw/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

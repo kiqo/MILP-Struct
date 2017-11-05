@@ -20,3 +20,4 @@ TreeTorsoWidth/*.png
 hs_err_pid*
 .idea/workspace.xml
 TreeTorsoWidth/.idea/workspace.xml
+MILP-Struct/logs/logging.log

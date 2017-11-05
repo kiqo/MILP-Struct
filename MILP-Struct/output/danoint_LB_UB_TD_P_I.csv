@@ -1,2 +1,0 @@
-name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;numBoundVars;minCoeff;maxCoeff;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;tw_lb;tw_ub;
-danoint;521;664;56;0,1075;false;0.0;7.0;1.0;4.0;64;-66.5;62.69;1;521;56;0,1075;12888;0,0951;8;120;49,4741;95;0;461;0;0;1185;56;0,0473;3232;0,0093;2;64;5,4549;36;0;
