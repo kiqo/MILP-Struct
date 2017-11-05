@@ -11,7 +11,7 @@ public class Configuration {
     private static final String NL = System.getProperty("line.separator");
     private static final String TAB = "\t";
 
-    public static String PROGRAM_NAME = "TreeTorsoWidth";
+    public static String PROGRAM_NAME = "MILP-Struct";
     public static long TERMINATION_TIMEOUT = 5;
     public static long TIMEOUT = 60 * 10; // 10 min
     public static Class<?> UPPER_BOUND_ALG = null;
