@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="WAGU">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/lib/WAGU" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="LibTW">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/lib/libtw/src" />
+    </SOURCES>
+  </library>
+</component>

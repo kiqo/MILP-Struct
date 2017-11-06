@@ -1,6 +1,5 @@
 package main.java.main;
 
-import main.java.lp.LPStatistics;
 import main.java.lp.LPStatisticsFormatter;
 import main.java.parser.InputParser;
 import org.slf4j.Logger;
