@@ -77,8 +77,9 @@ public class InputParser {
 
     private static void checkCorrectFileFormat(String filePath) throws InputArgumentsException {
         String[] splits = filePath.split("\\.");
-        if (!splits[splits.length - 1].equals("mps") && !splits[splits.length - 1].equals("mps\"") && !splits[splits.length - 1].equals("MPS")) {
-            throw new InputArgumentsException("Input file must have .mps as ending!");
+        if (!splits[splits.length - 1].equals("mps") && !splits[splits.length - 1].equals("mps\"") && !splits[splits.length - 1].equals("MPS")
+                && !splits[splits.length - 1].equals("txt") && !splits[splits.length - 1].equals("txt\"") && !splits[splits.length - 1].equals("TXT")) {
+            throw new InputArgumentsException("Input file must have .mps or .txt as ending!");
         }
     }
 

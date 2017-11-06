@@ -27,12 +27,12 @@ public class MILPParser extends ThreadExecutor {
         return lp;
     }
 
-    private LinearProgram constructLP(String filename) throws IOException, InterruptedException {
+    private LinearProgram constructLP(String filePath) throws IOException, InterruptedException {
         LinearProgram lp = new LinearProgram();
         FileInputStream inputStream;
         Scanner sc = null;
         try  {
-            inputStream = new FileInputStream(filename);
+            inputStream = new FileInputStream(filePath.trim());
             sc = new Scanner(inputStream, "UTF-8");
             parseName(lp, sc);
             parseRows(lp, sc);
@@ -42,7 +42,9 @@ public class MILPParser extends ThreadExecutor {
             sc.close();
         } catch (IOException e) {
             LOGGER.error("", e);
-            sc.close();
+            if (sc != null) {
+                sc.close();
+            }
         }
         return lp;
     }

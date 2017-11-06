@@ -4,7 +4,6 @@ import wagu.Block;
 import wagu.Board;
 import wagu.Table;
 
-import java.rmi.ConnectIOException;
 import java.util.Arrays;
 import java.util.List;
 
