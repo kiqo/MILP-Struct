@@ -30,9 +30,6 @@ public class SerializerTest extends GraphTest {
         statistics.setLpStatistics(lp.getStatistics());
         statistics.computeGraphData(graph);
 
-        Serializer.serializeToFile(nGraph, "bienst2_small_test_deserialize_primal.ser");
-        Serializer.serializeToFile(statistics, "bienst2_small_test_deserialize_primalStatistics.ser");
-
         Configuration.PRIMAL = true;
         Configuration.INCIDENCE = false;
         Configuration.DUAL = false;
@@ -40,10 +37,10 @@ public class SerializerTest extends GraphTest {
 
     @Test
     public void testSerializeToAndFromFile() throws InterruptedException {
-        Serializer.serializeToFile(nGraph, "bienst2_small_test_primal.ser");
-        Serializer.serializeToFile(statistics, "bienst2_small_test_primalStatistics.ser");
-        NGraph<GraphInput.InputData> primalGraphDeserialized = (NGraph<GraphInput.InputData>) Serializer.deserializeFromFile( "bienst2_small_test_primal.ser");
-        GraphStatistics primalStatisticsDeserialized = (GraphStatistics) Serializer.deserializeFromFile( "bienst2_small_test_primalStatistics.ser");
+        Serializer.serializeToFile(nGraph, Configuration.GRAPH_REPRESENTATIONS_FOLDER + "tests/" + "bienst2_small_test_primal.ser");
+        Serializer.serializeToFile(statistics, Configuration.GRAPH_REPRESENTATIONS_FOLDER + "tests/" + "bienst2_small_test_primalStatistics.ser");
+        NGraph<GraphInput.InputData> primalGraphDeserialized = (NGraph<GraphInput.InputData>) Serializer.deserializeFromFile( Configuration.GRAPH_REPRESENTATIONS_FOLDER + "tests/" + "bienst2_small_test_primal.ser");
+        GraphStatistics primalStatisticsDeserialized = (GraphStatistics) Serializer.deserializeFromFile( Configuration.GRAPH_REPRESENTATIONS_FOLDER + "tests/" + "bienst2_small_test_primalStatistics.ser");
 
         assertSameGraph(nGraph, primalGraphDeserialized);
         assertSameStatistics(statistics, primalStatisticsDeserialized);

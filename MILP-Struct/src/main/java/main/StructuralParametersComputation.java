@@ -14,6 +14,7 @@ import nl.uu.cs.treewidth.ngraph.NGraph;
 import nl.uu.cs.treewidth.timing.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.security.krb5.Config;
 
 import java.io.IOException;
 
@@ -103,19 +104,16 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         NGraph<GraphInput.InputData> graph = computeNGraph(lp, graphGenerator, graphStatistics);
         graph.addComment(graphType.toString());
         LOGGER.debug("Finished " + graphType.toString() + " graph representation");
-        checkInterrupted();
-        Serializer.serializeToFile(graph, fileName + "_" + graphType + ".ser");
-        checkInterrupted();
-        Serializer.serializeToFile(graphStatistics, fileName + "_" + graphType + "Statistics.ser");
+        Serializer.serializeToFile(graph, Serializer.getDefaultGraphPath(fileName, graphType));
+        Serializer.serializeToFile(graphStatistics, Serializer.getDefaultStatisticsPath(fileName, graphType));
         LOGGER.debug("Finished serializing " + graphType.toString() + " graph representation to file");
         checkInterrupted();
         return graph;
     }
 
     private boolean deserializeGraphRepresentation(GraphType graphType) {
-        String fileNameGraph = fileName + "_" + graphType + ".ser";
-        NGraph<GraphInput.InputData> graph = (NGraph<GraphInput.InputData>) Serializer.deserializeFromFile(fileNameGraph);
-        GraphStatistics statistics = (GraphStatistics) Serializer.deserializeFromFile(fileName + "_" + graphType + "Statistics.ser");
+        NGraph<GraphInput.InputData> graph = (NGraph<GraphInput.InputData>) Serializer.deserializeFromFile(Serializer.getDefaultGraphPath(fileName,graphType));
+        GraphStatistics statistics = (GraphStatistics) Serializer.deserializeFromFile(Serializer.getDefaultStatisticsPath(fileName, graphType));
 
         if (graph == null || statistics == null) {
             return false;
@@ -126,7 +124,7 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
             case INCIDENCE: gIncidence = graph; incidenceGraphStatistics = statistics; break;
             default: return false;
         }
-        LOGGER.debug("Deserialized " + fileNameGraph);
+        LOGGER.debug("Deserialized from " + Serializer.getDefaultGraphPath(fileName,graphType));
         return true;
     }
 
