@@ -21,11 +21,12 @@
  
 package nl.uu.cs.treewidth.ngraph;
 
+import java.io.Serializable;
 import java.util.*;
 
 import nl.uu.cs.treewidth.output.Output;
 
-public abstract class NGraph< D > implements Iterable<NVertex<D>> {
+public abstract class NGraph< D > implements Iterable<NVertex<D>>, Serializable{
 	
 	String comments = "";
 	

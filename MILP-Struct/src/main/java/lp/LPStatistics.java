@@ -4,17 +4,18 @@ import main.java.main.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * Created by Verena on 19.04.2017.
  */
-public class LPStatistics {
+public class LPStatistics implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LPStatistics.class);
 
-    private LinearProgram linearProgram;
+    private transient LinearProgram linearProgram;
     private LPData linearProgramData;
 
     public LinearProgram getLinearProgram() {

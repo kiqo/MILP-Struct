@@ -1,9 +1,11 @@
 package main.java.graph;
 
+import java.io.Serializable;
+
 /**
  * Created by Verena on 19.04.2017.
  */
-public class GraphData {
+public class GraphData implements Serializable{
     int numNodes;
     int numIntegerNodes;
     double proportionIntegerNodes;

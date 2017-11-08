@@ -41,7 +41,11 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
 
     public StructuralParametersComputation (String filePath) {
         this.filePath = filePath;
-        this.fileName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length());
+        int lastIndexOfSlashOrBackslash = filePath.lastIndexOf("\\");
+        if (filePath.lastIndexOf("/") > lastIndexOfSlashOrBackslash) {
+            lastIndexOfSlashOrBackslash = filePath.lastIndexOf("/");
+        }
+        this.fileName = filePath.substring(lastIndexOfSlashOrBackslash+1, filePath.length()-4);
     }
 
     @Override
@@ -79,21 +83,51 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
 
     private void computeGraphRepresentations(LinearProgram lp) throws InterruptedException {
         if (Configuration.PRIMAL) {
-            gPrimal = computeNGraph(lp, new PrimalGraphGenerator(), primalGraphStatistics);
-            gPrimal.addComment("Primal");
-            LOGGER.debug("Finished primal graph representation");
+            if (!deserializeGraphRepresentation(GraphType.PRIMAL)) {
+                gPrimal = computeGraphRepresentation(lp, new PrimalGraphGenerator(), primalGraphStatistics, GraphType.PRIMAL);
+            }
         }
         if (Configuration.INCIDENCE) {
-            gIncidence = computeNGraph(lp, new IncidenceGraphGenerator(), incidenceGraphStatistics);
-            gIncidence.addComment("Incidence");
-            LOGGER.debug("Finished incidence graph representation");
+            if (!deserializeGraphRepresentation(GraphType.INCIDENCE)) {
+                gIncidence = computeGraphRepresentation(lp, new IncidenceGraphGenerator(), incidenceGraphStatistics, GraphType.INCIDENCE);
+            }
         }
         if (Configuration.DUAL) {
-            gDual = computeNGraph(lp, new DualGraphGenerator(), dualGraphStatistics);
-            gDual.addComment("Dual");
-            LOGGER.debug("Finished dual graph representation");
+            if (!deserializeGraphRepresentation(GraphType.DUAL)) {
+                gDual = computeGraphRepresentation(lp, new DualGraphGenerator(), dualGraphStatistics, GraphType.DUAL);
+            }
         }
+    }
+
+    private NGraph<GraphInput.InputData> computeGraphRepresentation(LinearProgram lp, GraphGenerator graphGenerator, GraphStatistics graphStatistics, GraphType graphType) throws InterruptedException {
+        NGraph<GraphInput.InputData> graph = computeNGraph(lp, graphGenerator, graphStatistics);
+        graph.addComment(graphType.toString());
+        LOGGER.debug("Finished " + graphType.toString() + " graph representation");
         checkInterrupted();
+        Serializer.serializeToFile(graph, fileName + "_" + graphType + ".ser");
+        checkInterrupted();
+        Serializer.serializeToFile(graphStatistics, fileName + "_" + graphType + "Statistics.ser");
+        LOGGER.debug("Finished serializing " + graphType.toString() + " graph representation to file");
+        checkInterrupted();
+        return graph;
+    }
+
+    private boolean deserializeGraphRepresentation(GraphType graphType) {
+        String fileNameGraph = fileName + "_" + graphType + ".ser";
+        NGraph<GraphInput.InputData> graph = (NGraph<GraphInput.InputData>) Serializer.deserializeFromFile(fileNameGraph);
+        GraphStatistics statistics = (GraphStatistics) Serializer.deserializeFromFile(fileName + "_" + graphType + "Statistics.ser");
+
+        if (graph == null || statistics == null) {
+            return false;
+        }
+        switch (graphType) {
+            case PRIMAL: gPrimal = graph; primalGraphStatistics = statistics; break;
+            case DUAL: gDual = graph; dualGraphStatistics = statistics; break;
+            case INCIDENCE: gIncidence = graph; incidenceGraphStatistics = statistics; break;
+            default: return false;
+        }
+        LOGGER.debug("Deserialized " + fileNameGraph);
+        return true;
     }
 
     public NGraph<GraphInput.InputData> computeNGraph(LinearProgram lp, GraphGenerator graphGenerator, GraphStatistics graphStatistics) throws InterruptedException {
@@ -101,11 +135,15 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         NGraph<GraphInput.InputData> nGraph;
         graph = graphGenerator.linearProgramToGraph(lp);
         checkInterrupted();
+        nGraph = GraphTransformator.graphToNGraph(graph);
+        computeGraphStatistics(graphStatistics, graph, nGraph);
+        return nGraph;
+    }
+
+    private void computeGraphStatistics(GraphStatistics graphStatistics, Graph graph, NGraph<GraphInput.InputData> nGraph) {
         graphStatistics.setLpStatistics(lpStatistics);
         graphStatistics.computeGraphData(graph);
-        nGraph = GraphTransformator.graphToNGraph(graph);
         graphStatistics.getGraphData().setNumComponents(nGraph.getComponents().size());
-        return nGraph;
     }
 
     private void computeTWLowerBounds() throws InterruptedException {

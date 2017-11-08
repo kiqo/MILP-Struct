@@ -2,13 +2,14 @@ package main.java.graph;
 
 import main.java.lp.LPStatistics;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Verena on 22.08.2017.
  */
-public abstract class GraphStatistics {
+public abstract class GraphStatistics implements Serializable {
     GraphData graphData;
     LPStatistics lpStatistics;
 

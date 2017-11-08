@@ -21,9 +21,10 @@
  
 package nl.uu.cs.treewidth.ngraph;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
-public abstract class NVertex< D > implements Iterable<NVertex<D>> {
+public abstract class NVertex< D > implements Iterable<NVertex<D>>, Serializable {
 
 	public D data;
 	

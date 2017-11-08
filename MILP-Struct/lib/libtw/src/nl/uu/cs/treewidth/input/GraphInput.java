@@ -23,6 +23,8 @@ package nl.uu.cs.treewidth.input;
 
 import nl.uu.cs.treewidth.ngraph.NGraph;
 
+import java.io.Serializable;
+
 /**
  * <p>Interface for classes that can return a Graph.</p> 
  * <p>Using this interface the program can be oblivious of where the
@@ -55,7 +57,7 @@ import nl.uu.cs.treewidth.ngraph.NGraph;
  */
 public interface GraphInput {
 	
-	public static class InputData {
+	public static class InputData implements Serializable {
 		public InputData() {}
 		public InputData( int id, String name ) {
 			this.id = id;

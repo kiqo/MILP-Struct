@@ -13,13 +13,14 @@ public class Configuration {
 
     public static String PROGRAM_NAME = "MILP-Struct";
     public static long TERMINATION_TIMEOUT = 5;
-    public static long TIMEOUT = 60 * 10; // 10 min
+    public static long TIMEOUT = 60 * 60; // 10 min
     public static Class<?> UPPER_BOUND_ALG = null;
     public static Class<?> LOWER_BOUND_ALG = null;
     public static final String DEFAULT_LOWER_BOUND_ALG = "nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC";
     public static final String DEFAULT_UPPER_BOUND_ALG = "nl.uu.cs.treewidth.algorithm.GreedyDegree";
     public static String INPUT_FILE = null;
     public static String OUTPUT_FILE = null;
+    public static String GRAPH_REPRESENTATIONS_FOLDER = "./graphs/";
     public static boolean PRIMAL = false;
     public static boolean INCIDENCE = false;
     public static boolean DUAL = false;

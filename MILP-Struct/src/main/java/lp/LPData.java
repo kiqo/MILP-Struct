@@ -1,9 +1,11 @@
 package main.java.lp;
 
+import java.io.Serializable;
+
 /**
  * Used for storing parameters of the (M)ILP
  */
-public class LPData {
+public class LPData implements Serializable {
     public int numVariables;
     public int numIntegerVariables;
     public boolean isIntegerLP;
