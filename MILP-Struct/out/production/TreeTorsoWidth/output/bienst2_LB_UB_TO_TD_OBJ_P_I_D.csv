@@ -1,4 +1,0 @@
-Timeout for one MILP instance: 3600s
-Linear program statistics;;;;;;;;;;;Primal graph statistics;;;;;;;;;;;;;;Incidence graph statistics;;;;;;;;;;;Dual graph statistics;;;;;;;;;;;;
-name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;numComponents;tw_lb;tw_ub;td_ub;torso_lb;torso_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;numComponents;tw_lb;tw_ub;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;numComponents;tw_lb;tw_ub;totalTime
-bienst2;505;576;35;0,0693;false;0.0;7.0;0.0;3.0;1;505;35;0,0693;6552;0,0515;8;56;25,9485;1;52;299;400;34;34;1082;35;0,0323;2185;0,0075;1;57;4,0388;1;27;85;577;0;0,0000;5684;0,0342;10;57;19,7019;1;59;112;1s
