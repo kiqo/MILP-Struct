@@ -1,4 +1,0 @@
-Timeout for one MILP instance: 60s
-Linear program statistics;;;;;;;;;;;Incidence graph statistics;;;;;;;;;;;
-name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;sizeObjFun;numNodes;numIntNodes;propIntNodes;numEdges;density;minDegree;maxDegree;avgDegree;numComponents;tw_lb;tw_ub;totalTime
-bienst2;505;576;35;0,0693;false;0.0;7.0;0.0;3.0;1;1081;35;0,0324;2184;0,0075;2;56;4,0407;1;26;0;0s

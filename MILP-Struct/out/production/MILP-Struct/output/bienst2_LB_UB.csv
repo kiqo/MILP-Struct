@@ -1,4 +1,0 @@
-Timeout for one MILP instance: 60s
-Linear program statistics;;;;;;;;;;;
-name;numVars;numCons;numIntVars;propIntVars;integerLP;minIntVars;maxIntVars;avgIntVars;avgVars;sizeObjFun;totalTime
-bienst2;505;576;35;0,0693;false;0.0;7.0;0.0;3.0;1;0s
