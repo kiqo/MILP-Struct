@@ -8,9 +8,8 @@ MILP-Struct/*.png
 
 workspace.xml
 MILP-Struct/graphs/*
-MILP-Struct/logs/logging.log
+MILP-Struct/logs/*
 MILP-Struct/out/*
-MILP-Struct/out/production/*
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
