@@ -29,8 +29,8 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StructuralParametersComputation.class);
 
-    private static String filePath;
-    private static String fileName;
+    private String filePath;
+    private String fileName;
     private StringBuilder sb = new StringBuilder();
     private static final Stopwatch t = new Stopwatch();
     private static final Stopwatch totalTimer = new Stopwatch();
@@ -103,10 +103,10 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
     private NGraph<GraphInput.InputData> computeGraphRepresentation(LinearProgram lp, GraphGenerator graphGenerator, GraphStatistics graphStatistics, GraphType graphType) throws InterruptedException {
         NGraph<GraphInput.InputData> graph = computeNGraph(lp, graphGenerator, graphStatistics);
         graph.addComment(graphType.toString());
-        LOGGER.debug("Finished " + graphType.toString() + " graph representation");
+        LOGGER.debug("Finished {} graph representation", graphType.toString());
         Serializer.serializeToFile(graph, Serializer.getDefaultGraphPath(fileName, graphType));
         Serializer.serializeToFile(graphStatistics, Serializer.getDefaultStatisticsPath(fileName, graphType));
-        LOGGER.debug("Finished serializing " + graphType.toString() + " graph representation to file");
+        LOGGER.debug("Finished serializing {} graph representation to file", graphType.toString());
         checkInterrupted();
         return graph;
     }
@@ -124,7 +124,7 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
             case INCIDENCE: gIncidence = graph; incidenceGraphStatistics = statistics; break;
             default: return false;
         }
-        LOGGER.debug("Deserialized from " + Serializer.getDefaultGraphPath(fileName,graphType));
+        LOGGER.debug("Deserialized from {}", Serializer.getDefaultGraphPath(fileName,graphType));
         return true;
     }
 
@@ -241,7 +241,7 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         }
     }
 
-    private static void computeTreeDepth(NGraph<GraphInput.InputData> g, GraphData graphData) throws InterruptedException {
+    private void computeTreeDepth(NGraph<GraphInput.InputData> g, GraphData graphData) throws InterruptedException {
         TreeDepth<GraphInput.InputData> treeDepthAlgo = new TreeDepth<>();
         runAlgo(g, treeDepthAlgo);
         int treeDepthUpperBound = treeDepthAlgo.getUpperBound();
@@ -258,12 +258,12 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
     }
 
     private void addTimingInformation() {
-        sb.append(totalTimer.getTime() / 1000 + "s");
+        sb.append(totalTimer.getTime() / 1000).append("s");
         sb.append(System.lineSeparator());
     }
 
-    private static void printTimingInfo(NGraph<GraphInput.InputData> graph, String algorithm, int result, String algoName) {
-        LOGGER.info(fileName + " " + graph.getComments() + " " + algorithm + ": " + result + " of " + graph.getNumberOfVertices() + " nodes with " + algoName
-                + ", time: " + t.getTime() / 1000 + "s");
+    private void printTimingInfo(NGraph<GraphInput.InputData> graph, String algorithm, int result, String algoName) {
+        LOGGER.info("{} {} {}: {} of {} nodes with {}, time: {} s", fileName, graph.getComments(), algorithm, result,
+                graph.getNumberOfVertices(), algoName, t.getTime() / 1000);
     }
 }

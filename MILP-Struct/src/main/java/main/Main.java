@@ -65,7 +65,7 @@ public class Main {
             writer.print(sb.toString());
             writer.close();
         } catch (IOException e) {
-            LOGGER.error("", e);
+            LOGGER.error("Error writing statistics to ouput file {}", e);
         }
     }
 
@@ -86,14 +86,14 @@ public class Main {
 
     private static String invokeTask(ThreadExecutor executor, String fileName) {
         String resultString = null;
-        LOGGER.info("Start structural parameters computation for " + fileName);
+        LOGGER.info("Start structural parameters computation for {}", fileName);
         try {
             // invoke all waits until all tasks are finished (= terminated or had an error)
             List<Future<String>> result = executor.startStructuralParameterComputation(fileName);
 
             if (result.get(0).isCancelled()) {
                 // task finished by cancellation (seconds exceeded)
-                LOGGER.warn(fileName + " was cancelled");
+                LOGGER.warn("{} was cancelled", fileName);
                 resultString = fileName + ";no result;" + LINE_SEPARATOR;
             } else {
                 resultString = result.get(0).get();
@@ -106,7 +106,7 @@ public class Main {
 
     private static StringBuilder appendHeader() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Timeout for one MILP instance: " + Configuration.TIMEOUT + "s" + LINE_SEPARATOR);
+        sb.append("Timeout for one MILP instance: ").append(Configuration.TIMEOUT).append("s").append(LINE_SEPARATOR);
         sb.append(LPStatisticsFormatter.csvFormatHeader());
         return sb;
     }
@@ -128,6 +128,9 @@ public class Main {
 
         String line;
         while ((line = br.readLine()) != null) {
+            if (line.trim().startsWith("%")) {
+                break;
+            }
             files.add(line);
         }
         br.close();

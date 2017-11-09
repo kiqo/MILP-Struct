@@ -28,7 +28,6 @@ public class Serializer {
             out.writeObject(object);
             out.close();
             fileOut.close();
-            LOGGER.debug("Serialized to " + filePath);
         } catch (IOException i) {
             LOGGER.error(i.toString());
         }
@@ -38,7 +37,7 @@ public class Serializer {
         Object object = null;
 
         if (Files.notExists(Paths.get(filePath))) {
-            LOGGER.debug("No serialization exists for " + filePath);
+            LOGGER.debug("No serialization exists for {}", filePath);
             return null;
         }
 
@@ -49,7 +48,7 @@ public class Serializer {
             in.close();
             fileIn.close();
         } catch (IOException i) {
-            LOGGER.error("IOException when deserializing " + filePath);
+            LOGGER.error("IOException when deserializing {}", filePath);
         } catch (ClassNotFoundException e) {
             LOGGER.error(e.getMessage());
         }

@@ -13,7 +13,7 @@ public class Configuration {
 
     public static String PROGRAM_NAME = "MILP-Struct";
     public static long TERMINATION_TIMEOUT = 5;
-    public static long TIMEOUT = 60 * 60; // 10 min
+    public static long TIMEOUT = 60 * 60; // 60 min
     public static Class<?> UPPER_BOUND_ALG = null;
     public static Class<?> LOWER_BOUND_ALG = null;
     public static final String DEFAULT_LOWER_BOUND_ALG = "nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC";
@@ -42,59 +42,59 @@ public class Configuration {
     }
 
     private static void addTimeoutInformation(StringBuilder sb) {
-        sb.append("Timeout for one MILP instance: " + Configuration.TIMEOUT + " seconds" + NL);
+        sb.append("Timeout for one MILP instance: ").append(Configuration.TIMEOUT).append(" seconds").append(NL);
     }
 
     private static void addObjectiveFunctionInformation(StringBuilder sb) {
         if (OBJ_FUNCTION) {
-            sb.append("Objective function is considered." + NL);
+            sb.append("Objective function is considered.").append(NL);
         }
     }
 
     private static void addFileInformation(StringBuilder sb) {
-        sb.append("Input file: " + INPUT_FILE + NL);
-        sb.append("Output file: " + OUTPUT_FILE + NL);
+        sb.append("Input file: ").append(INPUT_FILE).append(NL);
+        sb.append("Output file: ").append(OUTPUT_FILE).append(NL);
     }
 
     private static void addDualInformation(StringBuilder sb) {
         if (DUAL) {
-            sb.append("Computing for dual graph: " + NL);
+            sb.append("Computing for dual graph: ").append(NL);
             if (LOWER_BOUND) {
-                sb.append(TAB + "- lower bound of tree width" + NL);
+                sb.append(TAB + "- lower bound of tree width").append(NL);
             }
             if (UPPER_BOUND) {
-                sb.append(TAB + "- upper bound of tree width" + NL);
+                sb.append(TAB + "- upper bound of tree width").append(NL);
             }
         }
     }
 
     private static void addIncidenceInformation(StringBuilder sb) {
         if (INCIDENCE) {
-            sb.append("Computing for incidence graph: " + NL);
+            sb.append("Computing for incidence graph: ").append(NL);
             if (LOWER_BOUND) {
-                sb.append(TAB + "- lower bound of tree width" + NL);
+                sb.append(TAB + "- lower bound of tree width").append(NL);
             }
             if (UPPER_BOUND) {
-                sb.append(TAB + "- upper bound of tree width" + NL);
+                sb.append(TAB + "- upper bound of tree width").append(NL);
             }
         }
     }
 
     private static void addPrimalInformation(StringBuilder sb) {
         if (PRIMAL) {
-            sb.append("Computing for primal graph: " + NL);
+            sb.append("Computing for primal graph: ").append(NL);
             if (LOWER_BOUND) {
-                sb.append(TAB + "- lower bound of tree width" + NL);
+                sb.append(TAB + "- lower bound of tree width").append(NL);
             }
             if (UPPER_BOUND) {
-                sb.append(TAB + "- upper bound of tree width" + NL);
+                sb.append(TAB + "- upper bound of tree width").append(NL);
             }
             if (TORSO_WIDTH) {
-                sb.append(TAB + "- lower bound of torso width" + NL);
-                sb.append(TAB + "- upper bound of torso width" + NL);
+                sb.append(TAB + "- lower bound of torso width").append(NL);
+                sb.append(TAB + "- upper bound of torso width").append(NL);
             }
             if (TREE_DEPTH) {
-                sb.append(TAB + "- upper bound of tree depth" + NL);
+                sb.append(TAB + "- upper bound of tree depth").append(NL);
             }
         }
     }

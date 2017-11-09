@@ -222,7 +222,7 @@ public class MILPParser extends ThreadExecutor {
                 boundValue = Double.valueOf(lineContents[3]);
             }
         } else {
-            LOGGER.trace("No upper or lower bound value for variable " + variableName);
+            LOGGER.trace("No upper or lower bound value for variable {}", variableName);
         }
         return boundValue;
     }

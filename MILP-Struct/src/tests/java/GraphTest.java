@@ -78,7 +78,7 @@ public abstract class GraphTest extends StructuralParametersTest {
      * Creates a graph that consists of three connected components, a clique of 2 vertices, of 3 vertices and the integer
      * node blocker graph
      *
-     * @return
+     * @return a graph that has more than one connected component
      */
     Graph createDisconnectedGraph() {
         Graph nodeBlockerGraph = createNodeBlockerGraph();
@@ -138,7 +138,7 @@ public abstract class GraphTest extends StructuralParametersTest {
 
         Node node1 = createNode("middleNode", false);
         Node node2 = createNode("outNode1", true);
-        Node node3 = createNode("outNode2", true);;
+        Node node3 = createNode("outNode2", true);
         Node node4 = createNode("outNode3", true);
 
         nodes.add(node1);
@@ -159,8 +159,8 @@ public abstract class GraphTest extends StructuralParametersTest {
 
     /**
      * Creates a Graph out of the specified nodes and edges
-     * @param nodes
-     * @param edges
+     * @param nodes noddes to be in the created graph
+     * @param edges edges to be in the created graph
      * @return Graph
      */
     static Graph createGraph(List<Node> nodes, List<Edge> edges) {
@@ -224,7 +224,7 @@ public abstract class GraphTest extends StructuralParametersTest {
                     // create an edge
                     Edge edge = new Edge(nodes.get(i), nodes.get(j));
                     edges.add(edge);
-                };
+                }
             }
         }
 
@@ -243,6 +243,6 @@ public abstract class GraphTest extends StructuralParametersTest {
     }
 
     static void printResult(String parameterComputed, int result, int graphSize, String algoName) {
-        LOGGER.debug(parameterComputed + ": " + result + " of " + graphSize + " nodes with " + algoName);
+        LOGGER.debug("{}: {} of {} nodes with {}", parameterComputed, result, graphSize, algoName);
     }
 }

@@ -63,7 +63,7 @@ public class LPGraphInput implements GraphInput {
 
                 boolean edgeExists = v1.isNeighbor(v2);
                 if (edgeExists && !v2.isNeighbor(v1)) {
-                    LOGGER.error("Directed edge found for node " + v1.data.name);
+                    LOGGER.error("Directed edge found for node {}", v1.data.name);
                 }
 
                 if (!edgeExists) {
