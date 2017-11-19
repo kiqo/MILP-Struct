@@ -35,7 +35,7 @@ public class DualGraphGenerator extends GraphGenerator {
                 Row constraint2 = constraints.get(j);
                 Node constraintNode2 = createNodeIfNotExists(constraintNodes, constraint2.getName());
                 if (haveCommonVariable(constraint1, constraint2)) {
-                    generateEdge(constraintNode1, constraintNode2); // TODO fix gc overhead limit exceeded
+                    generateEdge(constraintNode1, constraintNode2);
                     createNeighbours(constraintNode1, constraintNode2);
                 }
             }

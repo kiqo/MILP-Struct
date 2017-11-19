@@ -64,28 +64,39 @@ public class MILPParser extends ThreadExecutor {
         line = sc.nextLine();
 
         int iteration = 0;
-        while (!line.startsWith("COLUMNS")) {
+            while (!line.startsWith("COLUMNS")) {
             if (iteration++ % 10 == 0) {
                 checkInterrupted();
             }
-            if (line.substring(COL_0_START).startsWith("N")) {
-                // objective function
-                Row row = new Row();
-                row.setName(line.substring(COL_1_START).trim());
-                row.setVariableEntries(new ArrayList<>());
-                lp.setObjectiveFunction(row);
-            } else {
-                // matrix row
-                MatrixRow row = new MatrixRow();
-                row.setEquality(parseEquality(line.substring(COL_0_START, COL_0_START + 1)));
-                row.setName(line.substring(COL_1_START).trim());
-                row.setVariableEntries(new ArrayList<>());
-                constraints.add(row);
+            if (!line.equals("")) {
+                if (line.substring(COL_0_START).startsWith("N")) {
+                    if (lp.getObjectiveFunction() != null) {
+                        LOGGER.warn("Multiple objective functions in .mps file detected, creating another constraint instead");
+                        createMatrixRow(constraints, line);
+                    } else {
+                        // objective function
+                        Row row = new Row();
+                        row.setName(line.substring(COL_1_START).trim());
+                        row.setVariableEntries(new ArrayList<>());
+                        lp.setObjectiveFunction(row);
+                    }
+                } else {
+                    createMatrixRow(constraints, line);
+                }
             }
 
             line = sc.nextLine();
         }
         lp.setConstraints(constraints);
+    }
+
+    private void createMatrixRow(List<MatrixRow> constraints, String line) {
+        // matrix row
+        MatrixRow row = new MatrixRow();
+        row.setEquality(parseEquality(line.substring(COL_0_START, COL_0_START + 1)));
+        row.setName(line.substring(COL_1_START).trim());
+        row.setVariableEntries(new ArrayList<>());
+        constraints.add(row);
     }
 
     private LinearProgram.Equality parseEquality(String substring) {
@@ -124,14 +135,16 @@ public class MILPParser extends ThreadExecutor {
                 }
             } else {
                 lineContents = getDataWithoutSpaces(line);
-                if (integerVariable) {
-                    variable = new IntegerVariable(lineContents[0]);
-                } else {
-                    variable = new RealVariable(lineContents[0]);
-                    integerLP = false;
+                if (!lineContents[0].equals("")) {
+                    if (integerVariable) {
+                        variable = new IntegerVariable(lineContents[0]);
+                    } else {
+                        variable = new RealVariable(lineContents[0]);
+                        integerLP = false;
+                    }
+                    variables.put(variable.getName(), variable);
+                    createRowEntries(lineContents, rows, variable);
                 }
-                variables.put(variable.getName(), variable);
-                createRowEntries(lineContents, rows, variable);
             }
             line = sc.nextLine();
         }
@@ -139,12 +152,18 @@ public class MILPParser extends ThreadExecutor {
     }
 
     private boolean swapIntegerVariable(String line) {
-        return line.substring(COL_2_START, COL_2_START + 8).equals("'MARKER'");
+        return line.length() >= 21 && line.substring(COL_2_START, COL_2_START + 8).equals("'MARKER'");
     }
 
     private void createRowEntries(String[] lineContents, Map<String, Row> rows, Variable variable) {
         String rowName = lineContents[1];
         Row currentRow = rows.get(rowName);
+
+        if (currentRow == null) {
+            LOGGER.warn("Row " + rowName + " was not found, cannot create row entries");
+            return;
+        }
+
         // double coefficient = Double.valueOf(lineContents[2]);
         addRowEntry(currentRow, variable);
 
@@ -179,17 +198,19 @@ public class MILPParser extends ThreadExecutor {
 
             lineContents = getDataWithoutSpaces(line);
 
-            String rowName = lineContents[1];
-            double rightHandSideValue = Double.valueOf(lineContents[2]);
-            Row currentRow = rows.get(rowName);
-            ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
-
-            if (lineContents.length >= 5) {
-                // parse for another constraint the rhs
-                rowName = lineContents[3];
-                rightHandSideValue = Double.valueOf(lineContents[2]);
-                currentRow = rows.get(rowName);
+            if (lineContents.length >= 2) {
+                String rowName = lineContents[1];
+                double rightHandSideValue = Double.valueOf(lineContents[2]);
+                Row currentRow = rows.get(rowName);
                 ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
+
+                if (lineContents.length >= 5) {
+                    // parse for another constraint the rhs
+                    rowName = lineContents[3];
+                    rightHandSideValue = Double.valueOf(lineContents[2]);
+                    currentRow = rows.get(rowName);
+                    ((MatrixRow) currentRow).setRightHandSide(rightHandSideValue);
+                }
             }
 
             line = sc.nextLine();
@@ -205,26 +226,59 @@ public class MILPParser extends ThreadExecutor {
         if (sc.hasNext()) {
             String line = sc.nextLine();
             while (line != null && !line.startsWith("ENDATA")) {
-                // Currently do nothing with the bounds
-                line = sc.nextLine();
+                Map<String, Variable> variables = lp.getVariables();
+                String[] lineContents = getDataWithoutSpaces(line);
+
+                if (lineContents.length >= 3) {
+                    String boundType = lineContents[0];
+                    String variableName = lineContents[2];
+                    Variable variable = variables.get(variableName);
+                    handleBoundType(lp, boundType, variable);
+
+                    line = sc.nextLine();
+                }
             }
         }
     }
 
-    private Number getBoundValue(String[] lineContents, String variableName, Variable variable) {
-        Number boundValue = null;
-        if (lineContents.length >= 4) {
-            if (variable.isInteger()) {
-                // needed such that 1.0000 does not throw a NumberFormatException
-                double value = Double.valueOf(lineContents[3]);
-                boundValue = (int) value;
-            } else {
-                boundValue = Double.valueOf(lineContents[3]);
-            }
-        } else {
-            LOGGER.trace("No upper or lower bound value for variable {}", variableName);
+    /**
+     * Definition of boundType according to http://miplib.zib.de/miplib3/mps_format.txt, section E.
+    */
+    private void handleBoundType(LinearProgram lp, String boundType, Variable variable) {
+        switch (boundType) {
+            case "BV":
+                // binary variable, should be integer variable
+                // if variable is not integer, then delete old non-integer variable and add integer variable
+                if (!variable.isInteger()) {
+                    LOGGER.trace("Variable " + variable.getName() + " converted to integer");
+                    convertToIntegerVariable(lp, variable);
+                }
+                break;
+            case "LI":
+                // lower bound (must be integer variable)
+                if (!variable.isInteger()) {
+                    LOGGER.warn("Variable " + variable.getName() + " should be integer!");
+                }
+                break;
+            default:
+                break;
         }
-        return boundValue;
+    }
+
+    private void convertToIntegerVariable(LinearProgram lp, Variable oldVariable) {
+        Variable newVariable = new IntegerVariable(oldVariable.getName());
+        lp.getVariables().replace(oldVariable.getName(), newVariable);
+        for (Row row : lp.getConstraints()) {
+            if (row.getVariableEntries().contains(oldVariable)) {
+                row.getVariableEntries().remove(oldVariable);
+                row.getVariableEntries().add(newVariable);
+            }
+        }
+        Row objectiveFunction = lp.getObjectiveFunction();
+        if (objectiveFunction.getVariableEntries().contains(oldVariable)) {
+            objectiveFunction.getVariableEntries().remove(oldVariable);
+            objectiveFunction.getVariableEntries().add(newVariable);
+        }
     }
 
     private void computeLPStatistics(LinearProgram lp) {

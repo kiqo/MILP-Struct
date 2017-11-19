@@ -65,7 +65,7 @@ public class Main {
             writer.print(sb.toString());
             writer.close();
         } catch (IOException e) {
-            LOGGER.error("Error writing statistics to ouput file {}", e);
+            LOGGER.error("Error writing statistics to ouput file {}", Configuration.OUTPUT_FILE, e);
         }
     }
 
@@ -99,7 +99,8 @@ public class Main {
                 resultString = result.get(0).get();
             }
         } catch (InterruptedException | ExecutionException e) {
-            LOGGER.error("", e);
+            LOGGER.error("Error for {} occured " , fileName, e);
+            resultString = fileName + ";no result;" + LINE_SEPARATOR;
         }
         return resultString;
     }

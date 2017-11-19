@@ -182,7 +182,7 @@ public class InputParser {
 
     private static void setOutputFilePathIfNotSet() {
         if (Configuration.OUTPUT_FILE == null) {
-            int endIndex = Configuration.INPUT_FILE.lastIndexOf("/");
+            int endIndex = Math.max(Configuration.INPUT_FILE.lastIndexOf("/"), Configuration.INPUT_FILE.lastIndexOf("\\"));
             String path = "./output";
 
             String inputFile = Configuration.INPUT_FILE.substring(endIndex+1, Configuration.INPUT_FILE.length())

@@ -14,7 +14,7 @@ public class PrimalGraphStatistics extends GraphStatistics {
         if (graphData.numNodes <= 1) {
             graphData.density = 0;
         } else {
-            graphData.density = (double) (2 * graphData.numEdges) / (double) (graphData.numNodes * (graphData.numNodes - 1));
+            graphData.density = (2.0 * (double) graphData.numEdges) /  ((double) graphData.numNodes * ((double) graphData.numNodes - 1.0));
         }
     }
 }
