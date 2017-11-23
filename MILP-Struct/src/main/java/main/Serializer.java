@@ -35,7 +35,7 @@ public class Serializer {
     }
 
     private static void createDirectoriesToFilePath(String filePath) {
-        int lastFolderIndex = Math.max(filePath.lastIndexOf("/"), filePath.lastIndexOf("\\\\"));
+        int lastFolderIndex = Math.max(filePath.lastIndexOf("/"), filePath.lastIndexOf("\\"));
         File directories = new File(filePath.substring(0, lastFolderIndex));
         directories.mkdirs();
     }

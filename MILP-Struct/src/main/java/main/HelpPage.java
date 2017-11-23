@@ -50,7 +50,7 @@ public class HelpPage {
                     Arrays.asList("", "", "Programs (MILP). It is possible to compute lower and "),
                     Arrays.asList("", "", "upper bounds for treewidth, tree-depth and torso-width "),
                     Arrays.asList("", "", "of the primal, incidence or dual representation of the "),
-                    Arrays.asList("", "", "(M)ILP. "),
+                    Arrays.asList("", "", "(M)ILP instances. "),
                     Arrays.asList("", "", ""),
                     Arrays.asList("", "Arguments", ""),
                     Arrays.asList("", "", Configuration.PROGRAM_NAME + " [--help] <inputFile(.mps|.txt)> "),
@@ -89,12 +89,16 @@ public class HelpPage {
                     Arrays.asList("", "", DOUBLE_TAB + "the graph representation computed it is handled "),
                     Arrays.asList("", "", DOUBLE_TAB + "as if it were part of the constraint matrix"),
                     Arrays.asList("", "", "One of --lb, --ub, --to, --td must be specified. "),
+                    Arrays.asList("", "", "Increasing the stack and/or heap size of the Java VM may be necessary. "),
                     Arrays.asList("", "", ""),
                     Arrays.asList("", "Examples", ""),
                     Arrays.asList("", "", Configuration.PROGRAM_NAME + " ./path/inputFile.mps -g primal --lb --ub"),
                     Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -o outputFile.csv -g p --ub"),
                     Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal --to --obj"),
-                    Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal incidence --td --to")
+                    Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal incidence --td --to"),
+                    Arrays.asList("", "", ""),
+                    Arrays.asList("", "Example Windows (command line)", ""),
+                    Arrays.asList("", "", "java -Xms256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar inputFile.txt -g p --lb")
             );
     }
 }

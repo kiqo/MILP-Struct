@@ -86,7 +86,7 @@ public class InputParser {
     private static void checkForConfigurationErrors() throws InputArgumentsException {
         if (Configuration.OUTPUT_FILE != null) {
             int outputFileLength = Configuration.OUTPUT_FILE.length();
-            if (Configuration.OUTPUT_FILE.length() < 4 || !Configuration.OUTPUT_FILE.substring(outputFileLength - 4, outputFileLength).equals(".csv")){
+            if (Configuration.OUTPUT_FILE.length() < 4 || !Configuration.OUTPUT_FILE.substring(outputFileLength - 4, outputFileLength).equals(".csv")) {
                 throw new InputArgumentsException("Output file must end on .csv!");
             }
         }
@@ -116,37 +116,52 @@ public class InputParser {
         setInputFilePath(args);
         parseStructuralParameterArguments(args);
         setOutputFilePathIfNotSet();
+        createOutputPathFolders();
     }
 
     private static void parseStructuralParameterArguments(String[] args) throws InputArgumentsException {
-        boolean expectOutputFile = false , expectGraphType = false;
+        boolean expectOutputFile = false, expectGraphType = false;
         for (int i = 1; i < args.length; i++) {
             switch (args[i]) {
                 case "-o":
                 case "-O":
-                case "--output": expectOutputFile = true; break;
+                case "--output":
+                    expectOutputFile = true;
+                    break;
 
                 case "-g":
                 case "-G":
-                case "--graph": expectGraphType = true; break;
+                case "--graph":
+                    expectGraphType = true;
+                    break;
 
-                case "--obj": Configuration.OBJ_FUNCTION = true; break;
+                case "--obj":
+                    Configuration.OBJ_FUNCTION = true;
+                    break;
 
                 case "--ub":
                 case "--UB":
-                case "--upperbound": Configuration.UPPER_BOUND = true; break;
+                case "--upperbound":
+                    Configuration.UPPER_BOUND = true;
+                    break;
 
                 case "--lb":
                 case "--LB":
-                case "--lowerbound": Configuration.LOWER_BOUND = true; break;
+                case "--lowerbound":
+                    Configuration.LOWER_BOUND = true;
+                    break;
 
                 case "--to":
                 case "--TO":
-                case "--torsowidth": Configuration.TORSO_WIDTH = true; break;
+                case "--torsowidth":
+                    Configuration.TORSO_WIDTH = true;
+                    break;
 
                 case "--td":
                 case "--TD":
-                case "--treedepth": Configuration.TREE_DEPTH = true; break;
+                case "--treedepth":
+                    Configuration.TREE_DEPTH = true;
+                    break;
 
                 default:
                     if (expectOutputFile) {
@@ -171,7 +186,7 @@ public class InputParser {
         String graphType = arg;
         if (graphType.equalsIgnoreCase("p") || graphType.equalsIgnoreCase("primal")) {
             Configuration.PRIMAL = true;
-        } else if (graphType.equalsIgnoreCase("i") || graphType.equalsIgnoreCase("incidence")){
+        } else if (graphType.equalsIgnoreCase("i") || graphType.equalsIgnoreCase("incidence")) {
             Configuration.INCIDENCE = true;
         } else if (graphType.equalsIgnoreCase("d") || graphType.equalsIgnoreCase("dual")) {
             Configuration.DUAL = true;
@@ -185,7 +200,7 @@ public class InputParser {
             int endIndex = Math.max(Configuration.INPUT_FILE.lastIndexOf("/"), Configuration.INPUT_FILE.lastIndexOf("\\"));
             String path = "./output";
 
-            String inputFile = Configuration.INPUT_FILE.substring(endIndex+1, Configuration.INPUT_FILE.length())
+            String inputFile = Configuration.INPUT_FILE.substring(endIndex + 1, Configuration.INPUT_FILE.length())
                     .replace(".txt", "")
                     .replace(".mps", "");
 
@@ -218,5 +233,15 @@ public class InputParser {
             outputFile += ".csv";
             Configuration.OUTPUT_FILE = outputFile;
         }
+    }
+
+    /**
+     * creates the output path folders if they do not exist yet
+     */
+    private static void createOutputPathFolders() {
+        String outputPath = Configuration.OUTPUT_FILE;
+        int lastFolderIndex = Math.max(outputPath.lastIndexOf("/"), outputPath.lastIndexOf("\\"));
+        File directories = new File(Configuration.OUTPUT_FILE.substring(0, lastFolderIndex));
+        directories.mkdirs();
     }
 }
