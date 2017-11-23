@@ -18,7 +18,7 @@ public class LPStatisticsTest extends StructuralParametersTest {
 
     @Test
     public void testLPFromInputFile() throws TimeoutException, InterruptedException {
-        lp = createLinearProgram("../input/tests/bienst2_small_test.mps");
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "bienst2_small_test.mps");
 
         LPStatistics statistics = computeStatistics();
 

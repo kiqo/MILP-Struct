@@ -23,7 +23,7 @@ public class SerializerTest extends GraphTest {
 
     @Before
     public void createGraphAndStatistics() throws InterruptedException {
-        lp = createLinearProgram("../input/tests/bienst2_small_test.mps");
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "bienst2_small_test.mps");
         Graph graph = new PrimalGraphGenerator().linearProgramToGraph(lp);
         this.nGraph = createNGraph(graph);
         statistics = new PrimalGraphStatistics();

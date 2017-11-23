@@ -1,9 +1,11 @@
 package tests.java;
 
 import main.java.algo.TreeWidthWrapper;
+import main.java.main.Configuration;
 import nl.uu.cs.treewidth.input.GraphInput;
 import nl.uu.cs.treewidth.ngraph.NGraph;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +18,13 @@ public class TreeWidthWrapperTest extends StructuralParametersTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeWidthWrapperTest.class);
 
+    @Before
+    public void before() throws InterruptedException {
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "bienst2_small_test_components.mps");
+    }
+
     @Test
     public void testLowerBound() throws InterruptedException {
-        lp = createLinearProgram("../input/tests/bienst2_small_test_components.mps");
         NGraph<GraphInput.InputData> primalGraph = createNGraph(createPrimalGraph(lp));
 
         int lowerBound = TreeWidthWrapper.computeLowerBound(primalGraph);
@@ -30,7 +36,6 @@ public class TreeWidthWrapperTest extends StructuralParametersTest {
 
     @Test
     public void testUpperBound() throws InterruptedException {
-        lp = createLinearProgram("../input/tests/bienst2_small_test_components.mps");
         NGraph<GraphInput.InputData> nGraph = createNGraph(createPrimalGraph(lp));
 
         int upperBound = TreeWidthWrapper.computeUpperBound(nGraph);

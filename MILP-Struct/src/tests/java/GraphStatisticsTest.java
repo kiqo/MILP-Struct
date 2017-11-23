@@ -22,7 +22,7 @@ public class GraphStatisticsTest extends StructuralParametersTest{
 
     @Test
     public void testLPFromInputFile() throws TimeoutException, InterruptedException {
-        lp = createLinearProgram("../input/tests/bienst2_small_test.mps");
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "bienst2_small_test.mps");
         Configuration.PRIMAL = true;
         Configuration.INCIDENCE = true;
         Configuration.DUAL = true;

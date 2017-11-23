@@ -1,3 +1,0 @@
-./../input\benchmarks\mspp16.mps
-./../input\benchmarks\gmu-35-40.mps
-./../input/benchmarks/30n20b8.mps

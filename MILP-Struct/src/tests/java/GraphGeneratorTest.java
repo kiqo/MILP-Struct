@@ -29,7 +29,7 @@ public class GraphGeneratorTest extends GraphTest {
 
     @Test
     public void testLinearProgramToPrimalGraph() throws TimeoutException, InterruptedException {
-        lp = createLinearProgram("./../input/benchmarks/bienst2.mps");
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "bienst2.mps");
         Graph primalGraph = createPrimalGraph(lp);
 
         assertNotNull(primalGraph.getEdges());
@@ -53,7 +53,7 @@ public class GraphGeneratorTest extends GraphTest {
 
     @Test
     public void testLinearProgramToDualGraph() throws TimeoutException, InterruptedException {
-        lp = createLinearProgram("./../input/benchmarks/bienst2.mps");
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "bienst2.mps");
 
         Graph dualGraph = new DualGraphGenerator().linearProgramToGraph(lp);
 
@@ -120,7 +120,7 @@ public class GraphGeneratorTest extends GraphTest {
 
     @Test
     public void testLinearProgramToIncidenceGraph() throws InterruptedException {
-        lp = createLinearProgram("./../input/benchmarks/bienst2.mps");
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "bienst2.mps");
 
         Graph incidenceGraph = new IncidenceGraphGenerator().linearProgramToGraph(lp);
 

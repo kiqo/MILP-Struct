@@ -29,6 +29,7 @@ public class Configuration {
     public static boolean UPPER_BOUND = false;
     public static boolean TREE_DEPTH = false;
     public static boolean OBJ_FUNCTION = false;
+    public static String MPS_TEST_FILES_FOLDER = "./src/tests/resources/mps_files/";
 
     public static void print() {
         StringBuilder sb = new StringBuilder();

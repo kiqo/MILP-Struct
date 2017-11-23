@@ -3,6 +3,7 @@ package tests.java;
 import main.java.lp.LinearProgram;
 import main.java.lp.MatrixRow;
 import main.java.lp.Variable;
+import main.java.main.Configuration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class MILPParserTest extends StructuralParametersTest {
 
     @Test
     public void testMILPParser() throws InterruptedException {
-        lp = createLinearProgram("../input/tests/bienst2_test.mps");
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "bienst2_test.mps");
 
         assertCorrectResult();
     }
@@ -88,7 +89,7 @@ public class MILPParserTest extends StructuralParametersTest {
      */
     @Test
     public void testMoreColumns() throws InterruptedException {
-        lp = createLinearProgram("./../input/benchmarks/roll3000.mps");
+        lp = createLinearProgram(Configuration.MPS_TEST_FILES_FOLDER + "roll3000.mps");
         assertLPNotNull();
         testDoubleMatrixEntryInColumns();
     }

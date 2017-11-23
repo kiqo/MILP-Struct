@@ -1,5 +1,7 @@
-input/benchmarks/
-!input/
+MILP-Struct/input/benchmarks/
+!MILP-Struct/input/
+
+MILP-Struct/output
 
 # File endings
 *.png
