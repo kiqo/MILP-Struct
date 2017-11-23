@@ -23,6 +23,7 @@ public class Serializer {
 
     public static void serializeToFile(Object object, String filePath) {
         try {
+            createDirectoriesToFilePath(filePath);
             FileOutputStream fileOut = new FileOutputStream(filePath);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(object);
@@ -31,6 +32,12 @@ public class Serializer {
         } catch (IOException i) {
             LOGGER.error(i.toString());
         }
+    }
+
+    private static void createDirectoriesToFilePath(String filePath) {
+        int lastFolderIndex = Math.max(filePath.lastIndexOf("/"), filePath.lastIndexOf("\\\\"));
+        File directories = new File(filePath.substring(0, lastFolderIndex));
+        directories.mkdirs();
     }
 
     public static Object deserializeFromFile(String filePath) {
