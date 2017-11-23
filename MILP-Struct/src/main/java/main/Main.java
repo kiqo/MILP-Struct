@@ -129,9 +129,6 @@ public class Main {
 
         String line;
         while ((line = br.readLine()) != null) {
-            if (line.trim().startsWith("%")) {
-                break;
-            }
             files.add(line);
         }
         br.close();
