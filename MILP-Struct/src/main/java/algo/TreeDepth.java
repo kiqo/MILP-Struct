@@ -74,6 +74,7 @@ public class TreeDepth<D extends GraphInput.InputData> implements UpperBound<D> 
     public void run() throws InterruptedException {
         // the logarithm of maxPathLength would be a lower bound for tree depth
         int maxPathLength = Integer.MIN_VALUE;
+        LOGGER.trace("TreeDepth Num Iterations = {}", NUM_DFS_TREE_GENERATION);
 
         for (int i = 0; i < NUM_DFS_TREE_GENERATION; i++) {
             List<ListVertex<D>> path = findRandomPath();

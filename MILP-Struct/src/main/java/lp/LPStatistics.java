@@ -72,8 +72,8 @@ public class LPStatistics implements Serializable {
         }
         linearProgramData.minIntegerVariables = minNumInteger; // per row
         linearProgramData.maxIntegerVariables = maxNumInteger;
-        linearProgramData.avgIntegerVariables = numIntegerVariablesTotal / linearProgramData.numConstraints;
-        linearProgramData.avgVariables = numVariablesTotal / linearProgramData.numConstraints;
+        linearProgramData.avgIntegerVariables = (double) numIntegerVariablesTotal / ((double) linearProgramData.numConstraints);
+        linearProgramData.avgVariables = (double) numVariablesTotal / ((double) linearProgramData.numConstraints);
         linearProgramData.sizeObjectiveFunction = linearProgram.getObjectiveFunction().getVariableEntries().size();
     }
 

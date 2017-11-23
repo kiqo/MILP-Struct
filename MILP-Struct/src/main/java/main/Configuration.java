@@ -13,7 +13,7 @@ public class Configuration {
 
     public static String PROGRAM_NAME = "MILP-Struct";
     public static long TERMINATION_TIMEOUT = 5;
-    public static long TIMEOUT = 60 * 60; // 60 min
+    public static long TIMEOUT = 60 * 10; // 10 min
     public static Class<?> UPPER_BOUND_ALG = null;
     public static Class<?> LOWER_BOUND_ALG = null;
     public static final String DEFAULT_LOWER_BOUND_ALG = "nl.uu.cs.treewidth.algorithm.MaximumMinimumDegreePlusLeastC";

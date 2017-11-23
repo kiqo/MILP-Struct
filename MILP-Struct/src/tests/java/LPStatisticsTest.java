@@ -29,7 +29,7 @@ public class LPStatisticsTest extends StructuralParametersTest {
         Configuration.PRIMAL = true;
         Configuration.INCIDENCE = true;
         Configuration.DUAL = true;
-        Assert.assertEquals("bienst2;7;8;2;0,2857;false;0.0;2.0;1.0;2.0;1;",
+        Assert.assertEquals("bienst2;7;8;2;0,2857;false;0;2;1,1;2,9;1;",
                             new LPStatisticsFormatter(statistics).csvFormat());
     }
 

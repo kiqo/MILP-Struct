@@ -48,7 +48,7 @@ public class Serializer {
             in.close();
             fileIn.close();
         } catch (IOException i) {
-            LOGGER.error("IOException when deserializing {}", filePath);
+            LOGGER.error("IOException when deserializing {}", filePath, i.getMessage());
         } catch (ClassNotFoundException e) {
             LOGGER.error(e.getMessage());
         }

@@ -10,8 +10,8 @@ public class LPData implements Serializable {
     public int numIntegerVariables;
     public boolean isIntegerLP;
     public double proportionIntegerVariables;
-    public double minIntegerVariables; // per row
-    public double maxIntegerVariables;
+    public int minIntegerVariables; // per row
+    public int maxIntegerVariables;
     public double avgIntegerVariables;
     public int numConstraints;
     public int sizeObjectiveFunction;

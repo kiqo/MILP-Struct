@@ -61,8 +61,8 @@ public class LPStatisticsFormatter {
         sb.append(linearProgramData.isIntegerLP).append(";");
         sb.append(linearProgramData.minIntegerVariables).append(";");
         sb.append(linearProgramData.maxIntegerVariables).append(";");
-        sb.append(linearProgramData.avgIntegerVariables).append(";");
-        sb.append(linearProgramData.avgVariables).append(";");
+        sb.append(new DecimalFormat("0.0").format(linearProgramData.avgIntegerVariables)).append(";");
+        sb.append(new DecimalFormat("0.0").format(linearProgramData.avgVariables)).append(";");
         sb.append(linearProgramData.sizeObjectiveFunction).append(";");
     }
 }

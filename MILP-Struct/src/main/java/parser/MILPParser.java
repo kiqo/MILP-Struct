@@ -164,15 +164,19 @@ public class MILPParser extends ThreadExecutor {
             return;
         }
 
-        // double coefficient = Double.valueOf(lineContents[2]);
-        addRowEntry(currentRow, variable);
+        double coefficient = Double.valueOf(lineContents[2]);
+        if (coefficient != 0.0) {
+            addRowEntry(currentRow, variable);
+        }
 
         if (lineContents.length >= 5) {
             // create for another row a matrix entry for this variable
             rowName = lineContents[3];
             currentRow = rows.get(rowName);
-            // coefficient = Double.valueOf(lineContents[4]);
-            addRowEntry(currentRow, variable);
+            coefficient = Double.valueOf(lineContents[4]);
+            if (coefficient != 0.0) {
+                addRowEntry(currentRow, variable);
+            }
         }
     }
 
