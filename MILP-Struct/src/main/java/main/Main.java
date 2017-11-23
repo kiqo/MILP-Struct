@@ -65,7 +65,7 @@ public class Main {
             writer.print(sb.toString());
             writer.close();
         } catch (IOException e) {
-            LOGGER.error("Error writing statistics to ouput file {}", Configuration.OUTPUT_FILE, e);
+            LOGGER.error("Error writing statistics to output file {}", Configuration.OUTPUT_FILE, e);
         }
     }
 
