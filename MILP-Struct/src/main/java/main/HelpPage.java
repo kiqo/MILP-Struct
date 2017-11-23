@@ -33,7 +33,7 @@ public class HelpPage {
         Board board = new Board(TABLE_WIDTH);
         Table table = new Table(board, TABLE_WIDTH, headersList, rowsList);
         table.setGridMode(Table.GRID_NON);
-        List<Integer> colWidthsListEdited = Arrays.asList(Configuration.PROGRAM_NAME.length(), 12, 120 - 12 - Configuration.PROGRAM_NAME.length());
+        List<Integer> colWidthsListEdited = Arrays.asList(Configuration.PROGRAM_NAME.length(), 15, 120 - 15 - Configuration.PROGRAM_NAME.length());
         table.setColWidthsList(colWidthsListEdited);
         Block tableBlock = table.tableToBlocks();
         board.setInitialBlock(tableBlock);
@@ -97,7 +97,7 @@ public class HelpPage {
                     Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal --to --obj"),
                     Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal incidence --td --to"),
                     Arrays.asList("", "", ""),
-                    Arrays.asList("", "Example Windows (command line)", ""),
+                    Arrays.asList("", "Example Windows", ""),
                     Arrays.asList("", "", "java -Xms256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar inputFile.txt -g p --lb")
             );
     }
