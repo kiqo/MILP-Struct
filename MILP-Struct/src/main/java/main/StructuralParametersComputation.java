@@ -54,6 +54,7 @@ public class StructuralParametersComputation extends ThreadExecutor implements C
         try {
             computeStructuralParameters(filePath);
         } catch (InterruptedException e) {
+            // ignore as thread still is set as interrupted
         }
         return sb.toString();
     }

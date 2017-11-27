@@ -100,6 +100,12 @@ public class Main {
             }
         } catch (InterruptedException | ExecutionException e) {
             LOGGER.error("Error for {} occured " , fileName, e);
+            if (e.getCause().getClass().equals(StackOverflowError.class)) {
+                LOGGER.error("Try to increase the maximum stack size with VM option -Xss, for example -Xss256m");
+            }
+            if (e.getCause().getClass().equals(OutOfMemoryError.class)) {
+                LOGGER.error("Try to increase the maximum heap size with VM option -Xmx, for example -Xmx4g");
+            }
             resultString = fileName + ";no result;" + LINE_SEPARATOR;
         }
         return resultString;
