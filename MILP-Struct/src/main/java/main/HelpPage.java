@@ -98,7 +98,7 @@ public class HelpPage {
                     Arrays.asList("", "", Configuration.PROGRAM_NAME + " inputFile.txt -g primal incidence --td --to"),
                     Arrays.asList("", "", ""),
                     Arrays.asList("", "Example Windows", ""),
-                    Arrays.asList("", "", "java -Xms256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar inputFile.txt -g p --lb")
+                    Arrays.asList("", "", "java -Xss256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar inputFile.txt -g p --lb")
             );
     }
 }
