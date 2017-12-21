@@ -36,7 +36,7 @@ public class InputParser {
     }
 
     private static void printLongHelpMessage() {
-        LOGGER.info(HelpPage.getLongHelpMessage());
+        System.out.println(HelpPage.getLongHelpMessage());
     }
 
     private static boolean helpArgumentSet(String[] args) {
@@ -49,14 +49,14 @@ public class InputParser {
     }
 
     private static void printErrorAndExit(String errorMessage) {
-        LOGGER.error(errorMessage);
+        System.out.println(errorMessage);
         printShortHelpMessage();
         exitProgram(1);
     }
 
     private static void printShortHelpMessage() {
         String shortHelpMessage = HelpPage.getShortHelpMessage();
-        LOGGER.error(shortHelpMessage);
+        System.out.println(shortHelpMessage);
     }
 
     private static void setInputFilePath(String[] args) throws InputArgumentsException {
