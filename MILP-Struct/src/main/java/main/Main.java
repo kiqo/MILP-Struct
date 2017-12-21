@@ -85,7 +85,7 @@ public class Main {
     }
 
     private static String invokeTask(ThreadExecutor executor, String fileName) {
-        String resultString = null;
+        String resultString;
         LOGGER.info("Start structural parameters computation for {}", fileName);
         try {
             // invoke all waits until all tasks are finished (= terminated or had an error)
@@ -99,12 +99,12 @@ public class Main {
                 resultString = result.get(0).get();
             }
         } catch (InterruptedException | ExecutionException e) {
-            LOGGER.error("Error for {} occured " , fileName, e);
             if (e.getCause().getClass().equals(StackOverflowError.class)) {
-                LOGGER.error("Try to increase the maximum stack size with VM option -Xss, for example -Xss256m");
-            }
-            if (e.getCause().getClass().equals(OutOfMemoryError.class)) {
-                LOGGER.error("Try to increase the maximum heap size with VM option -Xmx, for example -Xmx4g");
+                LOGGER.error("Try to increase the maximum stack size with VM option -Xss, for example \"java -Xss256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar ... \"");
+            } else if (e.getCause().getClass().equals(OutOfMemoryError.class)) {
+                LOGGER.error("Try to increase the maximum heap size with VM option -Xmx, for example \"java -Xss256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar ... \"");
+            } else {
+                LOGGER.error("Error for {} occured " , fileName, e);
             }
             resultString = fileName + ";no result;" + LINE_SEPARATOR;
         }
