@@ -7,3 +7,7 @@ Lower and upper bounds for the structural parameters treewidth, tree-depth and t
 This framework is based on the libtw library from http://www.treewidth.com, with some adaptations for the computation of the treewidth lower and upper bound approximations. 
 
 This program is published under the GNU Lesser General Public License.
+
+# Release MILP-Struct
+
+Create a jar file in IntelliJ by selecting Build->Build Artifacts...->Build. The jar file is then created to the folder MILP-Struct/out/artifacts/MILP_Struct_jar.
