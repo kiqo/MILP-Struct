@@ -16,8 +16,7 @@ public class InputParser {
 
     public static void parseArguments(String[] args) {
         try {
-            checkAtLeastOneArgument(args);
-            if (helpArgumentSet(args)) {
+            if (noArgument(args) || helpArgumentSet(args)) {
                 printLongHelpMessage();
                 exitProgram(0);
             }
@@ -29,10 +28,11 @@ public class InputParser {
         Configuration.print();
     }
 
-    private static void checkAtLeastOneArgument(String[] args) throws InputArgumentsException {
+    private static boolean noArgument(String[] args) {
         if (args.length == 0) {
-            throw new InputArgumentsException("Too few input arguments!");
+            return true;
         }
+        return false;
     }
 
     private static void printLongHelpMessage() {
