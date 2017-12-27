@@ -45,12 +45,6 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    static {
-        // system property current.date used for the name of the log file
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
-        System.setProperty("current.date", dateFormat.format(new Date()));
-    }
-
     public static void main(String[] args) throws IOException {
         InputParser.parseArguments(args);
         Configuration.setDefaultAlgorithms();
@@ -100,9 +94,11 @@ public class Main {
             }
         } catch (InterruptedException | ExecutionException e) {
             if (e.getCause().getClass().equals(StackOverflowError.class)) {
-                LOGGER.error("Try to increase the maximum stack size with VM option -Xss, for example \"java -Xss256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar ... \"");
+                LOGGER.debug("StackOverflowError for {} occurred " , fileName, e);
+                LOGGER.error("StackOverflowError occurred. Try to increase the maximum stack size with VM option -Xss, for example \"java -Xss256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar ... \"");
             } else if (e.getCause().getClass().equals(OutOfMemoryError.class)) {
-                LOGGER.error("Try to increase the maximum heap size with VM option -Xmx, for example \"java -Xss256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar ... \"");
+                LOGGER.debug("OutOfMemoryError for {} occurred " , fileName, e);
+                LOGGER.error("OutOfMemoryError occurred. Try to increase the maximum heap size with VM option -Xmx, for example \"java -Xss256m -Xmx4g -jar " + Configuration.PROGRAM_NAME + ".jar ... \"");
             } else {
                 LOGGER.error("Error for {} occured " , fileName, e);
             }
